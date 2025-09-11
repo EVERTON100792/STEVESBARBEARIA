@@ -65,7 +65,7 @@ body {
     padding: 1rem 0;
 }
 #clientArea {
-    display: block; /* Garante que a área do cliente seja a primeira a aparecer */
+    display: block;
 }
 
 /* Landing Page Styles */
@@ -226,7 +226,7 @@ body {
 .chart-wrapper { position: relative; height: 300px; margin-top: 1rem; }
 
 /* Modal Styles */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);z-index:1000;display:flex;justify-content:center;align-items:center;padding:1rem;animation:fadeIn .3s ease;}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);z-index:1000;display:none;justify-content:center;align-items:center;padding:1rem;animation:fadeIn .3s ease;}
 .modal-container{max-width:600px;width:100%;animation:slideIn .3s ease;max-height:90vh;display:flex;flex-direction:column;}
 .modal-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid var(--border);}
 .modal-header h3{color:var(--accent);}
@@ -248,7 +248,7 @@ body {
 .agenda-time-slot:nth-child(4n+1)::after{content:'';position:absolute;bottom:0;left:10%;right:0;border-bottom:1px solid var(--secondary);}
 .agenda-barbers-area{display:grid;}
 .agenda-barber-column{border-left:1px solid var(--secondary);}
-.agenda-slots-container{position:relative;min-height: 800px;} /* Altura mínima para garantir rolagem */
+.agenda-slots-container{position:relative;min-height: 800px;}
 .agenda-barber-header{text-align:center;padding:.5rem;position:sticky;top:0;background:var(--background);z-index:10;border-bottom:1px solid var(--accent);font-weight:600;}
 .agenda-appointment-block{position:absolute;left:4px;right:4px;background-color:var(--secondary);color:var(--secondary-foreground);border-radius:calc(var(--radius)/4);padding:2px 6px;font-size:.75rem;line-height:1.3;overflow:hidden;cursor:pointer;transition:background-color .2s;border-left:3px solid var(--accent);z-index:5;display:flex;flex-direction:column;justify-content:center;min-height:20px;}
 .appointment-block-name{font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--foreground);font-size:.8rem;}
