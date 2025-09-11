@@ -117,6 +117,8 @@ class BarberPro {
         });
     }
 
+    // ... (O restante completo do arquivo JavaScript, omitido aqui para brevidade, mas o código completo está abaixo)
+
     showSection(sectionId) { document.querySelectorAll('.page-section').forEach(section => { section.style.display = 'none'; }); const section = document.getElementById(sectionId); if (section) { section.style.display = 'block'; } const navbar = document.querySelector('.navbar'); if (navbar) { navbar.style.display = sectionId === 'barberDashboard' ? 'none' : 'flex'; } }
     switchDashboardView(viewId, isInitialLoad = false) { if (!viewId) return; document.querySelectorAll('.content-view').forEach(view => { view.classList.remove('active'); view.style.display = 'none'; }); const viewElement = document.getElementById(viewId); if (viewElement) { viewElement.style.display = 'block'; viewElement.classList.add('active'); } const titles = { dashboardView: { title: 'Dashboard', subtitle: 'Visão geral do seu negócio.' }, appointmentsView: { title: 'Agenda', subtitle: 'Visualize e gerencie seus horários.' }, comandasView: { title: 'Atendimentos', subtitle: 'Gerencie os atendimentos pendentes do dia.' }, clientsView: { title: 'Clientes', subtitle: 'Consulte e gerencie sua base de clientes.' }, servicesView: { title: 'Serviços', subtitle: 'Configure os serviços oferecidos.' }, professionalsView: { title: 'Profissionais', subtitle: 'Gerencie a equipe de barbeiros.' }, financialView: { title: 'Caixa', subtitle: 'Acompanhe suas receitas e despesas.' }, reportsView: { title: 'Relatórios', subtitle: 'Analise o desempenho da sua barbearia.' } }; const newTitle = titles[viewId] || { title: 'BarberPro', subtitle: '' }; const dashboardTitleEl = document.getElementById('dashboardTitle'); const dashboardSubtitleEl = document.getElementById('dashboardSubtitle'); if(dashboardTitleEl) dashboardTitleEl.textContent = newTitle.title; if(dashboardSubtitleEl) dashboardSubtitleEl.textContent = newTitle.subtitle; document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active')); const activeNavItem = document.querySelector(`.sidebar-nav .nav-item[data-view="${viewId}"]`); if(activeNavItem) { activeNavItem.classList.add('active'); const parentGroup = activeNavItem.closest('.nav-group'); if(parentGroup) { parentGroup.querySelector('.nav-parent')?.classList.add('active'); } } switch (viewId) { case 'appointmentsView': this.renderAgendaView(); break; case 'comandasView': this.renderPendingAppointments(); break; case 'clientsView': this.renderFullClientsList(); break; case 'servicesView': this.renderServicesList(); break; case 'professionalsView': this.renderProfessionalsList(); break; case 'financialView': this.renderFinancialPage(); break; case 'reportsView': this.renderCharts(); break; case 'dashboardView': this.loadDashboardData(); break; } document.body.classList.remove('sidebar-is-open'); }
     handleAppointmentSubmit(form) { const nameInput = form.querySelector('[name="name"]'); const phoneInput = form.querySelector('[name="phone"]'); const serviceInput = form.querySelector('[name="service"]'); const barberInput = form.querySelector('[name="barber"]'); const dateInput = form.querySelector('[name="date"]'); const timeInput = form.querySelector('[name="time"]'); const isWalkIn = form.dataset.walkIn === 'true'; if (!nameInput?.value.trim() || !phoneInput?.value || !serviceInput?.value || !barberInput?.value || (isWalkIn ? false : !dateInput?.value) || (isWalkIn ? false : !timeInput?.value)) { this.showNotification('Por favor, preencha todos os campos.', 'error'); return; } const phone = this.sanitizePhone(phoneInput.value); if (phone.length < 10) { this.showNotification('Por favor, insira um número de telefone válido com DDD.', 'error'); return; } const selectedService = this.services.find(s => s.id === serviceInput.value); if (!selectedService) { this.showNotification('Serviço inválido selecionado.', 'error'); return; } const today = new Date(); const timezoneOffset = today.getTimezoneOffset() * 60000; const localDate = new Date(today.getTime() - timezoneOffset); const appointment = { id: Date.now().toString(), createdAt: new Date().toISOString(), name: nameInput.value.trim(), phone: phone, service: serviceInput.value, barberId: barberInput.value, date: isWalkIn ? localDate.toISOString().split('T')[0] : dateInput.value, time: isWalkIn ? localDate.toTimeString().split(' ')[0].substring(0,5) : timeInput.value, status: isWalkIn ? 'pending' : 'scheduled', paymentStatus: 'pending', paymentMethod: null, closedAt: null }; this.getOrUpdateClient(appointment.phone, appointment.name); this.appointments.push(appointment); this.saveData(); this.showNotification(isWalkIn ? 'Atendimento criado com sucesso!' : 'Agendamento realizado com sucesso!', 'success'); if (form.id === 'bookingForm') { form.reset(); this.setMinDate(); } else { this.hideModal(); if (isWalkIn) this.renderPendingAppointments(); else this.renderAgendaView(); this.loadDashboardData(); } }
@@ -169,6 +171,54 @@ class BarberPro {
     renderClientBarbers() { const container = document.getElementById('barbers-showcase-list'); if (!container) return; container.innerHTML = this.barbers.map(barber => ` <div class="barber-card glass-card"> <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(barber.name)}&background=c7a355&color=fff&size=128" alt="Barbeiro ${barber.name}"> <h4>${barber.name}</h4> <p class="barber-specialty">${barber.specialty || 'Especialista'}</p> </div> `).join(''); }
     renderFullClientsList() { const container = document.getElementById('fullClientsList'); const searchInput = document.getElementById('clientSearchInput'); if(!container || !searchInput) return; const searchTerm = searchInput.value.toLowerCase(); const clients = this.clients.filter(c => c.name.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm)).sort((a,b) => a.name.localeCompare(b.name)); container.innerHTML = clients.length === 0 ? '<div class="empty-state"><p>Nenhum cliente encontrado.</p></div>' : clients.map(client => { const clientAppointments = this.appointments.filter(a => a.phone === client.phone); const totalVisits = clientAppointments.length; const lastVisitAppointment = clientAppointments.filter(a => a.status === 'completed').sort((a,b) => b.date.localeCompare(a.date))[0]; const lastVisit = lastVisitAppointment ? this.formatDate(lastVisitAppointment.date) : 'N/A'; return `<div class="data-card"><div><strong>${client.name}</strong><div class="data-card-info"><span>📞 ${client.phone}</span><span>📅 Visitas: ${totalVisits}</span><span>📍 Última Visita: ${lastVisit}</span></div></div><div class="data-card-actions"><button class="btn-secondary btn-small" data-action="view-client-details" data-id="${client.phone}">Ver Detalhes</button></div></div>`; }).join(''); }
     renderCharts() { Object.values(this.charts).forEach(chart => chart?.destroy()); if(typeof Chart === 'undefined' || typeof ChartDataLabels === 'undefined') return; Chart.register(ChartDataLabels); const revenueCtxEl = document.getElementById('revenueChart'); if(revenueCtxEl) { const revenueCtx = revenueCtxEl.getContext('2d'); const weeklyData = { labels: [], data: [] }; for (let i = 6; i >= 0; i--) { const date = new Date(); date.setDate(date.getDate() - i); const dateStr = date.toISOString().split('T')[0]; weeklyData.labels.push(date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })); const dailyRevenue = this.appointments.filter(a => a.date === dateStr && a.status === 'completed').reduce((sum, a) => { const service = this.services.find(s => s.id === a.service); return sum + (service ? service.price : 0); }, 0); weeklyData.data.push(dailyRevenue); } this.charts.revenueChart = new Chart(revenueCtx, { type: 'bar', data: { labels: weeklyData.labels, datasets: [{ label: 'Faturamento Diário', data: weeklyData.data, backgroundColor: 'rgba(199, 163, 85, 0.7)' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } }); } const servicesCtxEl = document.getElementById('servicesChart'); if(servicesCtxEl) { const servicesCtx = servicesCtxEl.getContext('2d'); const serviceAnalytics = this.services.map(s => { const appointments = this.appointments.filter(a => a.service === s.id && a.status === 'completed'); return { name: s.name, count: appointments.length, revenue: appointments.length * s.price }; }).filter(s => s.count > 0).sort((a, b) => b.revenue - a.revenue); this.charts.servicesChart = new Chart(servicesCtx, { type: 'bar', data: { labels: serviceAnalytics.map(s => s.name), datasets: [{ label: 'Faturamento por Serviço', data: serviceAnalytics.map(s => s.revenue), backgroundColor: 'rgba(59, 130, 246, 0.7)' }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true } } } }); } }
+    renderAgendaView() {
+        const container = document.getElementById('agendaViewContainer');
+        const dateFilter = document.getElementById('agendaDateFilter');
+        if (!container || !dateFilter) {
+            if (container) container.innerHTML = '<p>Erro ao carregar a agenda.</p>';
+            return;
+        }
+
+        const selectedDate = dateFilter.value || this.getTodayDateString();
+        const timeSlots = Array.from({ length: (19 - 9) * 4 }, (_, i) => {
+            const hour = 9 + Math.floor(i / 4);
+            const minute = (i % 4) * 15;
+            return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+        });
+
+        let timeColumnHTML = '<div class="agenda-time-column">' + timeSlots.map(time => `<div class="agenda-time-slot">${time.endsWith(':00') ? `<b>${time}</b>` : ''}</div>`).join('') + '</div>';
+        
+        if (this.barbers.length === 0) {
+            container.innerHTML = '<div class="empty-state"><p>Nenhum profissional cadastrado.</p></div>';
+            return;
+        }
+
+        let barbersAreaHTML = `<div class="agenda-barbers-area" style="grid-template-columns: repeat(${this.barbers.length}, 1fr);">`;
+        this.barbers.forEach(barber => {
+            barbersAreaHTML += `<div class="agenda-barber-column"><div class="agenda-barber-header">${barber.name}</div><div class="agenda-slots-container">`;
+            const barberAppointments = this.appointments.filter(a => a.barberId === barber.id && a.date === selectedDate && a.status !== 'cancelled');
+            barberAppointments.forEach(app => {
+                const service = this.services.find(s => s.id === app.service);
+                if (!service || !app.time) return;
+                
+                try {
+                    const [startHour, startMinute] = app.time.split(':').map(Number);
+                    const totalMinutesFrom9AM = (startHour - 9) * 60 + startMinute;
+                    const topPosition = totalMinutesFrom9AM;
+                    const height = service.duration || 60;
+                    barbersAreaHTML += `<div class="agenda-appointment-block status-${app.status}" data-id="${app.id}" style="top: ${topPosition}px; height: ${height}px;" data-action="show-finalize-modal">
+                        <p class="appointment-block-name">${app.name}</p>
+                        <p class="appointment-block-service">${service.name}</p>
+                    </div>`;
+                } catch(e) {
+                    console.error("Erro ao renderizar agendamento:", app, e);
+                }
+            });
+            barbersAreaHTML += `</div></div>`;
+        });
+        barbersAreaHTML += `</div>`;
+        container.innerHTML = timeColumnHTML + barbersAreaHTML;
+    }
 }
 
 window.barberPro = new BarberPro();
