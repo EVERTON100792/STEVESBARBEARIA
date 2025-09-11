@@ -1,378 +1,265 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steves Barbearia - Sistema de Gestão</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAnZJREFUWEftl01IVFEUx3/nvWmyD6MoqEYLzaKgoI0FQUIFQkEtjanRKGhjRBQVLWzXLiKINi0KWgRBgRAtkkIzLSKINi0qKhNaVKBTkGVqOs37cSPHmXnj+HzvjRU0F2bnvXP+v3PuOfeec4WUj4lZl/8ZIK0O/DsOpACQUmAi4RUCVACNQBVQCeSAaeAr8AwYBX45fS0isCPYBRwDdgM5wEGFRGD/gE/AQ+AGMOkWwg2gEbgI7ANSpRSP0AZcBZps4Z0A6oHLwDbPPMv2SBrYGgRCKRSv7DmgTGtyFGgD3kYF4AQ4D5xVgAUrPclZyZXNiRnPURB1cxp4D6S1qEvAaSewWIJcAE4EtO6vQIsC7NDazgCDwLSa3wYc0XWHxo+APmAsSkQ3pxPACaAOWKm1adXXrXqtlQPj+rzY5hJwV8F4AogD8N4ekSrkwGNgQJ+/AxP6TNtHTppJSvU8qus6AL4A58JY4ebAFeB4RACSYv3AWZ33AOhRb2kFSZpXKQOG1KxuI5QozwMB2CK3AM+V+gTwFVgLrFErbgLvNPwvdIQsN3RdfGAYGA5bfTEAs0CbptgwMAH8UH9YDXwGPqoIbQV2aoUMGKH6rO/bLPZkALgZBsBL/xcHwBPVfBn6IWBfgP0uLcUF/c0AuKbr4ohQGACJtIRfROYj8ELzbqOK0F7gosMANyzFJe3XgPMRXDAMgNjvLOC3iqe0W6Ra8kFfN2JFpBoY1YDUaGfURlBepAQlDMBH4Jpmh7RlH9QMJBWlwUgzYgGxOmNfbNmKAiC98gv1gQ/qgnKKkZRm6Xq9TmlCpIo9tLJBAPwOk0O3fdD/TcB7P3l4QHRIrsseAAAAAElFTSuQmCC">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steves Barbearia - Sistema de Gestão</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAnZJREFUWEftl01IVFEUx3/nvWmyD6MoqEYLzaKgoI0FQUIFQkEtjanRKGhjRBQVLWzXLiKINi0KWgRBgRAtkkIzLSKINi0qKhNaVKBTkGVqOs37cSPHmXnj+HzvjRU0F2bnvXP+v3PuOfeec4WUj4lZl/8ZIK0O/DsOpACQUmAi4RUCVACNQBVQCeSAaeAr8AwYBX45fS0isCPYBRwDdgM5wEGFRGD/gE/AQ+AGMOkWwg2gEbgI7ANSpRSP0AZcBZps4Z0A6oHLwDbPPMv2SBrYGgRCKRSv7DmgTGtyFGgD3kYF4AQ4D5xVgAUrPclZyZXNiRnPURB1cxp4D6S1qEvAaSewWIJcAE4EtO6vQIsC7NDazgCDwLSa3wYc0XWHxo+APmAsSkQ3pxPACaAOWKm1adXXrXqtlQPj+rzY5hJwV8F4AogD8N4ekSrkwGNgQJ+/AxP6TNtHTppJSvU8qus6AL4A58JY4ebAFeB4RACSYv3AWZ33AOhRb2kFSZpXKQOG1KxuI5QozwMB2CK3AM+V+gTwFVgLrFErbgLvNPwvdIQsN3RdfGAYGA5bfTEAs0CbptgwMAH8UH9YDXwGPqoIbQV2aoUMGKH6rO/bLPZkALgZBsBL/xcHwBPVfBn6IWBfgP0uLcUF/c0AuKbr4ohQGACJtIRfROYj8ELzbqOK0F7gosMANyzFJe3XgPMRXDAMgNjvLOC3iqe0W6Ra8kFfN2JFpBoY1YDUaGfURlBepAQlDMBH4Jpmh7RlH9QMJBWlwUgzYgGxOmNfbNmKAiC98gv1gQ/qgnKKkZRm6Xq9TmlCpIo9tLJBAPwOk0O3fdD/TcB7P3l4QHRIrsseAAAAAElFTSuQmCC">
+    
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 </head>
 <body>
-    <nav class="navbar glass-card">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <div class="logo">⭐</div>
-                <h1>Steves Barbearia</h1>
-            </div>
-            <div class="nav-buttons">
-                <button class="nav-btn" id="clientAreaBtn">Área do Cliente</button>
-                <button class="nav-btn" id="barberAreaBtn">Área do Barbeiro</button>
-            </div>
-        </div>
-    </nav>
-    
-    <div id="clientArea" class="page-section">
-        <div class="container">
-            <div class="hero-section">
-                <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600" alt="Barbearia Moderna">
-                    <div class="hero-overlay">
-                        <h2>Estilo e Precisão em Cada Corte</h2>
-                        <p>Experiência premium, resultados excepcionais.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="services-showcase-section">
-                <h3 class="section-title">Nossos Serviços</h3>
-                <div id="services-showcase-list" class="services-grid"></div>
-            </div>
-            <div class="gallery-section">
-                <h3 class="section-title">Nosso Trabalho</h3>
-                <div class="gallery-grid">
-                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1599338152365-e1013b4695e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDEyfHxiYXJiZXJzaG9wfGVufDB8fHx8MTY3NzExODg4OA&ixlib=rb-4.0.3&q=80&w=400" alt="Corte de cabelo masculino"></div>
-                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1621605815971-fbc39e1a6af3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDEwfHxtZW4lMjBoYWlyY3V0fGVufDB8fHx8MTY3NzExODg4OA&ixlib=rb-4.0.3&q=80&w=400" alt="Barba bem cuidada"></div>
-                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-16222888094043-a62a95c3d258?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDI3fHxmYWRlJTIwaGFpcmN1dHxlbnwwfHx8fDE2NzcxMTg4ODg&ixlib=rb-4.0.3&q=80&w=400" alt="Corte degradê"></div>
-                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1567894340345-2212a4c5a7a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDE3fHxiZWFyZCUyMHRyaW18ZW58MHx8fHwxNjc3MTE4ODg4&ixlib=rb-4.0.3&q=80&w=400" alt="Cuidado com a barba"></div>
-                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1615486228747-9c3f43501a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDE0fHxtZW4lMjBoYWlyJTIwc3R5bGV8ZW58MHx8fHwxNjc3MTE4ODg4&ixlib=rb-4.0.3&q=80&w=400" alt="Penteado masculino moderno"></div>
-                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1533638822695-9e32a61b606b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDIyfHxiYXJiZXJ8ZW58MHx8fHwxNjc3MTE4ODg4&ixlib=rb-4.0.3&q=80&w=400" alt="Barbeiro em ação"></div>
-                </div>
-            </div>
-            <div class="barbers-section">
-                <h3 class="section-title">Nossos Barbeiros</h3>
-                <div id="barbers-showcase-list" class="barbers-grid"></div>
-            </div>
-            <div class="booking-form-container">
-                <div class="glass-card booking-form pulse-gold">
-                    <h3 class="section-title" style="font-size: 1.8rem; margin-bottom: 2rem;">Pronto para Transformar seu Visual?</h3>
-                    <h4>Faça seu Agendamento</h4>
-                    <form id="bookingForm" style="margin-top: 1.5rem;">
-                        <div class="form-group"><label for="clientName">Nome Completo</label><input type="text" id="clientName" name="name" placeholder="Seu nome completo" required autocomplete="name"></div>
-                        <div class="form-group"><label for="clientPhone">Celular (com DDD)</label><input type="tel" id="clientPhone" name="phone" placeholder="11999999999" required autocomplete="tel"></div>
-                        <div class="form-group"><label for="serviceType">Serviço</label><select id="serviceType" name="service" required></select></div>
-                        <div class="form-group"><label for="barberSelection">Profissional</label><select id="barberSelection" name="barber" required></select></div>
-                        <div class="form-group"><label for="preferredDate">Data de Preferência</label><input type="date" id="preferredDate" name="date" required></div>
-                        <div class="form-group"><label for="preferredTime">Horário de Preferência</label><select id="preferredTime" name="time" required><option value="">Selecione o horário</option><option value="09:00">09:00</option><option value="09:15">09:15</option><option value="09:30">09:30</option><option value="09:45">09:45</option><option value="10:00">10:00</option><option value="10:15">10:15</option><option value="10:30">10:30</option><option value="10:45">10:45</option><option value="11:00">11:00</option><option value="11:15">11:15</option><option value="11:30">11:30</option><option value="11:45">11:45</option><option value="14:00">14:00</option><option value="14:15">14:15</option><option value="14:30">14:30</option><option value="14:45">14:45</option><option value="15:00">15:00</option><option value="15:15">15:15</option><option value="15:30">15:30</option><option value="15:45">15:45</option><option value="16:00">16:00</option><option value="16:15">16:15</option><option value="16:30">16:30</option><option value="16:45">16:45</option><option value="17:00">17:00</option><option value="17:15">17:15</option><option value="17:30">17:30</option><option value="17:45">17:45</option><option value="18:00">18:00</option></select></div>
-                        <button type="submit" class="btn-primary">Agendar Agora</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <nav class="navbar glass-card">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo">⭐</div>
+                <h1>Steves Barbearia</h1>
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn" id="clientAreaBtn">Área do Cliente</button>
+                <button class="nav-btn" id="barberAreaBtn">Área do Barbeiro</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div id="clientArea" class="page-section">
+        <div class="container">
+            <div class="hero-section">
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600" alt="Barbearia Moderna">
+                    <div class="hero-overlay">
+                        <h2>Estilo e Precisão em Cada Corte</h2>
+                        <p>Experiência premium, resultados excepcionais.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="services-showcase-section">
+                <h3 class="section-title">Nossos Serviços</h3>
+                <div id="services-showcase-list" class="services-grid"></div>
+            </div>
+            <div class="gallery-section">
+                <h3 class="section-title">Nosso Trabalho</h3>
+                <div class="gallery-grid">
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1599338152365-e1013b4695e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDEyfHxiYXJiZXJzaG9wfGVufDB8fHx8MTY3NzExODg4OA&ixlib=rb-4.0.3&q=80&w=400" alt="Corte de cabelo masculino"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1621605815971-fbc39e1a6af3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDEwfHxtZW4lMjBoYWlyY3V0fGVufDB8fHx8MTY3NzExODg4OA&ixlib=rb-4.0.3&q=80&w=400" alt="Barba bem cuidada"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-16222888094043-a62a95c3d258?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDI3fHxmYWRlJTIwaGFpcmN1dHxlbnwwfHx8fDE2NzcxMTg4ODg&ixlib=rb-4.0.3&q=80&w=400" alt="Corte degradê"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1567894340345-2212a4c5a7a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDE3fHxiZWFyZCUyMHRyaW18ZW58MHx8fHwxNjc3MTE4ODg4&ixlib=rb-4.0.3&q=80&w=400" alt="Cuidado com a barba"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1615486228747-9c3f43501a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDE0fHxtZW4lMjBoYWlyJTIwc3R5bGV8ZW58MHx8fHwxNjc3MTE4ODg4&ixlib=rb-4.0.3&q=80&w=400" alt="Penteado masculino moderno"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1533638822695-9e32a61b606b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDIyfHxiYXJiZXJ8ZW58MHx8fHwxNjc3MTE4ODg4&ixlib=rb-4.0.3&q=80&w=400" alt="Barbeiro em ação"></div>
+                </div>
+            </div>
+            <div class="barbers-section">
+                <h3 class="section-title">Nossos Barbeiros</h3>
+                <div id="barbers-showcase-list" class="barbers-grid"></div>
+            </div>
+            <div class="booking-form-container">
+                <div class="glass-card booking-form pulse-gold">
+                    <h3 class="section-title" style="font-size: 1.8rem; margin-bottom: 2rem;">Pronto para Transformar seu Visual?</h3>
+                    <h4>Faça seu Agendamento</h4>
+                    <form id="bookingForm" style="margin-top: 1.5rem;">
+                        <div class="form-group"><label for="clientName">Nome Completo</label><input type="text" id="clientName" name="name" placeholder="Seu nome completo" required autocomplete="name"></div>
+                        <div class="form-group"><label for="clientPhone">Celular (com DDD)</label><input type="tel" id="clientPhone" name="phone" placeholder="11999999999" required autocomplete="tel"></div>
+                        <div class="form-group"><label for="serviceType">Serviço</label><select id="serviceType" name="service" required></select></div>
+                        <div class="form-group"><label for="barberSelection">Profissional</label><select id="barberSelection" name="barber" required></select></div>
+                        <div class="form-group"><label for="preferredDate">Data de Preferência</label><input type="date" id="preferredDate" name="date" required></div>
+                        <div class="form-group"><label for="preferredTime">Horário de Preferência</label><select id="preferredTime" name="time" required><option value="">Selecione o horário</option><option value="09:00">09:00</option><option value="09:15">09:15</option><option value="09:30">09:30</option><option value="09:45">09:45</option><option value="10:00">10:00</option><option value="10:15">10:15</option><option value="10:30">10:30</option><option value="10:45">10:45</option><option value="11:00">11:00</option><option value="11:15">11:15</option><option value="11:30">11:30</option><option value="11:45">11:45</option><option value="14:00">14:00</option><option value="14:15">14:15</option><option value="14:30">14:30</option><option value="14:45">14:45</option><option value="15:00">15:00</option><option value="15:15">15:15</option><option value="15:30">15:30</option><option value="15:45">15:45</option><option value="16:00">16:00</option><option value="16:15">16:15</option><option value="16:30">16:30</option><option value="16:45">16:45</option><option value="17:00">17:00</option><option value="17:15">17:15</option><option value="17:30">17:30</option><option value="17:45">17:45</option><option value="18:00">18:00</option></select></div>
+                        <button type="submit" class="btn-primary">Agendar Agora</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <div id="barberLogin" class="page-section">
-        <div class="container">
-            <div class="login-container">
-                <div class="glass-card login-form">
-                    <div class="login-header">
-                        <div class="login-icon">👤</div>
-                        <h2>Acesso do Barbeiro</h2>
-                        <p>Entre com suas credenciais</p>
-                    </div>
-                    <form id="loginForm">
-                        <div class="form-group"><label for="username">Usuário</label><input type="text" id="username" placeholder="seu_usuario" required autocomplete="username"></div>
-                        <div class="form-group"><label for="password">Senha</label><input type="password" id="password" placeholder="********" required autocomplete="current-password"></div>
-                        <button type="submit" class="btn-primary">Entrar</button>
-                        <button type="button" class="btn-secondary" id="demoLoginBtn" style="margin-top:0.5rem;">Entrar como demonstração</button>
-                    </form>
-                    <p class="demo-info">Demo: usuário "barbeiro" senha "123"</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="barberLogin" class="page-section">
+        <div class="container">
+            <div class="login-container">
+                <div class="glass-card login-form">
+                    <div class="login-header">
+                        <div class="login-icon">👤</div>
+                        <h2>Acesso do Barbeiro</h2>
+                        <p>Entre com suas credenciais</p>
+                    </div>
+                    <form id="loginForm">
+                        <div class="form-group"><label for="username">Usuário</label><input type="text" id="username" placeholder="seu_usuario" required autocomplete="username"></div>
+                        <div class="form-group"><label for="password">Senha</label><input type="password" id="password" placeholder="********" required autocomplete="current-password"></div>
+                        <button type="submit" class="btn-primary">Entrar</button>
+                        <button type="button" class="btn-secondary" id="demoLoginBtn" style="margin-top:0.5rem;">Entrar como demonstração</button>
+                    </form>
+                    <p class="demo-info">Demo: usuário "barbeiro" senha "123"</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <div id="barberDashboard" class="page-section">
-        <div class="dashboard-layout">
-            <aside class="dashboard-sidebar glass-card">
-                <div class="sidebar-content">
-                    <div class="sidebar-header">
-                        <div class="sidebar-brand">
-                            <div class="logo">⭐</div>
-                            <h2>Steves Barbearia</h2>
-                        </div>
-                    </div>
-                    <nav class="sidebar-nav">
-                        <a class="nav-item" data-view="dashboardView"><i class="nav-icon fas fa-chart-bar"></i><span>Dashboard</span></a>
-                        <a class="nav-item" data-view="appointmentsView"><i class="nav-icon fas fa-calendar-alt"></i><span>Agenda</span></a>
-                        <div class="nav-group">
-                            <a class="nav-item nav-parent"><i class="nav-icon fas fa-edit"></i><span>Cadastros</span><i class="nav-arrow fas fa-chevron-right"></i></a>
-                            <div class="nav-submenu">
-                                <a class="nav-item" data-view="clientsView"><i class="nav-icon fas fa-users"></i><span>Clientes</span></a>
-                                <a class="nav-item" data-view="servicesView"><i class="nav-icon fas fa-cut"></i><span>Serviços</span></a>
-                                <a class="nav-item" data-view="professionalsView"><i class="nav-icon fas fa-store"></i><span>Profissionais</span></a>
-                            </div>
-                        </div>
-                        <a class="nav-item" data-view="comandasView"><i class="nav-icon fas fa-receipt"></i><span>Comandas</span></a>
-                        <div class="nav-group">
-                            <a class="nav-item nav-parent"><i class="nav-icon fas fa-dollar-sign"></i><span>Financeiro</span><i class="nav-arrow fas fa-chevron-right"></i></a>
-                            <div class="nav-submenu">
-                                <a class="nav-item" data-view="financialView"><i class="nav-icon fas fa-cash-register"></i><span>Caixa</span></a>
-                                <a class="nav-item" data-view="reportsView"><i class="nav-icon fas fa-chart-pie"></i><span>Relatórios</span></a>
-                            </div>
-                        </div>
-                    </nav>
-                </div>
-                <div class="sidebar-footer">
-                    <button class="btn-secondary" id="logoutBtnSidebar"><i class="fas fa-door-open"></i> Sair</button>
-                    <button class="btn-secondary btn-danger" id="resetDataBtn"><i class="fas fa-trash"></i> Resetar Dados (Teste)</button>
-                </div>
-            </aside>
+    <div id="barberDashboard" class="page-section">
+        <div class="dashboard-layout">
+            <aside class="dashboard-sidebar glass-card">
+                <div class="sidebar-content">
+                    <div class="sidebar-header">
+                        <div class="sidebar-brand">
+                            <div class="logo">⭐</div>
+                            <h2>Steves Barbearia</h2>
+                        </div>
+            _BÇ_B <div id="barberDashboard" class="page-section">
+        <div class="dashboard-layout">
+            <aside class="dashboard-sidebar glass-card">
+                <div class="sidebar-content">
+                    <div class="sidebar-header">
+                        <div class="sidebar-brand">
+                            <div class="logo">⭐</div>
+                            <h2>Steves Barbearia</h2>
+                        </div>
+                    </div>
+                    <nav class="sidebar-nav">
+                        <a class="nav-item" data-view="dashboardView"><i class="nav-icon fas fa-chart-bar"></i><span>Dashboard</span></a>
+                        <a class="nav-item" data-view="appointmentsView"><i class="nav-icon fas fa-calendar-alt"></i><span>Agenda</span></a>
+                        <div class="nav-group">
+                            <a class="nav-item nav-parent"><i class="nav-icon fas fa-edit"></i><span>Cadastros</span><i class="nav-arrow fas fa-chevron-right"></i></a>
+                            <div class="nav-submenu">
+                                <a class="nav-item" data-view="clientsView"><i class="nav-icon fas fa-users"></i><span>Clientes</span></a>
+                                <a class="nav-item" data-view="servicesView"><i class="nav-icon fas fa-cut"></i><span>Serviços</span></a>
+                                <a class="nav-item" data-view="professionalsView"><i class="nav-icon fas fa-store"></i><span>Profissionais</span></a>
+                            </div>
+                        </div>
+                        <a class="nav-item" data-view="comandasView"><i class="nav-icon fas fa-receipt"></i><span>Comandas</span></a>
+                        <div class="nav-group">
+                            <a class="nav-item nav-parent"><i class="nav-icon fas fa-dollar-sign"></i><span>Financeiro</span><i class="nav-arrow fas fa-chevron-right"></i></a>
+                            <div class="nav-submenu">
+                                <a class="nav-item" data-view="financialView"><i class="nav-icon fas fa-cash-register"></i><span>Caixa</span></a>
+                                <a class="nav-item" data-view="reportsView"><i class="nav-icon fas fa-chart-pie"></i><span>Relatórios</span></a>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <div class="sidebar-footer">
+                    <button class="btn-secondary" id="logoutBtnSidebar"><i class="fas fa-door-open"></i> Sair</button>
+                    <button class="btn-secondary btn-danger" id="resetDataBtn"><i class="fas fa-trash"></i> Resetar Dados (Teste)</button>
+                </div>
+            </aside>
 
-            <main class="dashboard-main">
-                <div class="dashboard-header">
-                    <div id="header-info">
-                        <h2 id="dashboardTitle">Dashboard</h2>
-                        <p id="dashboardSubtitle">Visão geral do seu negócio.</p>
-                    </div>
-                    <div class="dashboard-header-actions">
-                        <div id="caixaStatus" class="caixa-status-indicator"></div>
-                        <button id="sidebarToggle" class="btn-secondary btn-icon" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
-                        <button class="btn-secondary" id="logoutBtn"><i class="fas fa-door-open"></i> Sair</button>
-                    </div>
-                </div>
-                
-                <div id="dashboardView" class="content-view">
-                    <div class="main-stats">
-                        <div class="stat-card-principal glass-card bg-green">
-                            <div class="stat-content">
-                                <div class="stat-info">
-                                    <p>Faturamento Hoje</p>
-                                    <h3 id="todayProfit">R$ 0,00</h3>
-                                </div>
-                                <div class="stat-icon-principal"><i class="fas fa-hand-holding-usd"></i></div>
-                            </div>
-                        </div>
-                        <div class="stat-card-principal glass-card bg-accent">
-                            <div class="stat-content">
-                                <div class="stat-info">
-                                    <p>Agend. Hoje</p>
-                                    <h3 id="todayCount">0</h3>
-                                </div>
-                                <div class="stat-icon-principal"><i class="fas fa-calendar-day"></i></div>
-                            </div>
-                        </div>
-                        <div class="stat-card-principal glass-card bg-orange">
-                            <div class="stat-content">
-                                <div class="stat-info">
-                                    <p>Comandas Abertas</p>
-                                    <h3 id="openComandasCount">0</h3>
-                                </div>
-                                <div class="stat-icon-principal"><i class="fas fa-receipt"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="secondary-stats">
-                        <div class="stat-card-secundaria glass-card">
-                            <div class="stat-content">
-                                <div class="stat-info">
-                                    <p>Faturamento Mês</p>
-                                    <h3 id="monthlyProfit">R$ 0,00</h3>
-                                </div>
-                                <div class="stat-icon bg-purple"><i class="fas fa-wallet"></i></div>
-                            </div>
-                        </div>
-                        <div class="stat-card-secundaria glass-card">
-                            <div class="stat-content">
-                                <div class="stat-info">
-                                    <p>Serviços Concluídos (Mês)</p>
-                                    <h3 id="completedServicesCount">0</h3>
-                                </div>
-                                <div class="stat-icon" style="background-color: #14b8a6;"><i class="fas fa-check-circle"></i></div>
-                            </div>
-                        </div>
-                        <div class="stat-card-secundaria glass-card">
-                            <div class="stat-content">
-                                <div class="stat-info">
-                                    <p>Ticket Médio (Mês)</p>
-                                    <h3 id="averageTicket">R$ 0,00</h3>
-                                </div>
-                                <div class="stat-icon" style="background-color: #f97316;"><i class="fas fa-balance-scale"></i></div>
-                            </div>
-                        </div>
-                        <div class="stat-card-secundaria glass-card">
-                            <div class="stat-content">
-                                <div class="stat-info">
-                                    <p>Total de Clientes</p>
-                                    <h3 id="totalClientsCount">0</h3>
-                                </div>
-                                <div class="stat-icon bg-blue"><i class="fas fa-users"></i></div>
-                            </div>
-                        </div>
-                         <div class="stat-card-secundaria glass-card">
-                            <div class="stat-content">
-                                <div class="stat-info">
-                                    <p>Novos Clientes (Mês)</p>
-                                    <h3 id="newClientsCount">0</h3>
-                                </div>
-                                <div class="stat-icon" style="background-color: #ec4899;"><i class="fas fa-star"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-grid">
-                        <div>
-                            <div class="glass-card" style="padding:1.5rem">
-                                <div class="section-header">
-                                    <h3>Próximos Agendamentos</h3>
-                                    <button class="btn-secondary btn-small" id="refreshBtn"><i class="fas fa-sync-alt"></i> Atualizar</button>
-                                </div>
-                                <div id="appointmentsList" class="appointments-list"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="glass-card" style="padding:1.5rem">
-                                <h3>Comandas em Aberto</h3>
-                                <div id="dashboardComandasList" class="upcoming-list"></div>
-                            </div>
-                            <div class="glass-card" style="margin-top:1.5rem; padding:1.5rem">
-                                <h3>Últimas Despesas</h3>
-                                <div id="recentExpensesList" class="recent-expenses-list"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <main class="dashboard-main">
+                <div class="dashboard-header">
+                    <div id="header-info">
+                        <h2 id="dashboardTitle">Dashboard</h2>
+                        <p id="dashboardSubtitle">Visão geral do seu negócio.</p>
+                    </div>
+                    <div class="dashboard-header-actions">
+                        <div id="caixaStatus" class="caixa-status-indicator"></div>
+                        <button id="sidebarToggle" class="btn-secondary btn-icon" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
+                        <button class="btn-secondary" id="logoutBtn"><i class="fas fa-door-open"></i> Sair</button>
+                    </div>
+                </div>
+                
+                <div id="dashboardView" class="content-view">
+                    <div class="main-stats">
+                        <div class="stat-card-principal glass-card bg-green">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <p>Faturamento Hoje</p>
+                                    <h3 id="todayProfit">R$ 0,00</h3>
+                                </div>
+                                <div class="stat-icon-principal"><i class="fas fa-hand-holding-usd"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card-principal glass-card bg-accent">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <p>Agend. Hoje</p>
+                                    <h3 id="todayCount">0</h3>
+                                </div>
+                                <div class="stat-icon-principal"><i class="fas fa-calendar-day"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card-principal glass-card bg-orange">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <p>Comandas Abertas</p>
+                                    <h3 id="openComandasCount">0</h3>
+                                </div>
+                                <div class="stat-icon-principal"><i class="fas fa-receipt"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="secondary-stats">
+                        <div class="stat-card-secundaria glass-card">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <p>Faturamento Mês</p>
+                                    <h3 id="monthlyProfit">R$ 0,00</h3>
+                                </div>
+                                <div class="stat-icon bg-purple"><i class="fas fa-wallet"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card-secundaria glass-card">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <p>Serviços Concluídos (Mês)</p>
+                                    <h3 id="completedServicesCount">0</h3>
+                                </div>
+                                <div class="stat-icon" style="background-color: #14b8a6;"><i class="fas fa-check-circle"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card-secundaria glass-card">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <p>Ticket Médio (Mês)</p>
+                                    <h3 id="averageTicket">R$ 0,00</h3>
+                                </div>
+                                <div class="stat-icon" style="background-color: #f97316;"><i class="fas fa-balance-scale"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card-secundaria glass-card">
+                  _BÇ_B <main class="dashboard-main">
+                <div class="dashboard-header">
+                    <div id="header-info">
+                        <h2 id="dashboardTitle">Dashboard</h2>
+                        <p id="dashboardSubtitle">Visão geral do seu negócio.</p>
+                    </div>
+                    <div class="dashboard-header-actions">
+                        <div id="caixaStatus" class="caixa-status-indicator"></div>
+                        <button id="sidebarToggle" class="btn-secondary btn-icon" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
+                        <button class="btn-secondary" id="logoutBtn"><i class="fas fa-door-open"></i> Sair</button>
+                    </div>
+                </div>
+                
+                <div id="dashboardView" class="content-view">
+                    <div class="main-stats">
+                        <div class="stat-card-principal glass-card bg-green">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <p>Faturamento Hoje</p>
+                                    <h3 id="todayProfit">R$ 0,00</h3>
+                                </div>
+                                <div class="stat-icon-principal"><i class="fas fa-hand-holding-usd"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card-principal glass-card bg-accent">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <p>Agend. Hoje</p>
+                                    <h3 id="todayCount">0</h3>
+                                </div>
+                                <div class="stat-icon-principal"><i class="fas fa-calendar-day"></i></div>
+                            </div>
+                _BÇ_B </div>
 
-                <div id="appointmentsView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;">
-                        <div class="section-header">
-                            <div class="agenda-nav">
-                                <button id="prevDayBtn" class="btn-secondary btn-small">⟨ Anterior</button>
-                                <input type="date" id="agendaDateFilter" class="form-control-small">
-                                <button id="nextDayBtn" class="btn-secondary btn-small">Próximo ⟩</button>
-                            </div>
-                            <button id="addAppointmentBtn" class="btn-primary btn-small">Novo Agendamento</button>
-                        </div>
-                        <div id="agendaViewContainer" class="agenda-view-container"></div>
-                    </div>
-                </div>
-                <div id="comandasView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;">
-                        <div class="section-header">
-                            <h3>Comandas em Aberto</h3>
-                            <div>
-                                <input type="search" id="comandaSearchInput" placeholder="Buscar por nome..." class="form-control-small" style="margin-right: 1rem;">
-                                <button id="addComandaBtn" class="btn-primary btn-small">Nova Comanda</button>
-                            </div>
-                        </div>
-                        <div id="comandasList" class="comandas-list"></div>
-                    </div>
-                </div>
-                <div id="clientsView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;">
-                        <div class="section-header">
-                            <h3>Gestão de Clientes</h3>
-                            <input type="search" id="clientSearchInput" placeholder="Buscar por nome ou telefone..." class="form-control-small">
-                        </div>
-                        <div id="fullClientsList" class="clients-list"></div>
-                    </div>
-                </div>
-                <div id="servicesView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;">
-                        <div class="section-header">
-                            <h3>Serviços Oferecidos</h3>
-                            <button id="addServiceBtn" class="btn-primary btn-small">Adicionar Serviço</button>
-                        </div>
-                        <div id="servicesList" class="services-list" style="margin-top:1rem;"></div>
-                    </div>
-                </div>
-                <div id="professionalsView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;">
-                        <div class="section-header">
-                            <h3>Profissionais</h3>
-                            <button id="addProfessionalBtn" class="btn-primary btn-small">Adicionar Profissional</button>
-                        </div>
-                        <div id="professionalsList" class="professionals-list" style="margin-top:1rem;"></div>
-                    </div>
-                </div>
-                <div id="financialView" class="content-view">
-                    <div class="glass-card financial-card">
-                        <div class="section-header">
-                            <h3>Controle de Caixa</h3>
-                            <div class="button-group">
-                                <button id="viewHistoryBtn" class="btn-secondary btn-small">Ver Histórico</button>
-                                <button id="addExpenseBtnMain" class="btn-secondary btn-small">Adicionar Despesa</button>
-                                <button id="openCaixaBtn" class="btn-primary btn-small">Abrir Caixa</button>
-                                <button id="closeCaixaBtn" class="btn-secondary btn-danger btn-small">Fechar Caixa</button>
-                            </div>
-                        </div>
-                        <div id="financialDashboard" class="financial-dashboard"></div>
-                    </div>
-                </div>
-                <div id="reportsView" class="content-view">
-                    <div class="stats-grid">
-                        <div class="glass-card stat-highlight">
-                            <h4>Desempenho Mensal</h4>
-                            <div class="highlight-content">
-                                <div class="highlight-value" id="monthlyGrowth">+0%</div>
-                                <p>em relação ao mês anterior</p>
-                            </div>
-                        </div>
-                        <div class="glass-card stat-highlight">
-                            <h4>Taxa de Retorno</h4>
-                            <div class="highlight-content">
-                                <div class="highlight-value" id="returnRate">0%</div>
-                                <p>de clientes recorrentes</p>
-                            </div>
-                        </div>
-                        <div class="glass-card stat-highlight">
-                            <h4>Taxa de Ocupação</h4>
-                            <div class="highlight-content">
-                                <div class="highlight-value" id="occupancyRate">0%</div>
-                                <p>dos horários preenchidos</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="charts-grid">
-                        <div class="glass-card chart-container">
-                            <div class="chart-header">
-                                <h4>Faturamento dos Últimos 7 Dias</h4>
-                                <p class="chart-subtitle">Com média móvel semanal</p>
-                            </div>
-                            <div class="chart-wrapper">
-                                <canvas id="revenueChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="glass-card chart-container">
-                            <div class="chart-header">
-                                <h4>Desempenho por Serviço</h4>
-                                <p class="chart-subtitle">Faturamento e número de atendimentos</p>
-                            </div>
-                            <div class="chart-wrapper">
-                                <canvas id="servicesChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="modalBackdrop" class="modal-backdrop" style="display: none;">
+        <div id="modalContainer" class="modal-container glass-card">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <button id="closeModalBtn" class="close-modal-btn">&times;</button>
+            </div>
+            <div id="modalContent" class="modal-content"></div>
+        </div>
+    </div>
+    <datalist id="clientSuggestions"></datalist>
+    <div id="notificationContainer"></div>
 
-            </main>
-        </div>
-    </div>
-    
-    <div id="modalBackdrop" class="modal-backdrop" style="display: none;">
-        <div id="modalContainer" class="modal-container glass-card">
-            <div class="modal-header">
-                <h3 id="modalTitle"></h3>
-                <button id="closeModalBtn" class="close-modal-btn">&times;</button>
-            </div>
-            <div id="modalContent" class="modal-content"></div>
-        </div>
-    </div>
-    <datalist id="clientSuggestions"></datalist>
-    <div id="notificationContainer"></div>
-
-    <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
