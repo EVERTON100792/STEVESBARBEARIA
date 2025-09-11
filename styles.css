@@ -1,44 +1,44 @@
 /* Reset and Base Styles */
 html, body {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    width: 100%;
-    min-height: 100%;
-    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
 }
 
 * {
-    box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, hsl(222, 84%, 4%) 0%, hsl(217, 32%, 17%) 100%);
-    color: hsl(210, 40%, 98%);
-    min-height: 100vh;
-    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, hsl(222, 84%, 4%) 0%, hsl(217, 32%, 17%) 100%);
+    color: hsl(210, 40%, 98%);
+    min-height: 100vh;
+    line-height: 1.6;
 }
 
 /* Variables */
 :root {
-    --background: hsl(222, 84%, 4%);
-    --foreground: hsl(210, 40%, 98%);
-    --card: hsl(222, 84%, 4%);
-    --card-foreground: hsl(210, 40%, 98%);
-    --primary: hsl(43, 96%, 56%);
-    --primary-foreground: hsl(222, 84%, 4%);
-    --secondary: hsl(217, 32%, 17%);
-    --secondary-foreground: hsl(210, 40%, 98%);
-    --muted: hsl(217, 32%, 17%);
-    --muted-foreground: hsl(215, 20%, 65%);
-    --accent: hsl(43, 96%, 56%);
-    --accent-foreground: hsl(222, 84%, 4%);
-    --destructive: hsl(0, 84%, 60%);
-    --border: hsl(217, 32%, 17%);
-    --input: hsl(217, 32%, 17%);
-    --ring: hsl(43, 96%, 56%);
-    --radius: 0.75rem;
+    --background: hsl(222, 84%, 4%);
+    --foreground: hsl(210, 40%, 98%);
+    --card: hsl(222, 84%, 4%);
+    --card-foreground: hsl(210, 40%, 98%);
+    --primary: hsl(43, 96%, 56%);
+    --primary-foreground: hsl(222, 84%, 4%);
+    --secondary: hsl(217, 32%, 17%);
+    --secondary-foreground: hsl(210, 40%, 98%);
+    --muted: hsl(217, 32%, 17%);
+    --muted-foreground: hsl(215, 20%, 65%);
+    --accent: hsl(43, 96%, 56%);
+    --accent-foreground: hsl(222, 84%, 4%);
+    --destructive: hsl(0, 84%, 60%);
+    --border: hsl(217, 32%, 17%);
+    --input: hsl(217, 32%, 17%);
+    --ring: hsl(43, 96%, 56%);
+    --radius: 0.75rem;
 }
 
 /* Utility Classes */
@@ -61,8 +61,8 @@ body {
 
 /* Page Sections */
 .page-section {
-    display: none;
-    padding: 1rem 0;
+    display: none;
+    padding: 1rem 0;
 }
 
 /* Landing Page Styles */
@@ -217,12 +217,32 @@ body {
 .chart-wrapper { position: relative; height: 300px; margin-top: 1rem; }
 
 /* Modal Styles */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);z-index:1000;display:flex;justify-content:center;align-items:center;padding:1rem;animation:fadeIn .3s ease}.modal-container{max-width:600px;width:100%;animation:slideIn .3s ease;max-height:90vh;display:flex;flex-direction:column;}.modal-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid var(--border)}.modal-header h3{color:var(--accent)}.close-modal-btn{background:none;border:none;color:var(--foreground);font-size:1.5rem;cursor:pointer}.modal-content{padding:1.5rem;overflow-y:auto}.modal-footer{display:flex;justify-content:flex-end;gap:.75rem;padding:1rem 1.5rem;border-top:1px solid var(--border);margin-top:auto;}
-#notificationContainer{position:fixed;bottom:1.5rem;right:1.5rem;z-index:2000;display:flex;flex-direction:column;gap:.75rem}.notification{padding:1rem 1.5rem;border-radius:var(--radius);color:var(--primary-foreground);min-width:250px;box-shadow:0 4px 15px rgba(0,0,0,.2);animation:slideInUp .4s ease}.notification.success{background-color:hsl(142,76%,36%)}.notification.error{background-color:var(--destructive)}
-@keyframes slideIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}@keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);z-index:1000;display:none;justify-content:center;align-items:center;padding:1rem;animation:fadeIn .3s ease;}
+.modal-container{max-width:600px;width:100%;animation:slideIn .3s ease;max-height:90vh;display:flex;flex-direction:column;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid var(--border);}
+.modal-header h3{color:var(--accent);}
+.close-modal-btn{background:none;border:none;color:var(--foreground);font-size:1.5rem;cursor:pointer;}
+.modal-content{padding:1.5rem;overflow-y:auto;}
+.modal-footer{display:flex;justify-content:flex-end;gap:.75rem;padding:1rem 1.5rem;border-top:1px solid var(--border);margin-top:auto;}
+#notificationContainer{position:fixed;bottom:1.5rem;right:1.5rem;z-index:2000;display:flex;flex-direction:column;gap:.75rem;}
+.notification{padding:1rem 1.5rem;border-radius:var(--radius);color:var(--primary-foreground);min-width:250px;box-shadow:0 4px 15px rgba(0,0,0,.2);animation:slideInUp .4s ease;}
+.notification.success{background-color:hsl(142,76%,36%);}
+.notification.error{background-color:var(--destructive);}
+@keyframes slideIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
 /* Agenda View */
-.agenda-nav{display:flex;gap:.5rem;align-items:center}.agenda-view-container{display:grid;grid-template-columns:60px 1fr;margin-top:1.5rem;overflow-x:auto;position:relative;}.agenda-time-column{padding-top:2.5rem}.agenda-time-slot{height:15px;display:flex;align-items:flex-start;justify-content:center;font-size:.75rem;color:var(--muted-foreground);position:relative}.agenda-time-slot:nth-child(4n+1)::after{content:'';position:absolute;bottom:0;left:10%;right:0;border-bottom:1px solid var(--secondary)}.agenda-barbers-area{display:grid}.agenda-barber-column{border-left:1px solid var(--secondary)}.agenda-slots-container{position:relative;height:100%}.agenda-barber-header{text-align:center;padding:.5rem;position:sticky;top:0;background:var(--background);z-index:10;border-bottom:1px solid var(--accent);font-weight:600}.agenda-appointment-block{position:absolute;left:4px;right:4px;background-color:var(--secondary);color:var(--secondary-foreground);border-radius:calc(var(--radius)/4);padding:2px 6px;font-size:.75rem;line-height:1.3;overflow:hidden;cursor:pointer;transition:background-color .2s;border-left:3px solid var(--accent);z-index:5;display:flex;flex-direction:column;justify-content:center;min-height:20px}.appointment-block-name{font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--foreground);font-size:.8rem}
+.agenda-nav{display:flex;gap:.5rem;align-items:center;}
+.agenda-view-container{display:grid;grid-template-columns:60px 1fr;margin-top:1.5rem;overflow-x:auto;position:relative;}
+.agenda-time-column{padding-top:2.5rem;}
+.agenda-time-slot{height:15px;display:flex;align-items:flex-start;justify-content:center;font-size:.75rem;color:var(--muted-foreground);position:relative;}
+.agenda-time-slot:nth-child(4n+1)::after{content:'';position:absolute;bottom:0;left:10%;right:0;border-bottom:1px solid var(--secondary);}
+.agenda-barbers-area{display:grid;}
+.agenda-barber-column{border-left:1px solid var(--secondary);}
+.agenda-slots-container{position:relative;height:100%;}
+.agenda-barber-header{text-align:center;padding:.5rem;position:sticky;top:0;background:var(--background);z-index:10;border-bottom:1px solid var(--accent);font-weight:600;}
+.agenda-appointment-block{position:absolute;left:4px;right:4px;background-color:var(--secondary);color:var(--secondary-foreground);border-radius:calc(var(--radius)/4);padding:2px 6px;font-size:.75rem;line-height:1.3;overflow:hidden;cursor:pointer;transition:background-color .2s;border-left:3px solid var(--accent);z-index:5;display:flex;flex-direction:column;justify-content:center;min-height:20px;}
+.appointment-block-name{font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--foreground);font-size:.8rem;}
 
 /* RESPONSIVIDADE */
 @media (max-width: 1024px) {
