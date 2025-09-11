@@ -1,44 +1,44 @@
 /* Reset and Base Styles */
 html, body {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    width: 100%;
-    min-height: 100%;
-    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
 }
 
 * {
-    box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, hsl(222, 84%, 4%) 0%, hsl(217, 32%, 17%) 100%);
-    color: hsl(210, 40%, 98%);
-    min-height: 100vh;
-    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, hsl(222, 84%, 4%) 0%, hsl(217, 32%, 17%) 100%);
+    color: hsl(210, 40%, 98%);
+    min-height: 100vh;
+    line-height: 1.6;
 }
 
 /* Variables */
 :root {
-    --background: hsl(222, 84%, 4%);
-    --foreground: hsl(210, 40%, 98%);
-    --card: hsl(222, 84%, 4%);
-    --card-foreground: hsl(210, 40%, 98%);
-    --primary: hsl(43, 96%, 56%);
-    --primary-foreground: hsl(222, 84%, 4%);
-    --secondary: hsl(217, 32%, 17%);
-    --secondary-foreground: hsl(210, 40%, 98%);
-    --muted: hsl(217, 32%, 17%);
-    --muted-foreground: hsl(215, 20%, 65%);
-    --accent: hsl(43, 96%, 56%);
-    --accent-foreground: hsl(222, 84%, 4%);
-    --destructive: hsl(0, 84%, 60%);
-    --border: hsl(217, 32%, 17%);
-    --input: hsl(217, 32%, 17%);
-    --ring: hsl(43, 96%, 56%);
-    --radius: 0.75rem;
+    --background: hsl(222, 84%, 4%);
+    --foreground: hsl(210, 40%, 98%);
+    --card: hsl(222, 84%, 4%);
+    --card-foreground: hsl(210, 40%, 98%);
+    --primary: hsl(43, 96%, 56%);
+    --primary-foreground: hsl(222, 84%, 4%);
+    --secondary: hsl(217, 32%, 17%);
+    --secondary-foreground: hsl(210, 40%, 98%);
+    --muted: hsl(217, 32%, 17%);
+    --muted-foreground: hsl(215, 20%, 65%);
+    --accent: hsl(43, 96%, 56%);
+    --accent-foreground: hsl(222, 84%, 4%);
+    --destructive: hsl(0, 84%, 60%);
+    --border: hsl(217, 32%, 17%);
+    --input: hsl(217, 32%, 17%);
+    --ring: hsl(43, 96%, 56%);
+    --radius: 0.75rem;
 }
 
 /* Utility Classes */
@@ -57,8 +57,8 @@ body {
 
 /* Page Sections */
 .page-section {
-    display: none;
-    padding: 1rem 0;
+    display: none;
+    padding: 1rem 0;
 }
 
 /* Landing Page Styles */
@@ -118,24 +118,25 @@ body {
 
 /* Dashboard Layout */
 .dashboard-layout {
-    padding: 1rem;
-    min-height: 100vh;
+    padding: 1rem;
+    min-height: 100vh;
 }
 .dashboard-main {
-    padding: 0 1rem;
-    margin-left: calc(280px + 1.5rem);
+    padding: 0 1rem;
+    margin-left: calc(280px + 1.5rem);
+    transition: margin-left .3s ease; /* Adicionado para suavizar a transição */
 }
 .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    gap: 1rem;
-    position: sticky;
-    top: 0;
-    background: var(--background);
-    z-index: 10;
-    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    background: var(--background);
+    z-index: 10;
+    padding: 1rem 0;
 }
 .dashboard-header h2 { font-size: 1.875rem; font-weight: 700; }
 .dashboard-header p { color: var(--muted-foreground); }
@@ -146,15 +147,15 @@ body {
 
 /* Sidebar */
 .dashboard-sidebar {
-    width: 280px;
-    height: calc(100vh - 2rem);
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    z-index: 20;
+    width: 280px;
+    height: calc(100vh - 2rem);
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    z-index: 20;
 }
 .sidebar-header { margin-bottom: 2rem; }
 .sidebar-brand { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
@@ -184,16 +185,16 @@ body {
 .content-view.active { display: block; animation: fadeIn .4s ease; }
 
 .main-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .secondary-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
 }
 
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
@@ -245,52 +246,52 @@ body {
 /* ============================================= */
 
 .stats-grid-moderna {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .stat-card-principal {
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .stat-card-principal:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 .stat-card-principal .stat-info p {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .stat-card-principal .stat-info h3 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
 }
 
 .stat-card-principal .stat-icon-principal {
-    position: absolute;
-    right: -20px;
-    bottom: -20px;
-    font-size: 6rem;
-    opacity: 0.15;
-    transform: rotate(-15deg);
-    color: #fff;
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    font-size: 6rem;
+    opacity: 0.15;
+    transform: rotate(-15deg);
+    color: #fff;
 }
 
 .stat-card-secundaria {
-    padding: 1.5rem;
+    padding: 1.5rem;
 }
 
 .stat-card-secundaria .stat-info h3 {
-    color: var(--foreground);
+    color: var(--foreground);
 }
 
 .bg-green { background: linear-gradient(135deg, #16a34a, #22c55e); }
@@ -299,14 +300,14 @@ body {
 
 /* Grid dos cards secundários */
 .stats-grid-moderna > .stat-card-secundaria {
-    grid-column: span 1;
+    grid-column: span 1;
 }
 
 /* Agrupando os cards secundários em um contêiner para melhor controle */
 .stats-grid-moderna {
-    grid-template-areas:
-        "main1 main2 main3"
-        "secondary secondary secondary";
+    grid-template-areas:
+        "main1 main2 main3"
+        "secondary secondary secondary";
 }
 .stat-card-principal:nth-child(1) { grid-area: main1; }
 .stat-card-principal:nth-child(2) { grid-area: main2; }
@@ -314,10 +315,10 @@ body {
 
 /* Wrapper para os cards secundários para que fiquem em uma linha */
 .secondary-stats-wrapper {
-    grid-area: secondary;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 cards secundários */
-    gap: 1.5rem;
+    grid-area: secondary;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 cards secundários */
+    gap: 1.5rem;
 }
 
 
@@ -326,76 +327,81 @@ body {
 /* ============================================= */
 
 @media (max-width: 1200px) {
-    .stats-grid-moderna {
-        grid-template-areas:
-            "main1 main1"
-            "main2 main3"
-            "secondary secondary";
-        grid-template-columns: 1fr 1fr;
-    }
-    .secondary-stats-wrapper {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    }
+    .stats-grid-moderna {
+        grid-template-areas:
+            "main1 main1"
+            "main2 main3"
+            "secondary secondary";
+        grid-template-columns: 1fr 1fr;
+    }
+    .secondary-stats-wrapper {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
 }
 
-/* --- ÁREA DA CORREÇÃO --- */
+
+/* =============================================== */
+/* ========= ÁREA PRINCIPAL DA CORREÇÃO NO CSS ========= */
+/* =============================================== */
 @media (max-width: 1024px) {
-    .dashboard-layout {
-        grid-template-columns: 1fr;
-    }
-    .dashboard-sidebar {
-        position: fixed;
-        left: -280px;
-        top: 0;
-        bottom: 0;
-        z-index: 1000;
-        transition: left .3s ease, box-shadow .3s ease;
-        
-        /* Correção para torná-lo um painel sólido */
-        background: hsl(217, 32%, 12%); /* Fundo um pouco mais claro e sólido */
-        backdrop-filter: none; /* Remove o efeito de vidro */
-        border: none; /* Remove a borda do glass-card */
-        border-right: 1px solid rgba(255, 255, 255, 0.1); /* Adiciona uma borda sutil para separação */
-        box-shadow: 10px 0 30px rgba(0,0,0,0.3); /* Adiciona uma sombra para destacar */
-        border-radius: 0; /* Remove o arredondamento para ocupar a altura toda */
-    }
-    .dashboard-sidebar.show {
-        left: 0;
-    }
-    #sidebarToggle {
-        display: flex !important;
-    }
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-    .charts-grid {
-        grid-template-columns: 1fr;
-    }
+    .dashboard-main {
+        /* CORREÇÃO: Remove a margem esquerda para que o conteúdo ocupe a tela toda */
+        margin-left: 0;
+    }
+    .dashboard-sidebar {
+        position: fixed;
+        left: -300px; /* Aumentado para garantir que saia da tela */
+        width: 280px;
+        top: 0;
+        height: 100vh; /* Ocupa a altura toda */
+        z-index: 1000;
+        transition: left .3s ease;
+        background: hsl(217, 32%, 12%);
+        backdrop-filter: none;
+        border: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 10px 0 30px rgba(0,0,0,0.3);
+        border-radius: 0;
+        padding: 1.5rem;
+    }
+    .dashboard-sidebar.show {
+        left: 0;
+    }
+    /* CORREÇÃO: Garante que o botão do menu fique visível */
+    #sidebarToggle {
+        display: inline-flex !important;
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 
 @media (max-width: 768px) {
-    .nav-container {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    .data-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    .stats-grid-moderna {
-        grid-template-areas:
-            "main1"
-            "main2"
-            "main3"
-            "secondary";
-        grid-template-columns: 1fr;
-    }
-    .secondary-stats-wrapper {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    }
+    .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .data-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .stats-grid-moderna {
+        grid-template-areas:
+            "main1"
+            "main2"
+            "main3"
+            "secondary";
+        grid-template-columns: 1fr;
+    }
+    .secondary-stats-wrapper {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
 }
