@@ -49,7 +49,7 @@
                     <div class="gallery-item"><img src="https://images.unsplash.com/photo-1621605815971-fbc39e1a6af3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDEwfHxtZW4lMjBoYWlyY3V0fGVufDB8fHx8MTY3NzExODg4OA&ixlib=rb-4.0.3&q=80&w=400" alt="Barba bem cuidada"></div>
                     <div class="gallery-item"><img src="https://images.unsplash.com/photo-16222888094043-a62a95c3d258?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDI3fHxmYWRlJTIwaGFpcmN1dHxlbnwwfHx8fDE2NzcxMTg4ODg&ixlib=rb-4.0.3&q=80&w=400" alt="Corte degradê"></div>
                     <div class="gallery-item"><img src="https://images.unsplash.com/photo-1567894340345-2212a4c5a7a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDE3fHxiZWFyZCUyMHRyaW18ZW58MHx8fHwxNjc3MTE4ODg4&ixlib=rb-4.0.3&q=80&w=400" alt="Cuidado com a barba"></div>
-                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1615486228747-9c3f43501a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDE0fHxtZW4lMjBoYWlyJTIwc3R5bGV8ZW58MHx8fHwxNjc3MTE4ODg4&ixlib=rb-4.0.3&q=80&w=400" alt="Penteado masculino moderno"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-161548BGEz-ja"></div>
                     <div class="gallery-item"><img src="https://images.unsplash.com/photo-1533638822695-9e32a61b606b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDIyfHxiYXJiZXJ8ZW58MHx8fHwxNjc3MTE4ODg4&ixlib=rb-4.0.3&q=80&w=400" alt="Barbeiro em ação"></div>
                 </div>
             </div>
@@ -98,12 +98,13 @@
 
     <div id="barberDashboard" class="page-section">
         <div class="dashboard-layout">
-            <aside class="dashboard-sidebar glass-card">
+            <aside class="dashboard-sidebar">
                 <div class="sidebar-header">
                     <div class="sidebar-brand">
                         <div class="logo">⭐</div>
                         <h2>Steves Barbearia</h2>
                     </div>
+                    <button id="closeSidebarBtn" class="btn-icon" aria-label="Fechar menu"><i class="fas fa-times"></i></button>
                 </div>
                 <nav class="sidebar-nav">
                     <a class="nav-item" data-view="dashboardView"><i class="nav-icon fas fa-chart-bar"></i><span>Dashboard</span></a>
@@ -130,6 +131,7 @@
                     <button class="btn-secondary btn-danger" id="resetDataBtn"><i class="fas fa-trash"></i> Resetar Dados (Teste)</button>
                 </div>
             </aside>
+            <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
             <main class="dashboard-main">
                 <button id="sidebarToggle" class="btn-icon" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
