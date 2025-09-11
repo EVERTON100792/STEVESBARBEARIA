@@ -132,6 +132,7 @@
             </aside>
 
             <main class="dashboard-main">
+                <button id="sidebarToggle" class="btn-icon" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
                 <div class="dashboard-header">
                     <div id="header-info">
                         <h2 id="dashboardTitle">Dashboard</h2>
@@ -139,27 +140,51 @@
                     </div>
                     <div class="dashboard-header-actions">
                         <div id="caixaStatus" class="caixa-status-indicator"></div>
-                        <button id="sidebarToggle" class="btn-secondary btn-icon" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
                         <button class="btn-secondary" id="logoutBtn"><i class="fas fa-door-open"></i> Sair</button>
                     </div>
                 </div>
                 
                 <div id="dashboardView" class="content-view">
-                    <div class="main-stats">
-                        <div class="stat-card-principal glass-card bg-green"><div class="stat-content"><div class="stat-info"><p>Faturamento Hoje</p><h3 id="todayProfit">R$ 0,00</h3></div><div class="stat-icon-principal"><i class="fas fa-hand-holding-usd"></i></div></div></div>
-                        <div class="stat-card-principal glass-card bg-accent"><div class="stat-content"><div class="stat-info"><p>Agend. Hoje</p><h3 id="todayCount">0</h3></div><div class="stat-icon-principal"><i class="fas fa-calendar-day"></i></div></div></div>
-                        <div class="stat-card-principal glass-card bg-orange"><div class="stat-content"><div class="stat-info"><p>Comandas Abertas</p><h3 id="openComandasCount">0</h3></div><div class="stat-icon-principal"><i class="fas fa-receipt"></i></div></div></div>
-                    </div>
-                    <div class="secondary-stats">
-                        <div class="stat-card-secundaria glass-card"><div class="stat-content"><div class="stat-info"><p>Faturamento Mês</p><h3 id="monthlyProfit">R$ 0,00</h3></div><div class="stat-icon bg-purple"><i class="fas fa-wallet"></i></div></div></div>
-                        <div class="stat-card-secundaria glass-card"><div class="stat-content"><div class="stat-info"><p>Serviços Concluídos (Mês)</p><h3 id="completedServicesCount">0</h3></div><div class="stat-icon" style="background-color: #14b8a6;"><i class="fas fa-check-circle"></i></div></div></div>
-                        <div class="stat-card-secundaria glass-card"><div class="stat-content"><div class="stat-info"><p>Ticket Médio (Mês)</p><h3 id="averageTicket">R$ 0,00</h3></div><div class="stat-icon" style="background-color: #f97316;"><i class="fas fa-balance-scale"></i></div></div></div>
-                        <div class="stat-card-secundaria glass-card"><div class="stat-content"><div class="stat-info"><p>Total de Clientes</p><h3 id="totalClientsCount">0</h3></div><div class="stat-icon bg-blue"><i class="fas fa-users"></i></div></div></div>
-                        <div class="stat-card-secundaria glass-card"><div class="stat-content"><div class="stat-info"><p>Novos Clientes (Mês)</p><h3 id="newClientsCount">0</h3></div><div class="stat-icon" style="background-color: #ec4899;"><i class="fas fa-star"></i></div></div></div>
-                    </div>
-                    <div class="dashboard-grid">
-                        <div><div class="glass-card" style="padding:1.5rem"><div class="section-header"><h3>Próximos Agendamentos</h3><button class="btn-secondary btn-small" id="refreshBtn"><i class="fas fa-sync-alt"></i> Atualizar</button></div><div id="appointmentsList" class="appointments-list"></div></div></div>
-                        <div><div class="glass-card" style="padding:1.5rem"><h3>Comandas em Aberto</h3><div id="dashboardComandasList" class="upcoming-list"></div></div><div class="glass-card" style="margin-top:1.5rem; padding:1.5rem"><h3>Últimas Despesas</h3><div id="recentExpensesList" class="recent-expenses-list"></div></div></div>
+                    <div class="dashboard-grid-modern">
+                        <div class="welcome-card card-grid-span-2">
+                            <h3>Bem-vindo, Barbeiro!</h3>
+                            <p>Aqui está um resumo rápido do seu dia. Pronto para começar?</p>
+                            <button class="btn-primary-outline" id="quickAddAppointmentBtn"><i class="fas fa-plus"></i> Novo Agendamento</button>
+                        </div>
+                        <div class="stat-card-modern">
+                            <div class="stat-icon-modern icon-green"><i class="fas fa-hand-holding-usd"></i></div>
+                            <div class="stat-info-modern">
+                                <p>Faturamento Hoje</p>
+                                <h3 id="todayProfit">R$ 0,00</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card-modern">
+                            <div class="stat-icon-modern icon-accent"><i class="fas fa-calendar-day"></i></div>
+                            <div class="stat-info-modern">
+                                <p>Agendamentos Hoje</p>
+                                <h3 id="todayCount">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card-modern">
+                            <div class="stat-icon-modern icon-orange"><i class="fas fa-receipt"></i></div>
+                            <div class="stat-info-modern">
+                                <p>Comandas Abertas</p>
+                                <h3 id="openComandasCount">0</h3>
+                            </div>
+                        </div>
+                        <div class="list-card card-grid-span-3">
+                            <div class="section-header">
+                                <h3>Próximos Agendamentos</h3>
+                                <button class="btn-secondary btn-small" id="refreshBtn"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                            <div id="appointmentsList" class="appointments-list"></div>
+                        </div>
+                        <div class="list-card card-grid-span-2">
+                             <div class="section-header">
+                                <h3>Comandas em Aberto</h3>
+                            </div>
+                            <div id="dashboardComandasList" class="upcoming-list"></div>
+                        </div>
                     </div>
                 </div>
 
