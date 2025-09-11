@@ -1,9 +1,9 @@
-// BarberPro - Versão 2.3 com Lógica de Atendimento Unificada
+// BarberPro - Versão 2.4 com Correção de Menu Mobile
 class BarberPro {
     constructor() {
         this.currentUser = null;
         this.charts = {};
-        this.DATA_VERSION = '2.3';
+        this.DATA_VERSION = '2.4';
         document.addEventListener('DOMContentLoaded', () => this.init());
     }
 
@@ -74,13 +74,17 @@ class BarberPro {
         
         document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => { if (!item.classList.contains('nav-parent')) { item.addEventListener('click', (e) => { e.preventDefault(); this.switchDashboardView(item.dataset.view); }); } });
         
+        const toggleSidebar = () => document.body.classList.toggle('sidebar-is-open');
+        safeAddEventListener('sidebarToggle', 'click', toggleSidebar);
+        safeAddEventListener('closeSidebarBtn', 'click', toggleSidebar);
+        safeAddEventListener('sidebarOverlay', 'click', toggleSidebar);
+
         safeAddEventListener('bookingForm', 'submit', e => { e.preventDefault(); this.handleAppointmentSubmit(e.target); });
         safeAddEventListener('loginForm', 'submit', e => { e.preventDefault(); this.handleLoginSubmit(); });
         safeAddEventListener('demoLoginBtn', 'click', () => this.login('barbeiro', '123'));
         safeAddEventListener('logoutBtn', 'click', () => this.logout());
         safeAddEventListener('logoutBtnSidebar', 'click', () => this.logout());
         safeAddEventListener('refreshBtn', 'click', () => { this.loadDashboardData(); this.showNotification('Dados atualizados!'); });
-        safeAddEventListener('sidebarToggle', 'click', () => document.querySelector('.dashboard-sidebar')?.classList.toggle('show'));
         safeAddEventListener('clientSearchInput', 'input', () => this.renderFullClientsList());
         safeAddEventListener('resetDataBtn', 'click', () => this.resetTestData());
         safeAddEventListener('agendaDateFilter', 'change', () => this.renderAgendaView());
@@ -113,159 +117,29 @@ class BarberPro {
         });
     }
 
-    showSection(sectionId) {
-        document.querySelectorAll('.page-section').forEach(section => {
-            section.style.display = 'none';
-        });
-        const section = document.getElementById(sectionId);
-        if (section) {
-            section.style.display = 'block';
-        }
-        const navbar = document.querySelector('.navbar');
-        if (navbar) {
-            navbar.style.display = sectionId === 'barberDashboard' ? 'none' : 'flex';
-        }
-    }
-    
-    switchDashboardView(viewId, isInitialLoad = false) {
-        if (!viewId) return;
-        document.querySelectorAll('.content-view').forEach(view => {
-            view.classList.remove('active');
-            view.style.display = 'none';
-        });
-        const viewElement = document.getElementById(viewId);
-        if (viewElement) {
-            viewElement.style.display = 'block';
-            viewElement.classList.add('active');
-        }
-        const titles = { dashboardView: { title: 'Dashboard', subtitle: 'Visão geral do seu negócio.' }, appointmentsView: { title: 'Agenda', subtitle: 'Visualize e gerencie seus horários.' }, comandasView: { title: 'Atendimentos', subtitle: 'Gerencie os atendimentos pendentes do dia.' }, clientsView: { title: 'Clientes', subtitle: 'Consulte e gerencie sua base de clientes.' }, servicesView: { title: 'Serviços', subtitle: 'Configure os serviços oferecidos.' }, professionalsView: { title: 'Profissionais', subtitle: 'Gerencie a equipe de barbeiros.' }, financialView: { title: 'Caixa', subtitle: 'Acompanhe suas receitas e despesas.' }, reportsView: { title: 'Relatórios', subtitle: 'Analise o desempenho da sua barbearia.' } };
-        const newTitle = titles[viewId] || { title: 'BarberPro', subtitle: '' };
-        const dashboardTitleEl = document.getElementById('dashboardTitle');
-        const dashboardSubtitleEl = document.getElementById('dashboardSubtitle');
-        if(dashboardTitleEl) dashboardTitleEl.textContent = newTitle.title;
-        if(dashboardSubtitleEl) dashboardSubtitleEl.textContent = newTitle.subtitle;
-        document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active'));
-        const activeNavItem = document.querySelector(`.sidebar-nav .nav-item[data-view="${viewId}"]`);
-        if(activeNavItem) {
-            activeNavItem.classList.add('active');
-            const parentGroup = activeNavItem.closest('.nav-group');
-            if(parentGroup) {
-                parentGroup.querySelector('.nav-parent')?.classList.add('active');
-            }
-        }
-        switch (viewId) {
-            case 'appointmentsView': this.renderAgendaView(); break;
-            case 'comandasView': this.renderPendingAppointments(); break;
-            case 'clientsView': this.renderFullClientsList(); break;
-            case 'servicesView': this.renderServicesList(); break;
-            case 'professionalsView': this.renderProfessionalsList(); break;
-            case 'financialView': this.renderFinancialPage(); break;
-            case 'reportsView': this.renderCharts(); break;
-            case 'dashboardView': this.loadDashboardData(); break;
-        }
-        document.querySelector('.dashboard-sidebar')?.classList.remove('show');
-    }
-
-    handleAppointmentSubmit(form) {
-        const nameInput = form.querySelector('[name="name"]');
-        const phoneInput = form.querySelector('[name="phone"]');
-        const serviceInput = form.querySelector('[name="service"]');
-        const barberInput = form.querySelector('[name="barber"]');
-        const dateInput = form.querySelector('[name="date"]');
-        const timeInput = form.querySelector('[name="time"]');
-        const isWalkIn = form.dataset.walkIn === 'true';
-        if (!nameInput?.value.trim() || !phoneInput?.value || !serviceInput?.value || !barberInput?.value || (isWalkIn ? false : !dateInput?.value) || (isWalkIn ? false : !timeInput?.value)) {
-            this.showNotification('Por favor, preencha todos os campos.', 'error');
-            return;
-        }
-        const phone = this.sanitizePhone(phoneInput.value);
-        if (phone.length < 10) {
-            this.showNotification('Por favor, insira um número de telefone válido com DDD.', 'error');
-            return;
-        }
-        const selectedService = this.services.find(s => s.id === serviceInput.value);
-        if (!selectedService) {
-            this.showNotification('Serviço inválido selecionado.', 'error');
-            return;
-        }
-        const today = new Date();
-        const timezoneOffset = today.getTimezoneOffset() * 60000;
-        const localDate = new Date(today.getTime() - timezoneOffset);
-        const appointment = {
-            id: Date.now().toString(),
-            createdAt: new Date().toISOString(),
-            name: nameInput.value.trim(),
-            phone: phone,
-            service: serviceInput.value,
-            barberId: barberInput.value,
-            date: isWalkIn ? localDate.toISOString().split('T')[0] : dateInput.value,
-            time: isWalkIn ? localDate.toTimeString().split(' ')[0].substring(0,5) : timeInput.value,
-            status: isWalkIn ? 'pending' : 'scheduled',
-            paymentStatus: 'pending',
-            paymentMethod: null,
-            closedAt: null
-        };
-        this.getOrUpdateClient(appointment.phone, appointment.name);
-        this.appointments.push(appointment);
-        this.saveData();
-        this.showNotification(isWalkIn ? 'Atendimento criado com sucesso!' : 'Agendamento realizado com sucesso!', 'success');
-        if (form.id === 'bookingForm') {
-            form.reset();
-            this.setMinDate();
-        } else {
-            this.hideModal();
-            if (isWalkIn) this.renderPendingAppointments();
-            else this.renderAgendaView();
-            this.loadDashboardData();
-        }
-    }
-
-    getOrUpdateClient(phone, name) {
-        let client = this.clients.find(c => c.phone === phone);
-        if (client) {
-            if (client.name !== name) client.name = name;
-        } else {
-            client = { phone, name, createdAt: new Date().toISOString() };
-            this.clients.push(client);
-        }
-        return client;
-    }
-
+    showSection(sectionId) { document.querySelectorAll('.page-section').forEach(section => { section.style.display = 'none'; }); const section = document.getElementById(sectionId); if (section) { section.style.display = 'block'; } const navbar = document.querySelector('.navbar'); if (navbar) { navbar.style.display = sectionId === 'barberDashboard' ? 'none' : 'flex'; } }
+    switchDashboardView(viewId, isInitialLoad = false) { if (!viewId) return; document.querySelectorAll('.content-view').forEach(view => { view.classList.remove('active'); view.style.display = 'none'; }); const viewElement = document.getElementById(viewId); if (viewElement) { viewElement.style.display = 'block'; viewElement.classList.add('active'); } const titles = { dashboardView: { title: 'Dashboard', subtitle: 'Visão geral do seu negócio.' }, appointmentsView: { title: 'Agenda', subtitle: 'Visualize e gerencie seus horários.' }, comandasView: { title: 'Atendimentos', subtitle: 'Gerencie os atendimentos pendentes do dia.' }, clientsView: { title: 'Clientes', subtitle: 'Consulte e gerencie sua base de clientes.' }, servicesView: { title: 'Serviços', subtitle: 'Configure os serviços oferecidos.' }, professionalsView: { title: 'Profissionais', subtitle: 'Gerencie a equipe de barbeiros.' }, financialView: { title: 'Caixa', subtitle: 'Acompanhe suas receitas e despesas.' }, reportsView: { title: 'Relatórios', subtitle: 'Analise o desempenho da sua barbearia.' } }; const newTitle = titles[viewId] || { title: 'BarberPro', subtitle: '' }; const dashboardTitleEl = document.getElementById('dashboardTitle'); const dashboardSubtitleEl = document.getElementById('dashboardSubtitle'); if(dashboardTitleEl) dashboardTitleEl.textContent = newTitle.title; if(dashboardSubtitleEl) dashboardSubtitleEl.textContent = newTitle.subtitle; document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active')); const activeNavItem = document.querySelector(`.sidebar-nav .nav-item[data-view="${viewId}"]`); if(activeNavItem) { activeNavItem.classList.add('active'); const parentGroup = activeNavItem.closest('.nav-group'); if(parentGroup) { parentGroup.querySelector('.nav-parent')?.classList.add('active'); } } switch (viewId) { case 'appointmentsView': this.renderAgendaView(); break; case 'comandasView': this.renderPendingAppointments(); break; case 'clientsView': this.renderFullClientsList(); break; case 'servicesView': this.renderServicesList(); break; case 'professionalsView': this.renderProfessionalsList(); break; case 'financialView': this.renderFinancialPage(); break; case 'reportsView': this.renderCharts(); break; case 'dashboardView': this.loadDashboardData(); break; } document.body.classList.remove('sidebar-is-open'); }
+    handleAppointmentSubmit(form) { const nameInput = form.querySelector('[name="name"]'); const phoneInput = form.querySelector('[name="phone"]'); const serviceInput = form.querySelector('[name="service"]'); const barberInput = form.querySelector('[name="barber"]'); const dateInput = form.querySelector('[name="date"]'); const timeInput = form.querySelector('[name="time"]'); const isWalkIn = form.dataset.walkIn === 'true'; if (!nameInput?.value.trim() || !phoneInput?.value || !serviceInput?.value || !barberInput?.value || (isWalkIn ? false : !dateInput?.value) || (isWalkIn ? false : !timeInput?.value)) { this.showNotification('Por favor, preencha todos os campos.', 'error'); return; } const phone = this.sanitizePhone(phoneInput.value); if (phone.length < 10) { this.showNotification('Por favor, insira um número de telefone válido com DDD.', 'error'); return; } const selectedService = this.services.find(s => s.id === serviceInput.value); if (!selectedService) { this.showNotification('Serviço inválido selecionado.', 'error'); return; } const today = new Date(); const timezoneOffset = today.getTimezoneOffset() * 60000; const localDate = new Date(today.getTime() - timezoneOffset); const appointment = { id: Date.now().toString(), createdAt: new Date().toISOString(), name: nameInput.value.trim(), phone: phone, service: serviceInput.value, barberId: barberInput.value, date: isWalkIn ? localDate.toISOString().split('T')[0] : dateInput.value, time: isWalkIn ? localDate.toTimeString().split(' ')[0].substring(0,5) : timeInput.value, status: isWalkIn ? 'pending' : 'scheduled', paymentStatus: 'pending', paymentMethod: null, closedAt: null }; this.getOrUpdateClient(appointment.phone, appointment.name); this.appointments.push(appointment); this.saveData(); this.showNotification(isWalkIn ? 'Atendimento criado com sucesso!' : 'Agendamento realizado com sucesso!', 'success'); if (form.id === 'bookingForm') { form.reset(); this.setMinDate(); } else { this.hideModal(); if (isWalkIn) this.renderPendingAppointments(); else this.renderAgendaView(); this.loadDashboardData(); } }
+    getOrUpdateClient(phone, name) { let client = this.clients.find(c => c.phone === phone); if (client) { if (client.name !== name) client.name = name; } else { client = { phone, name, createdAt: new Date().toISOString() }; this.clients.push(client); } return client; }
     checkDataVersion() { const storedVersion = localStorage.getItem('barberpro_data_version'); if (storedVersion !== this.DATA_VERSION) { localStorage.clear(); localStorage.setItem('barberpro_data_version', this.DATA_VERSION); } }
     getTodayDateString() { const today = new Date(); const timezoneOffset = today.getTimezoneOffset() * 60000; return new Date(today.getTime() - timezoneOffset).toISOString().split('T')[0]; }
     saveToStorage(key, data) { localStorage.setItem(`barberpro_${key}`, JSON.stringify(data)); }
     getFromStorage(key, defaultValue) { try { const item = localStorage.getItem(`barberpro_${key}`); return item ? JSON.parse(item) : defaultValue; } catch { return defaultValue; } }
-    
-    loadData() {
-        this.services = this.getFromStorage('services', [{ id: `s_default`, name: 'Corte Tradicional', price: 35, duration: 45, description: 'Corte clássico na tesoura e máquina.' }]);
-        this.barbers = this.getFromStorage('barbers', [{ id: `b_default`, name: 'Hernani', specialty: 'Corte e Barba' }]);
-        this.appointments = this.getFromStorage('appointments', []);
-        this.clients = this.getFromStorage('clients', []);
-        this.caixa = this.getFromStorage('caixa', { status: 'fechado', saldoInicial: 0, abertura: null, entradas: [], saidas: [] });
-        this.caixaHistory = this.getFromStorage('caixaHistory', []);
-        this.updateServiceDropdown();
-        this.updateBarberDropdowns();
-    }
-    
+    loadData() { this.services = this.getFromStorage('services', [{ id: `s_default`, name: 'Corte Tradicional', price: 35, duration: 45, description: 'Corte clássico na tesoura e máquina.' }]); this.barbers = this.getFromStorage('barbers', [{ id: `b_default`, name: 'Hernani', specialty: 'Corte e Barba' }]); this.appointments = this.getFromStorage('appointments', []); this.clients = this.getFromStorage('clients', []); this.caixa = this.getFromStorage('caixa', { status: 'fechado', saldoInicial: 0, abertura: null, entradas: [], saidas: [] }); this.caixaHistory = this.getFromStorage('caixaHistory', []); this.updateServiceDropdown(); this.updateBarberDropdowns(); }
     saveData() { this.saveToStorage('services', this.services); this.saveToStorage('barbers', this.barbers); this.saveToStorage('appointments', this.appointments); this.saveToStorage('clients', this.clients); this.saveToStorage('caixa', this.caixa); this.saveToStorage('caixaHistory', this.caixaHistory); }
-    
     checkAuthentication() { const token = this.getFromStorage('auth_token', null); if (token) { this.currentUser = token; this.showSection('barberDashboard'); this.loadDashboardData(); this.checkCaixaStatus(true); } else { this.showSection('barberLogin'); } }
     login(username, password) { if (username === 'barbeiro' && password === '123') { this.currentUser = { username: 'barbeiro', name: 'Barbeiro Pro' }; this.saveToStorage('auth_token', this.currentUser); this.showSection('barberDashboard'); this.switchDashboardView('dashboardView', true); this.showNotification('Login realizado com sucesso!', 'success'); this.loadDashboardData(); this.checkCaixaStatus(true); return true; } return false; }
     logout() { this.currentUser = null; localStorage.removeItem('barberpro_auth_token'); this.showSection('clientArea'); document.getElementById('clientAreaBtn')?.classList.add('active'); document.getElementById('barberAreaBtn')?.classList.remove('active'); this.showNotification('Você saiu da sua conta.'); }
     handleLoginSubmit() { const usernameEl = document.getElementById('username'); const passwordEl = document.getElementById('password'); if(usernameEl && passwordEl) { const username = usernameEl.value; const password = passwordEl.value; if (!this.login(username, password)) { this.showNotification('Usuário ou senha inválidos.', 'error'); } } }
-    
     loadDashboardData() { if (!this.currentUser) return; this.updateCaixaStatusIndicator(); this.updateStats(); this.renderDashboardAppointments(); }
     updateStats() { const todayStr = this.getTodayDateString(); const todayAppointments = this.appointments.filter(a => a.date === todayStr && a.status === 'scheduled'); const todayRevenue = (this.caixa.entradas || []).filter(e => e.data.startsWith(todayStr)).reduce((sum, e) => sum + e.valor, 0); const pendingCount = this.appointments.filter(a => a.date === todayStr && a.status === 'pending').length; const updateEl = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; }; updateEl('todayCount', todayAppointments.length); updateEl('pendingCount', pendingCount); updateEl('todayProfit', this.formatCurrency(todayRevenue)); }
-    
     renderDashboardAppointments() { const appointmentsListEl = document.getElementById('appointmentsList'); if(!appointmentsListEl) return; const today = this.getTodayDateString(); const upcomingAppointments = this.appointments.filter(a => a.date >= today && a.status === 'scheduled').sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time)); appointmentsListEl.innerHTML = upcomingAppointments.length === 0 ? '<div class="empty-state"><div class="empty-icon">📅</div><p>Nenhum agendamento futuro.</p></div>' : upcomingAppointments.map(a => this.createAppointmentCard(a)).join(''); }
     createAppointmentCard(appointment) { const service = this.services.find(s => s.id === appointment.service); const barber = this.barbers.find(b => b.id === appointment.barberId); const statusMap = { scheduled: { text: 'Agendado', class: 'status-scheduled' }, completed: { text: 'Concluído', class: 'status-completed' }, cancelled: { text: 'Cancelado', class: 'status-cancelled' }, pending: { text: 'Pendente', class: 'status-pending'} }; const status = statusMap[appointment.status] || statusMap.scheduled; let actionButton = ''; if (appointment.status === 'scheduled' || appointment.status === 'pending') { actionButton = `<button class="btn-primary btn-small" data-action="show-finalize-modal" data-id="${appointment.id}">Finalizar Atendimento</button>`; } return ` <div class="appointment-card status-${appointment.status}"> <div class="appointment-header"> <div class="appointment-client"><h4>${appointment.name}</h4><p>${this.formatDate(appointment.date)} - ${appointment.time}h</p></div> <div class="appointment-time"><p>${barber?.name || 'N/A'}</p><span class="appointment-status ${status.class}">${status.text}</span></div> </div> <div class="appointment-footer"> <p class="appointment-service">${service?.name || 'Serviço'} - <strong>${this.formatCurrency(service?.price || 0)}</strong></p> <div class="appointment-actions">${actionButton}</div> </div> </div>`; }
-    
     checkCaixaStatus(isInitialLoad = false) { if (this.caixa.status === 'fechado') { if (!isInitialLoad) { this.showNotification('O caixa está fechado. É preciso abri-lo para iniciar um atendimento.', 'error'); this.showAbrirCaixaModal(); } return false; } return true; }
     abrirCaixa(valorInicial) { if (isNaN(valorInicial)) { this.showNotification('Valor inicial inválido.', 'error'); return; } this.caixa = { status: 'aberto', saldoInicial: valorInicial, abertura: new Date().toISOString(), entradas: [], saidas: [] }; this.saveData(); this.hideModal(); this.updateCaixaStatusIndicator(); this.renderFinancialPage(); this.showNotification(`Caixa aberto com ${this.formatCurrency(valorInicial)}!`, 'success'); }
     fecharCaixa() { const countedCashInput = document.getElementById('countedCash'); const countedCash = countedCashInput ? (parseFloat(countedCashInput.value) || 0) : 0; const totalsByMethod = this.caixa.entradas.reduce((acc, entrada) => { acc[entrada.metodo] = (acc[entrada.metodo] || 0) + entrada.valor; return acc; }, {}); const totalEntradas = this.caixa.entradas.reduce((sum, item) => sum + item.valor, 0); const totalSaidas = this.caixa.saidas.reduce((sum, item) => sum + item.valor, 0); const dinheiroEntradas = totalsByMethod['Dinheiro'] || 0; const saldoEsperadoDinheiro = this.caixa.saldoInicial + dinheiroEntradas - totalSaidas; const closingSummary = { id: `caixa_${Date.now()}`, abertura: this.caixa.abertura, fechamento: new Date().toISOString(), saldoInicial: this.caixa.saldoInicial, entradas: this.caixa.entradas, saidas: this.caixa.saidas, totalEntradas: totalEntradas, entradasPorMetodo: totalsByMethod, totalSaidas: totalSaidas, saldoEsperadoDinheiro: saldoEsperadoDinheiro, dinheiroConferido: countedCash, diferenca: countedCash - saldoEsperadoDinheiro }; this.caixaHistory.push(closingSummary); this.caixa = { status: 'fechado', saldoInicial: 0, abertura: null, entradas: [], saidas: [] }; this.saveData(); this.hideModal(); this.updateCaixaStatusIndicator(); this.renderFinancialPage(); this.showNotification('Caixa fechado e salvo no histórico com sucesso.', 'success'); }
     showCaixaHistoryModal() { const historyItems = this.caixaHistory.sort((a, b) => new Date(b.fechamento) - new Date(a.fechamento)).map(item => { const differenceClass = item.diferenca < 0 ? 'text-red' : item.diferenca > 0 ? 'text-green' : ''; return ` <div class="history-item"> <span><strong>Fechamento:</strong> ${this.formatDateTime(item.fechamento)}<br><strong>Faturamento:</strong> ${this.formatCurrency(item.totalEntradas)}</span> <span class="${differenceClass}"><strong>Diferença:</strong><br>${this.formatCurrency(item.diferenca)}</span> </div>`; }).join(''); const content = ` <div class="history-list"> ${this.caixaHistory.length > 0 ? historyItems : '<p class="empty-state">Nenhum fechamento de caixa anterior encontrado.</p>'} </div> <div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Fechar</button></div>`; this.showModal('Histórico de Fechamentos de Caixa', content); }
     updateCaixaStatusIndicator() { const indicator = document.getElementById('caixaStatus'); if (!indicator) return; if (this.caixa.status === 'aberto') { const total = this.caixa.saldoInicial + this.caixa.entradas.reduce((sum, i) => sum + i.valor, 0) - this.caixa.saidas.reduce((sum, i) => sum + i.valor, 0); indicator.className = 'caixa-status-indicator aberto'; indicator.innerHTML = `<span>Caixa Aberto: <strong>${this.formatCurrency(total)}</strong></span>`; } else { indicator.className = 'caixa-status-indicator fechado'; indicator.innerHTML = `<span>Caixa Fechado</span>`; } }
-    
     renderPendingAppointments() { const container = document.getElementById('pendingAppointmentsList'); if(!container) return; const todayStr = this.getTodayDateString(); const pending = this.appointments.filter(a => a.date === todayStr && a.status === 'pending'); container.innerHTML = pending.length === 0 ? '<div class="empty-state"><div class="empty-icon">🧾</div><p>Nenhum atendimento pendente para hoje.</p></div>' : pending.map(app => this.createAppointmentCard(app)).join(''); }
     showFinalizeAppointmentModal(appointmentId) { if (!this.checkCaixaStatus()) return; const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); if (!service) { this.showNotification('Serviço não encontrado.', 'error'); return; } const content = ` <form id="finalizeForm"> <p>Finalizando atendimento de <strong>${appointment.name}</strong>.</p> <p>Serviço: <strong>${service.name}</strong></p> <h4 style="margin-top: 1rem;">Total: ${this.formatCurrency(service.price)}</h4> <div class="form-group" style="margin-top:1.5rem"> <label for="paymentMethod">Forma de Pagamento</label> <select id="paymentMethod" name="paymentMethod" required> <option value="Dinheiro">Dinheiro</option> <option value="Pix">Pix</option> <option value="Cartão de Débito">Cartão de Débito</option> <option value="Cartão de Crédito">Cartão de Crédito</option> </select> </div> <div class="modal-footer"> <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button> <button type="submit" class="btn-primary">Confirmar Pagamento</button> </div> </form> `; this.showModal('Finalizar e Receber', content); document.getElementById('finalizeForm')?.addEventListener('submit', (e) => { e.preventDefault(); const paymentMethod = e.target.querySelector('[name="paymentMethod"]').value; this.finalizeAppointment(appointmentId, paymentMethod); }); }
     finalizeAppointment(appointmentId, paymentMethod) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); if (!service) return; this.caixa.entradas.push({ descricao: `Serviço: ${service.name} (${appointment.name})`, valor: service.price, data: new Date().toISOString(), metodo: paymentMethod }); appointment.status = 'completed'; appointment.paymentStatus = 'paid'; appointment.paymentMethod = paymentMethod; appointment.closedAt = new Date().toISOString(); this.saveData(); this.hideModal(); this.showNotification(`Pagamento de ${this.formatCurrency(service.price)} recebido!`, 'success'); this.renderAgendaView(); this.renderPendingAppointments(); this.loadDashboardData(); }
@@ -281,7 +155,7 @@ class BarberPro {
     formatDateTime(dateString) { const date = new Date(dateString); return date.toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'}); }
     sanitizePhone(phone) { return String(phone).replace(/[^0-9]/g, ''); }
     showProfessionalModal(id = null) { const professional = id ? this.barbers.find(b => b.id === id) : {}; const content = ` <form id="professionalForm"> <input type="hidden" name="id" value="${professional.id || ''}"> <div class="form-group"> <label>Nome do Profissional</label> <input type="text" name="name" value="${professional.name || ''}" placeholder="Nome completo" required> </div> <div class="form-group"> <label>Especialidade</label> <input type="text" name="specialty" value="${professional.specialty || ''}" placeholder="Ex: Corte, Barba, Química"> </div> <div class="modal-footer"> <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button> <button type="submit" class="btn-primary">${id ? 'Salvar Alterações' : 'Adicionar Profissional'}</button> </div> </form> `; this.showModal(id ? 'Editar Profissional' : 'Adicionar Profissional', content); document.getElementById('professionalForm')?.addEventListener('submit', e => { e.preventDefault(); const formData = new FormData(e.target); const professionalData = { id: formData.get('id'), name: formData.get('name').trim(), specialty: formData.get('specialty').trim() }; this.saveProfessional(professionalData); }); }
-    showClientDetailModal(phone) { const client = this.clients.find(c => c.phone === phone); if (!client) { this.showNotification('Cliente não encontrado.', 'error'); return; } const clientAppointments = this.appointments.filter(a => a.phone === phone).sort((a, b) => new Date(b.date) - new Date(a.date)); const totalSpent = clientAppointments.filter(a => a.status === 'completed').reduce((sum, a) => { const service = this.services.find(s => s.id === a.service); return sum + (service?.price || 0); }, 0); const lastVisitAppointment = clientAppointments.find(a => a.status === 'completed'); let absenceString = 'Nenhuma visita concluída.'; if (lastVisitAppointment) { const lastVisitDate = new Date(lastVisitAppointment.date); const today = new Date(); const diffTime = Math.abs(today - lastVisitDate); const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); if (this.formatDate(lastVisitDate) === this.formatDate(today)) { absenceString = 'Hoje'; } else if (diffDays === 1) { absenceString = 'Ontem'; } else { absenceString = `Há ${diffDays} dias`; } } const historyHTML = clientAppointments.length > 0 ? clientAppointments.map(a => { const service = this.services.find(s => s.id === a.service); const statusMap = { scheduled: 'Agendado', completed: 'Concluído', cancelled: 'Cancelado', pending: 'Pendente' }; return `<div class="history-item"> <span>${this.formatDate(a.date)} - ${service?.name || 'Serviço'}</span> <span>${this.formatCurrency(service?.price || 0)}</span> <span class="appointment-status status-${a.status}">${statusMap[a.status] || a.status}</span> </div>`; }).join('') : '<p class="empty-state" style="padding: 1rem 0;">Nenhum histórico de agendamento.</p>'; const content = ` <div class="client-details"> <h4>${client.name}</h4> <p><strong>Telefone:</strong> ${client.phone}</p> <p><strong>Cliente desde:</strong> ${this.formatDate(client.createdAt)}</p> <div class="separator" style="margin: 1rem 0;"></div> <p><strong>Total Gasto:</strong> ${this.formatCurrency(totalSpent)}</p> <p><strong>Total de Visitas:</strong> ${clientAppointments.length}</p> <p><strong>Última Visita:</strong> ${absenceString}</p> <div class="separator" style="margin: 1rem 0;"></div> <h5>Histórico de Atendimentos</h5> <div class="history-list" style="margin-top: 1rem;">${historyHTML}</div> </div> <div class="modal-footer"> <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Fechar</button> </div> `; this.showModal('Detalhes do Cliente', content); }
+    showClientDetailModal(phone) { const client = this.clients.find(c => c.phone === phone); if (!client) { this.showNotification('Cliente não encontrado.', 'error'); return; } const clientAppointments = this.appointments.filter(a => a.phone === phone).sort((a, b) => new Date(b.date) - new Date(a.date)); const totalSpent = clientAppointments.filter(a => a.status === 'completed').reduce((sum, a) => { const service = this.services.find(s => s.id === a.service); return sum + (service?.price || 0); }, 0); const lastVisitAppointment = clientAppointments.find(a => a.status === 'completed'); let absenceString = 'Nenhuma visita concluída.'; if (lastVisitAppointment) { const lastVisitDate = new Date(lastVisitAppointment.date); const today = new Date(this.getTodayDateString()); const diffTime = Math.abs(today - lastVisitDate); const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); if (diffDays === 0) { absenceString = 'Hoje'; } else if (diffDays === 1) { absenceString = 'Ontem'; } else { absenceString = `Há ${diffDays} dias`; } } const historyHTML = clientAppointments.length > 0 ? clientAppointments.map(a => { const service = this.services.find(s => s.id === a.service); const statusMap = { scheduled: 'Agendado', completed: 'Concluído', cancelled: 'Cancelado', pending: 'Pendente' }; return `<div class="history-item"> <span>${this.formatDate(a.date)} - ${service?.name || 'Serviço'}</span> <span>${this.formatCurrency(service?.price || 0)}</span> <span class="appointment-status status-${a.status}">${statusMap[a.status] || a.status}</span> </div>`; }).join('') : '<p class="empty-state" style="padding: 1rem 0;">Nenhum histórico de agendamento.</p>'; const content = ` <div class="client-details"> <h4>${client.name}</h4> <p><strong>Telefone:</strong> ${client.phone}</p> <p><strong>Cliente desde:</strong> ${this.formatDate(client.createdAt)}</p> <div class="separator" style="margin: 1rem 0;"></div> <p><strong>Total Gasto:</strong> ${this.formatCurrency(totalSpent)}</p> <p><strong>Total de Visitas:</strong> ${clientAppointments.length}</p> <p><strong>Última Visita:</strong> ${absenceString}</p> <div class="separator" style="margin: 1rem 0;"></div> <h5>Histórico de Atendimentos</h5> <div class="history-list" style="margin-top: 1rem;">${historyHTML}</div> </div> <div class="modal-footer"> <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Fechar</button> </div> `; this.showModal('Detalhes do Cliente', content); }
     deleteService(id) { if (this.services.length <= 1) { this.showNotification('É necessário ter pelo menos um serviço cadastrado.', 'error'); return; } if (confirm('Tem certeza que deseja remover este serviço?')) { this.services = this.services.filter(s => s.id !== id); this.saveData(); this.renderServicesList(); this.updateServiceDropdown(); this.renderClientServices(); this.showNotification('Serviço removido.'); } }
     saveProfessional(professionalData) { if (!professionalData.name || professionalData.name.trim() === '') { this.showNotification('O nome do profissional é obrigatório.', 'error'); return; } const existingProfessional = this.barbers.find(b => b.name.toLowerCase() === professionalData.name.toLowerCase() && b.id !== professionalData.id); if (existingProfessional) { this.showNotification('Já existe um profissional com este nome.', 'error'); return; } if (professionalData.id) { const index = this.barbers.findIndex(b => b.id === professionalData.id); if (index > -1) { this.barbers[index] = { ...this.barbers[index], ...professionalData }; } } else { this.barbers.push({ id: `b_${Date.now()}`, ...professionalData }); } this.saveData(); this.hideModal(); this.renderProfessionalsList(); this.updateBarberDropdowns(); this.renderClientBarbers(); this.showNotification('Profissional salvo com sucesso!', 'success'); }
     deleteProfessional(id) { if (this.barbers.length <= 1) { this.showNotification('É necessário ter pelo menos um profissional cadastrado.', 'error'); return; } if (confirm('Tem certeza que deseja remover este profissional?')) { this.barbers = this.barbers.filter(b => b.id !== id); this.saveData(); this.renderProfessionalsList(); this.updateBarberDropdowns(); this.renderClientBarbers(); this.showNotification('Profissional removido.'); } }
