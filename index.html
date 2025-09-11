@@ -116,7 +116,7 @@
                             <a class="nav-item" data-view="professionalsView"><i class="nav-icon fas fa-store"></i><span>Profissionais</span></a>
                         </div>
                     </div>
-                    <a class="nav-item" data-view="comandasView"><i class="nav-icon fas fa-receipt"></i><span>Comandas</span></a>
+                    <a class="nav-item" data-view="comandasView"><i class="nav-icon fas fa-receipt"></i><span>Atendimentos</span></a>
                     <div class="nav-group">
                         <a class="nav-item nav-parent"><i class="nav-icon fas fa-dollar-sign"></i><span>Financeiro</span><i class="nav-arrow fas fa-chevron-right"></i></a>
                         <div class="nav-submenu">
@@ -149,7 +149,7 @@
                         <div class="welcome-card card-grid-span-2">
                             <h3>Bem-vindo, Barbeiro!</h3>
                             <p>Aqui está um resumo rápido do seu dia. Pronto para começar?</p>
-                            <button class="btn-primary-outline" id="quickAddAppointmentBtn"><i class="fas fa-plus"></i> Novo Agendamento</button>
+                            <button class="btn-primary-outline" id="quickAddAppointmentBtn"><i class="fas fa-plus"></i> Novo Atendimento</button>
                         </div>
                         <div class="stat-card-modern">
                             <div class="stat-icon-modern icon-green"><i class="fas fa-hand-holding-usd"></i></div>
@@ -168,22 +168,16 @@
                         <div class="stat-card-modern">
                             <div class="stat-icon-modern icon-orange"><i class="fas fa-receipt"></i></div>
                             <div class="stat-info-modern">
-                                <p>Comandas Abertas</p>
-                                <h3 id="openComandasCount">0</h3>
+                                <p>Pendentes Hoje</p>
+                                <h3 id="pendingCount">0</h3>
                             </div>
                         </div>
-                        <div class="list-card card-grid-span-3">
+                        <div class="list-card card-grid-span-5">
                             <div class="section-header">
                                 <h3>Próximos Agendamentos</h3>
                                 <button class="btn-secondary btn-small" id="refreshBtn"><i class="fas fa-sync-alt"></i> Atualizar</button>
                             </div>
                             <div id="appointmentsList" class="appointments-list"></div>
-                        </div>
-                        <div class="list-card card-grid-span-2">
-                             <div class="section-header">
-                                <h3>Comandas em Aberto</h3>
-                            </div>
-                            <div id="dashboardComandasList" class="upcoming-list"></div>
                         </div>
                     </div>
                 </div>
@@ -193,7 +187,7 @@
                 </div>
                 
                 <div id="comandasView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;"><div class="section-header"><h3>Comandas em Aberto</h3><div><input type="search" id="comandaSearchInput" placeholder="Buscar por nome..." class="form-control-small" style="margin-right: 1rem;"><button id="addComandaBtn" class="btn-primary btn-small">Nova Comanda</button></div></div><div id="comandasList" class="comandas-list"></div></div>
+                     <div class="glass-card" style="padding: 1.5rem;"><div class="section-header"><h3>Atendimentos Pendentes</h3><button id="addWalkInBtn" class="btn-primary btn-small">Novo Atendimento (Encaixe)</button></div><div id="pendingAppointmentsList" class="appointments-list"></div></div>
                 </div>
                 
                 <div id="clientsView" class="content-view">
