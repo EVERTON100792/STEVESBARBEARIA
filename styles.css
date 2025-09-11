@@ -125,6 +125,7 @@ body {
     justify-content: center;
     color: var(--foreground);
     border: 1px solid var(--border);
+    cursor: pointer;
 }
 
 /* Sidebar */
@@ -132,11 +133,14 @@ body {
 .sidebar-header { margin-bottom: 2rem; }
 .sidebar-brand { display: flex; align-items: center; gap: .75rem; }
 .sidebar-brand h2 { font-size: 1.25rem; color: var(--accent); }
-.sidebar-nav { display: flex; flex-direction: column; gap: .25rem; flex: 1; overflow-y: auto; }
-.sidebar-footer { margin-top: auto; padding-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
-.nav-item { display: flex; align-items: center; gap: 1rem; padding: .75rem 1rem; border: none; background: transparent; color: var(--foreground); border-radius: var(--radius); cursor: pointer; transition: all .2s ease; width: 100%; text-align: left; text-decoration: none; font-size: .95rem; }
+.sidebar-nav { display: flex; flex-direction: column; gap: .25rem; flex-grow: 1; overflow-y: auto; }
+.sidebar-footer { margin-top: auto; padding-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0; }
+.nav-group { flex-shrink: 0; } /* Impede que os grupos de menu encolham */
+.nav-item { display: flex; align-items: center; gap: 1rem; padding: .75rem 1rem; border: none; background: transparent; color: var(--foreground); border-radius: var(--radius); cursor: pointer; transition: all .2s ease; width: 100%; text-align: left; text-decoration: none; font-size: .95rem; flex-shrink: 0; }
 .nav-item:hover { background: rgba(255, 255, 255, .05); }
 .nav-item.active { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.nav-submenu { max-height: 0; overflow: hidden; transition: max-height .3s ease-out; }
+.nav-submenu .nav-item { padding-left: 3rem; }
 
 /* NOVO GRID DO DASHBOARD */
 .dashboard-grid-modern {
@@ -146,52 +150,20 @@ body {
 }
 .card-grid-span-2 { grid-column: span 2; }
 .card-grid-span-3 { grid-column: span 3; }
-
-/* Card de Boas-Vindas */
-.welcome-card {
-    background: var(--secondary);
-    padding: 2rem;
-    border-radius: var(--radius);
-}
+.welcome-card { background: var(--secondary); padding: 2rem; border-radius: var(--radius); }
 .welcome-card h3 { margin-top: 0; font-size: 1.5rem; color: var(--foreground); }
 .welcome-card p { color: var(--muted-foreground); margin-bottom: 1.5rem; }
-
-/* NOVOS CARDS DE ESTATÍSTICAS */
-.stat-card-modern {
-    background: var(--secondary);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border-left: 4px solid var(--secondary); /* Borda padrão */
-}
-.stat-card-modern .stat-icon-modern {
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-}
+.stat-card-modern { background: var(--secondary); border-radius: var(--radius); padding: 1.5rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid var(--secondary); }
+.stat-card-modern .stat-icon-modern { width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
 .stat-card-modern .stat-info-modern p { margin: 0; color: var(--muted-foreground); font-size: 0.9rem; }
 .stat-card-modern .stat-info-modern h3 { margin: 0.25rem 0 0 0; font-size: 1.75rem; color: var(--foreground); }
-/* Cores dos Ícones e Bordas */
 .stat-card-modern .icon-green { background-color: rgba(34, 197, 94, 0.1); color: var(--color-green); }
 .stat-card-modern:has(.icon-green) { border-left-color: var(--color-green); }
 .stat-card-modern .icon-accent { background-color: rgba(245, 158, 11, 0.1); color: var(--color-accent); }
 .stat-card-modern:has(.icon-accent) { border-left-color: var(--color-accent); }
 .stat-card-modern .icon-orange { background-color: rgba(249, 115, 22, 0.1); color: var(--color-orange); }
 .stat-card-modern:has(.icon-orange) { border-left-color: var(--color-orange); }
-
-/* Card de Lista */
-.list-card {
-    background-color: var(--secondary);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-}
+.list-card { background-color: var(--secondary); border-radius: var(--radius); padding: 1.5rem; }
 
 /* Modal e Notificações */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);z-index:1000;display:none;justify-content:center;align-items:center;padding:1rem;animation:fadeIn .3s ease;}
@@ -201,6 +173,7 @@ body {
 .notification{padding:1rem 1.5rem;border-radius:var(--radius);color:var(--primary-foreground);min-width:250px;box-shadow:0 4px 15px rgba(0,0,0,.2);animation:slideInUp .4s ease;}
 .notification.success{background-color:hsl(142,76%,36%);}
 .notification.error{background-color:var(--destructive);}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes slideIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
@@ -216,6 +189,11 @@ body {
         height: 100vh;
         top: 0;
         border-radius: 0;
+        /* CORREÇÃO: Fundo sólido no celular para evitar transparência */
+        background: hsl(217, 32%, 12%);
+        backdrop-filter: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 10px 0 30px rgba(0,0,0,0.3);
     }
     .dashboard-sidebar.show {
         left: 0;
