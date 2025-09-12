@@ -178,3 +178,130 @@ body {
     .dashboard-header { flex-direction: column; align-items: flex-start; }
     .dashboard-header-actions { width: 100%; justify-content: space-between; }
 } /* CORREÇÃO: Adicionado '}' que faltava para fechar o media query. */
+/* --- INÍCIO DO BLOCO DE CORREÇÃO E RESPONSIVIDADE CSS --- */
+
+/* CORREÇÃO CRÍTICA: Faz o nome e serviço aparecerem na Agenda */
+.agenda-appointment-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding: 2px 6px; /* Ajuste fino do preenchimento */
+}
+
+.appointment-block-name, .appointment-block-service {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+    line-height: 1.3; /* Melhora o espaçamento entre linhas */
+}
+
+.appointment-block-name { 
+    font-weight: 600; 
+    font-size: 0.75rem; 
+    color: var(--foreground); 
+}
+
+.appointment-block-service { 
+    font-size: 0.7rem; 
+    color: var(--muted-foreground);
+}
+
+/* --- MELHORIAS VISUAIS E RESPONSIVAS GERAIS --- */
+
+/* Melhora a legibilidade e espaçamento dos cards */
+.glass-card {
+    padding: 1.5rem;
+}
+
+/* Ajusta o layout das listas de dados (Clientes, Serviços, etc) */
+.data-card {
+    display: flex;
+    flex-wrap: wrap; /* Permite quebrar a linha em telas pequenas */
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--background);
+    padding: 1rem;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--border);
+    gap: 1rem; /* Adiciona um espaço entre os elementos */
+}
+.data-card-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--muted-foreground);
+}
+.data-card-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Responsividade da Tela Financeira (Controle de Caixa) */
+.financial-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Grid responsivo */
+    gap: 1rem;
+}
+.summary-item { 
+    background: var(--background); 
+    padding: 1rem; 
+    border-radius: var(--radius); 
+}
+.summary-item p { 
+    margin: 0 0 0.5rem 0; 
+    color: var(--muted-foreground); 
+    font-size: 0.9rem; 
+}
+.summary-item h4 { 
+    margin: 0; 
+    font-size: 1.25rem; 
+}
+
+/* Responsividade da Tela de Relatórios */
+.stats-grid, .charts-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr; /* Garante uma coluna em qualquer tela */
+}
+.chart-wrapper {
+    position: relative;
+    height: 280px; /* Altura fixa para melhor visualização */
+    width: 100%;
+}
+
+/* Ajustes finos para telas de celular */
+@media (max-width: 768px) {
+    body {
+        font-size: 15px; /* Levemente menor para caber mais info */
+    }
+
+    .glass-card {
+        padding: 1rem; /* Menos preenchimento em telas pequenas */
+    }
+
+    .dashboard-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Garante que os botões do header fiquem em linha */
+    .section-header .button-group, .section-header .agenda-nav {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .data-card-info {
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: flex-start;
+    }
+}
+/* --- FIM DO BLOCO DE CORREÇÃO --- */
