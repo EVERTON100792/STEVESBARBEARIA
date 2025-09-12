@@ -1,10 +1,10 @@
-// INÍCIO DO ARQUIVO SCRIPT.JS COMPLETO
-// BarberPro - Versão 2.5 com Correção da Tela Financeira
+// INÍCIO DO ARQUIVO SCRIPT.JS COMPLETO E CORRIGIDO
+// BarberPro - Versão 2.6 com Correções Críticas de Funcionalidade
 class BarberPro {
     constructor() {
         this.currentUser = null;
         this.charts = {};
-        this.DATA_VERSION = '2.5'; // Versão incrementada
+        this.DATA_VERSION = '2.6';
         document.addEventListener('DOMContentLoaded', () => this.init());
     }
 
@@ -1159,7 +1159,112 @@ class BarberPro {
         barbersAreaHTML += `</div>`;
         container.innerHTML = timeColumnHTML + barbersAreaHTML;
     }
+
+    // CORREÇÃO: Funções que faltavam para renderizar as listas de cadastros
+    renderServicesList() {
+        const container = document.getElementById('servicesList');
+        if (!container) return;
+        const sortedServices = [...this.services].sort((a,b) => a.name.localeCompare(b.name));
+        container.innerHTML = sortedServices.length === 0 
+            ? '<div class="empty-state"><p>Nenhum serviço cadastrado.</p></div>'
+            : sortedServices.map(service => `
+                <div class="data-card">
+                    <div>
+                        <strong>${service.name}</strong>
+                        <div class="data-card-info">
+                            <span>💰 ${this.formatCurrency(service.price)}</span>
+                            <span>⏱️ ${service.duration} min</span>
+                        </div>
+                    </div>
+                    <div class="data-card-actions">
+                        <button class="btn-secondary btn-small" data-action="edit-service" data-id="${service.id}">Editar</button>
+                        <button class="btn-secondary btn-danger btn-small" data-action="delete-service" data-id="${service.id}">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    renderProfessionalsList() {
+        const container = document.getElementById('professionalsList');
+        if (!container) return;
+        const sortedBarbers = [...this.barbers].sort((a,b) => a.name.localeCompare(b.name));
+        container.innerHTML = sortedBarbers.length === 0 
+            ? '<div class="empty-state"><p>Nenhum profissional cadastrado.</p></div>'
+            : sortedBarbers.map(barber => `
+                <div class="data-card">
+                    <div>
+                        <strong>${barber.name}</strong>
+                        <div class="data-card-info">
+                            <span>${barber.specialty || 'Sem especialidade'}</span>
+                        </div>
+                    </div>
+                    <div class="data-card-actions">
+                        <button class="btn-secondary btn-small" data-action="edit-professional" data-id="${barber.id}">Editar</button>
+                        <button class="btn-secondary btn-danger btn-small" data-action="delete-professional" data-id="${barber.id}">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    // CORREÇÃO: Funções que faltavam para abrir e fechar o caixa
+    showAbrirCaixaModal() {
+        const content = `
+            <form id="openCaixaForm">
+                <p>Para iniciar os atendimentos, você precisa abrir o caixa.</p>
+                <div class="form-group">
+                    <label for="initialValue">Valor inicial (fundo de troco)</label>
+                    <input type="number" id="initialValue" name="initialValue" step="0.01" value="0" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Abrir Caixa</button>
+                </div>
+            </form>
+        `;
+        this.showModal('Abrir Caixa', content);
+        document.getElementById('openCaixaForm')?.addEventListener('submit', e => {
+            e.preventDefault();
+            const initialValue = parseFloat(e.target.querySelector('#initialValue').value);
+            this.abrirCaixa(initialValue);
+        });
+    }
+
+    showFecharCaixaModal() {
+        const totalEntradas = this.caixa.entradas.reduce((sum, e) => sum + e.valor, 0);
+        const totalSaidas = this.caixa.saidas.reduce((sum, s) => sum + s.valor, 0);
+        const totalsByMethod = this.caixa.entradas.reduce((acc, entrada) => {
+            acc[entrada.metodo] = (acc[entrada.metodo] || 0) + entrada.valor;
+            return acc;
+        }, {});
+        const dinheiroEntradas = totalsByMethod['Dinheiro'] || 0;
+        const saldoEsperadoDinheiro = this.caixa.saldoInicial + dinheiroEntradas - totalSaidas;
+
+        const content = `
+            <form id="closeCaixaForm">
+                <h4>Resumo do Caixa</h4>
+                <p><strong>Abertura:</strong> ${this.formatDateTime(this.caixa.abertura)}</p>
+                <p><strong>Fundo de Caixa:</strong> ${this.formatCurrency(this.caixa.saldoInicial)}</p>
+                <p class="text-green"><strong>Total de Entradas:</strong> ${this.formatCurrency(totalEntradas)}</p>
+                <p class="text-red"><strong>Total de Saídas:</strong> ${this.formatCurrency(totalSaidas)}</p>
+                <hr style="margin: 1rem 0; border-color: var(--border);">
+                <p><strong>Saldo esperado em dinheiro:</strong> ${this.formatCurrency(saldoEsperadoDinheiro)}</p>
+                <div class="form-group">
+                    <label for="countedCash">Valor conferido em caixa (Dinheiro)</label>
+                    <input type="number" id="countedCash" name="countedCash" step="0.01" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary btn-danger">Confirmar e Fechar Caixa</button>
+                </div>
+            </form>
+        `;
+        this.showModal('Fechar Caixa', content);
+        document.getElementById('closeCaixaForm')?.addEventListener('submit', e => {
+            e.preventDefault();
+            this.fecharCaixa();
+        });
+    }
 }
 
 window.barberPro = new BarberPro();
-// FIM DO ARQUIVO SCRIPT.JS COMPLETO
+// FIM DO ARQUIVO SCRIPT.JS COMPLETO E CORRIGIDO
