@@ -14,31 +14,10 @@
 
     <style>
         /* --- Reset e Estilos Base --- */
-        html, body {
-            margin: 0;
-            padding: 0;
-            border: 0;
-            width: 100%;
-            min-height: 100%;
-            overflow-x: hidden;
-        }
-
-        /* Evita rolagem da página quando um modal ou sidebar está aberto */
-        body.sidebar-is-open, body.modal-open {
-            overflow: hidden;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, hsl(222, 84%, 4%) 0%, hsl(217, 32%, 17%) 100%);
-            color: hsl(210, 40%, 98%);
-            min-height: 100vh;
-            line-height: 1.6;
-        }
+        html, body { margin: 0; padding: 0; border: 0; width: 100%; min-height: 100%; overflow-x: hidden; }
+        body.sidebar-is-open, body.modal-open { overflow: hidden; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, hsl(222, 84%, 4%) 0%, hsl(217, 32%, 17%) 100%); color: hsl(210, 40%, 98%); min-height: 100vh; line-height: 1.6; }
 
         /* --- Variáveis de Cor e Estilo (Tema) --- */
         :root {
@@ -47,7 +26,7 @@
             --card: hsl(222, 84%, 4%);
             --card-foreground: hsl(210, 40%, 98%);
             --primary: hsl(43, 96%, 56%); /* Dourado/Amarelo */
-            --primary-foreground: hsl(222, 84%, 4%); /* Cor do texto no botão primário */
+            --primary-foreground: hsl(222, 84%, 4%);
             --secondary: hsl(217, 32%, 17%);
             --secondary-foreground: hsl(210, 40%, 98%);
             --muted: hsl(217, 32%, 17%);
@@ -57,7 +36,6 @@
             --destructive: hsl(0, 84%, 60%); /* Vermelho para ações de exclusão */
             --border: hsl(217, 32%, 25%);
             --input: hsl(217, 32%, 22%);
-            --ring: hsl(43, 96%, 56%);
             --radius: 0.75rem; /* Arredondamento das bordas */
             --color-green: #22c55e;
             --color-blue: #3b82f6;
@@ -122,6 +100,8 @@
         .nav-item:hover { background: rgba(255, 255, 255, .05); }
         .nav-item.active { background: var(--accent); color: var(--primary-foreground); font-weight: 600; }
         .nav-item.active .nav-icon { color: var(--primary-foreground); }
+        /* CORREÇÃO VISUAL: Estilo sutil para o menu pai quando um filho está ativo */
+        .nav-item.parent-active { background: rgba(255, 255, 255, .05); color: var(--foreground); }
         .nav-icon { font-size: 1rem; width: 1.25rem; text-align: center; color: var(--muted-foreground); }
         .nav-arrow { margin-left: auto; transition: transform .3s ease; }
         .nav-group.open > .nav-parent .nav-arrow { transform: rotate(90deg); }
@@ -421,42 +401,27 @@
 
 
     <script>
-/**
- * BarberPro - Classe principal que controla toda a lógica da aplicação de gestão da barbearia.
- * Gerencia dados, renderização da interface, eventos do usuário e estado da aplicação.
- * Funciona como um aplicativo de página única (SPA - Single Page Application).
- */
 class BarberPro {
-    /**
-     * Construtor da classe. Inicializa propriedades e adiciona o evento principal de inicialização.
-     */
     constructor() {
-        this.currentUser = null; // Armazena o usuário logado
-        this.charts = {}; // Objeto para armazenar instâncias dos gráficos
-        this.DATA_VERSION = '6.0'; // Versão dos dados para forçar limpeza de cache se a estrutura mudar
+        this.currentUser = null;
+        this.charts = {};
+        this.DATA_VERSION = '6.1'; // Versão incrementada
         document.addEventListener('DOMContentLoaded', () => this.init());
     }
 
-    // ---------------------------------------------------------------------------------
     // 1. MÉTODOS DE INICIALIZAÇÃO E RENDERIZAÇÃO PRINCIPAL
-    // ---------------------------------------------------------------------------------
-
-    /**
-     * Método de inicialização principal. Chamado quando o DOM está pronto.
-     * Configura a aplicação, carrega os dados e decide qual view mostrar (cliente ou barbeiro).
-     */
     init() {
         try {
-            this.checkDataVersion(); // Verifica se os dados no localStorage são compatíveis
-            this.setupGlobalEventListeners(); // Configura todos os ouvintes de eventos
-            this.loadData(); // Carrega os dados do localStorage para a memória
+            this.checkDataVersion();
+            this.setupGlobalEventListeners();
+            this.loadData();
 
             const token = this.getFromStorage('auth_token', null);
             if (token) {
                 this.currentUser = token;
-                this.renderBarberView(); // Se houver token, mostra o painel do barbeiro
+                this.renderBarberView();
             } else {
-                this.renderClientView(); // Caso contrário, mostra a área do cliente
+                this.renderClientView();
             }
         } catch (error) {
             console.error('Erro crítico durante a inicialização:', error);
@@ -464,9 +429,6 @@ class BarberPro {
         }
     }
 
-    /**
-     * Renderiza a visualização do cliente.
-     */
     renderClientView() {
         this.showSection('clientArea');
         this.renderClientServices();
@@ -477,9 +439,6 @@ class BarberPro {
         this.setMinDate();
     }
 
-    /**
-     * Renderiza a visualização do barbeiro (dashboard).
-     */
     renderBarberView() {
         this.showSection('barberDashboard');
         const agendaDateFilter = document.getElementById('agendaDateFilter');
@@ -489,16 +448,8 @@ class BarberPro {
         this.switchDashboardView('dashboardView');
     }
 
-    // ---------------------------------------------------------------------------------
     // 2. GERENCIADOR GLOBAL DE EVENTOS
-    // ---------------------------------------------------------------------------------
-
-    /**
-     * Configura todos os ouvintes de eventos globais usando delegação de eventos no `document.body`.
-     * Isso melhora a performance e garante que eventos funcionem em elementos criados dinamicamente.
-     */
     setupGlobalEventListeners() {
-        // Ouvinte para todos os cliques no corpo do documento
         document.body.addEventListener('click', e => {
             const actionTarget = e.target.closest('[data-action]');
             if (actionTarget) {
@@ -510,10 +461,7 @@ class BarberPro {
             if (buttonTarget) {
                 const buttonId = buttonTarget.id;
                 switch (buttonId) {
-                    case 'sidebarToggle':
-                    case 'closeSidebarBtn':
-                        document.body.classList.toggle('sidebar-is-open');
-                        break;
+                    case 'sidebarToggle': case 'closeSidebarBtn': document.body.classList.toggle('sidebar-is-open'); break;
                     case 'clientAreaBtn': this.renderClientView(); break;
                     case 'barberAreaBtn': this.checkAuthentication(); break;
                     case 'demoLoginBtn': this.login('barbeiro', '123'); break;
@@ -551,7 +499,6 @@ class BarberPro {
             }
         });
 
-        // Ouvinte para todos os envios de formulário
         document.body.addEventListener('submit', e => {
             e.preventDefault();
             const form = e.target;
@@ -568,37 +515,24 @@ class BarberPro {
                 case 'professionalForm': this.saveProfessional(new FormData(form)); break;
                 case 'expenseForm': this.saveExpense(new FormData(form)); break;
                 case 'openCaixaForm':
-                    const initialValue = parseFloat(new FormData(form).get('initialValue'));
-                    this.abrirCaixa(initialValue);
+                    this.abrirCaixa(parseFloat(new FormData(form).get('initialValue')));
                     break;
                 case 'closeCaixaForm':
-                     const countedCash = parseFloat(new FormData(form).get('countedCash'));
-                    this.fecharCaixa(countedCash);
+                    this.fecharCaixa(parseFloat(new FormData(form).get('countedCash')));
                     break;
             }
         });
 
-        // Ouvinte para inputs específicos
         document.body.addEventListener('input', e => {
-            if (e.target.id === 'clientSearchInput') {
-                this.renderFullClientsList();
-            }
-            if (e.target.matches('#barberBookingForm input[name="name"]')) {
-                this.handleClientNameInput(e);
-            }
+            if (e.target.id === 'clientSearchInput') this.renderFullClientsList();
+            if (e.target.matches('#barberBookingForm input[name="name"]')) this.handleClientNameInput(e);
         });
 
-        // Ouvintes para elementos fixos
         document.getElementById('agendaDateFilter')?.addEventListener('change', () => this.renderAgendaView());
         document.getElementById('sidebarOverlay')?.addEventListener('click', () => document.body.classList.remove('sidebar-is-open'));
         document.getElementById('modalBackdrop')?.addEventListener('click', e => { if (e.target.id === 'modalBackdrop') this.hideModal(); });
     }
 
-    /**
-     * Centraliza o tratamento de cliques em elementos com o atributo `data-action`.
-     * @param {string} action - A ação a ser executada (ex: 'edit-service').
-     * @param {string} id - O ID do item relacionado à ação.
-     */
     handleActionClick(action, id) {
         const actions = {
             'open-comanda-modal': () => this.showComandaActionsModal(id),
@@ -612,28 +546,15 @@ class BarberPro {
         if (actions[action]) actions[action]();
     }
     
-    // ---------------------------------------------------------------------------------
-    // 3. FUNÇÕES DE NAVEGAÇÃO E UI (Interface do Usuário)
-    // ---------------------------------------------------------------------------------
-
-    /**
-     * Mostra uma seção principal da página e esconde as outras.
-     * @param {string} sectionId - O ID da seção a ser exibida (ex: 'clientArea', 'barberDashboard').
-     */
+    // 3. FUNÇÕES DE NAVEGAÇÃO E UI
     showSection(sectionId) {
         document.querySelectorAll('.page-section').forEach(s => s.style.display = 'none');
         document.getElementById(sectionId).style.display = 'block';
-        
         document.querySelector('.navbar').style.display = sectionId === 'barberDashboard' ? 'none' : 'flex';
-
         document.getElementById('clientAreaBtn').classList.toggle('active', sectionId === 'clientArea');
         document.getElementById('barberAreaBtn').classList.toggle('active', sectionId === 'barberLogin');
     }
 
-    /**
-     * Alterna entre as diferentes "páginas" (views) dentro do dashboard do barbeiro.
-     * @param {string} viewId - O ID da view a ser exibida (ex: 'dashboardView', 'appointmentsView').
-     */
     switchDashboardView(viewId) {
         if (!viewId) return;
         document.querySelectorAll('.content-view').forEach(v => v.style.display = 'none');
@@ -653,12 +574,15 @@ class BarberPro {
         document.getElementById('dashboardTitle').textContent = title;
         document.getElementById('dashboardSubtitle').textContent = subtitle;
 
-        document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active'));
+        // CORREÇÃO: Lógica de ativação de menu para evitar sobreposição visual
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active', 'parent-active'));
         const activeNavItem = document.querySelector(`.sidebar-nav .nav-item[data-view="${viewId}"]`);
         if(activeNavItem) {
             activeNavItem.classList.add('active');
             const parentGroup = activeNavItem.closest('.nav-group');
-            if(parentGroup) parentGroup.querySelector('.nav-parent')?.classList.add('active');
+            if(parentGroup) {
+                parentGroup.querySelector('.nav-parent')?.classList.add('parent-active');
+            }
         }
         
         const renderActions = {
@@ -676,20 +600,20 @@ class BarberPro {
         document.body.classList.remove('sidebar-is-open');
     }
     
-    // ---------------------------------------------------------------------------------
     // 4. GERENCIAMENTO DE DADOS (LocalStorage)
-    // ---------------------------------------------------------------------------------
-
-    /** Verifica se a versão dos dados no localStorage é a mesma do código. Se não for, limpa tudo. */
     checkDataVersion() { if (localStorage.getItem('barberpro_data_version') !== this.DATA_VERSION) { localStorage.clear(); localStorage.setItem('barberpro_data_version', this.DATA_VERSION); } }
-    
-    /** Busca um item do localStorage. */
     getFromStorage(key, defaultValue) { try { const item = localStorage.getItem(`barberpro_${key}`); return item ? JSON.parse(item) : defaultValue; } catch { return defaultValue; } }
     
-    /** Salva um item no localStorage. */
-    saveToStorage(key, data) { localStorage.setItem(`barberpro_${key}`, JSON.stringify(data)); }
+    // CORREÇÃO: Adicionado tratamento de erro ao salvar
+    saveToStorage(key, data) {
+        try {
+            localStorage.setItem(`barberpro_${key}`, JSON.stringify(data));
+        } catch (error) {
+            console.error(`Erro ao salvar dados no localStorage (chave: ${key}):`, error);
+            this.showNotification('Erro ao salvar os dados. O armazenamento pode estar cheio.', 'error');
+        }
+    }
     
-    /** Carrega todos os dados do localStorage para as propriedades da classe. */
     loadData() { 
         this.services = this.getFromStorage('services', [{ id: `s_default`, name: 'Corte Tradicional', price: 35, duration: 45, description: 'Corte clássico na tesoura e máquina.' }]); 
         this.barbers = this.getFromStorage('barbers', [{ id: `b_default`, name: 'Hernani', specialty: 'Corte e Barba' }]); 
@@ -698,8 +622,6 @@ class BarberPro {
         this.caixa = this.getFromStorage('caixa', { status: 'fechado', saldoInicial: 0, abertura: null, entradas: [], saidas: [] }); 
         this.caixaHistory = this.getFromStorage('caixaHistory', []); 
     }
-
-    /** Salva todos os dados da memória (propriedades da classe) para o localStorage. */
     saveData() { 
         this.saveToStorage('services', this.services); 
         this.saveToStorage('barbers', this.barbers); 
@@ -708,121 +630,59 @@ class BarberPro {
         this.saveToStorage('caixa', this.caixa); 
         this.saveToStorage('caixaHistory', this.caixaHistory); 
     }
-
-    /** Reseta os dados de teste (agendamentos, clientes, caixa). */
     resetTestData() { if (confirm('ATENÇÃO!\nIsto irá apagar TODOS os agendamentos, clientes e dados financeiros.\nDeseja continuar?')) { this.appointments = []; this.clients = []; this.caixa = { status: 'fechado', saldoInicial: 0, abertura: null, entradas: [], saidas: [] }; this.caixaHistory = []; this.saveData(); this.loadDashboardData(); this.switchDashboardView('dashboardView'); this.showNotification('Dados de teste foram zerados.', 'success'); } }
     
-    // ---------------------------------------------------------------------------------
     // 5. LÓGICA DE AUTENTICAÇÃO
-    // ---------------------------------------------------------------------------------
-
-    /** Verifica se o usuário está autenticado e redireciona. */
     checkAuthentication() { const token = this.getFromStorage('auth_token', null); if (token) { this.currentUser = token; this.renderBarberView(); } else { this.showSection('barberLogin'); } }
-    
-    /** Realiza o login do usuário. */
     login(username, password) { if (username === 'barbeiro' && password === '123') { this.currentUser = { username: 'barbeiro' }; this.saveToStorage('auth_token', this.currentUser); this.renderBarberView(); this.showNotification('Login realizado com sucesso!', 'success'); return true; } return false; }
-    
-    /** Realiza o logout do usuário. */
     logout() { this.currentUser = null; localStorage.removeItem('barberpro_auth_token'); this.renderClientView(); this.showNotification('Você saiu da sua conta.'); }
-    
-    /** Trata o envio do formulário de login. */
     handleLoginSubmit(form) { const usernameEl = form.querySelector('#username'); const passwordEl = form.querySelector('#password'); if (usernameEl && passwordEl) { if (!this.login(usernameEl.value, passwordEl.value)) { this.showNotification('Usuário ou senha inválidos.', 'error'); } } }
     
-    // ---------------------------------------------------------------------------------
     // 6. LÓGICA DE AGENDAMENTOS E COMANDAS
-    // ---------------------------------------------------------------------------------
-
-    /**
-     * Processa o envio de um novo agendamento ou atendimento de encaixe.
-     * @param {FormData} formData - Os dados do formulário.
-     * @param {boolean} isWalkIn - True se for um atendimento de encaixe.
-     */
     handleAppointmentSubmit(formData, isWalkIn) {
         const name = formData.get('name').trim(); const phone = this.sanitizePhone(formData.get('phone'));
         if (!name || phone.length < 10 || !formData.get('service') || !formData.get('barber')) { return this.showNotification('Por favor, preencha todos os campos obrigatórios.', 'error'); }
-        
         const appointmentDate = isWalkIn ? this.getTodayDateString() : formData.get('date');
         const appointmentTime = isWalkIn ? new Date().toTimeString().slice(0, 5) : formData.get('time');
-        
         const appointment = { id: Date.now().toString(), createdAt: new Date().toISOString(), name, phone, service: formData.get('service'), barberId: formData.get('barber'), date: appointmentDate, time: appointmentTime, status: isWalkIn ? 'in_progress' : 'scheduled', paymentStatus: 'pending' };
-        
         this.getOrUpdateClient(appointment.phone, appointment.name);
         this.appointments.push(appointment); this.saveData();
-        
         this.showNotification(isWalkIn ? 'Comanda aberta com sucesso!' : 'Agendamento realizado com sucesso!', 'success');
-        
         this.hideModal();
-        if (this.currentUser) { // Apenas atualiza as views se o barbeiro estiver logado
-            this.renderRelevantViews();
-        }
+        if (this.currentUser) this.renderRelevantViews();
     }
-
-    /** Inicia um atendimento a partir de um agendamento. */
     startService(appointmentId) { if (!this.checkCaixaStatus()) return; const appointment = this.appointments.find(a => a.id === appointmentId); if (appointment) { appointment.status = 'in_progress'; this.saveData(); this.hideModal(); this.showNotification('Atendimento iniciado!', 'success'); this.renderRelevantViews(); } }
-    
-    /** Finaliza um atendimento, registrando o pagamento. */
     finalizeAppointment(appointmentId, paymentMethod) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); if (!service) return; this.caixa.entradas.push({ descricao: `Serviço: ${service.name} (${appointment.name})`, valor: service.price, data: new Date().toISOString(), metodo: paymentMethod }); appointment.status = 'completed'; appointment.paymentStatus = 'paid'; appointment.paymentMethod = paymentMethod; appointment.closedAt = new Date().toISOString(); this.saveData(); this.hideModal(); this.showNotification(`Pagamento de ${this.formatCurrency(service.price)} recebido!`, 'success'); this.renderRelevantViews(); }
-    
-    /** Cancela um agendamento. */
     cancelAppointment(id) { if (confirm('Tem certeza que deseja cancelar este agendamento?')) { const appointment = this.appointments.find(a => a.id === id); if (appointment) { appointment.status = 'cancelled'; this.saveData(); this.renderRelevantViews(); this.showNotification('Agendamento cancelado.'); } } }
     
-    // ---------------------------------------------------------------------------------
     // 7. LÓGICA DO CAIXA
-    // ---------------------------------------------------------------------------------
-
-    /** Verifica se o caixa está aberto. Se não estiver, impede a operação. */
     checkCaixaStatus(isInitialLoad = false) { if (this.caixa.status === 'fechado') { if (!isInitialLoad) { this.showNotification('O caixa está fechado. É preciso abri-lo para esta operação.', 'error'); this.showAbrirCaixaModal(); } return false; } return true; }
-    
-    /** Abre o caixa com um valor inicial. */
     abrirCaixa(valorInicial) { if (isNaN(valorInicial) || valorInicial < 0) return this.showNotification('Valor inicial inválido.', 'error'); this.caixa = { status: 'aberto', saldoInicial: valorInicial, abertura: new Date().toISOString(), entradas: [], saidas: [] }; this.saveData(); this.hideModal(); this.updateCaixaStatusIndicator(); this.renderFinancialPage(); this.showNotification(`Caixa aberto com ${this.formatCurrency(valorInicial)}!`, 'success'); }
-    
-    /** Fecha o caixa, calcula o resumo e salva no histórico. */
     fecharCaixa(countedCash) {
         if (isNaN(countedCash) || countedCash < 0) return this.showNotification('Valor conferido em dinheiro é inválido.', 'error');
-        const totalsByMethod = this.caixa.entradas.reduce((acc, e) => ({ ...acc, [e.metodo]: (acc[e.metodo] || 0) + e.valor }), {});
         const totalEntradas = this.caixa.entradas.reduce((sum, item) => sum + item.valor, 0);
         const totalSaidas = this.caixa.saidas.reduce((sum, item) => sum + item.valor, 0);
-        const dinheiroEntradas = totalsByMethod['Dinheiro'] || 0;
+        const dinheiroEntradas = this.caixa.entradas.filter(e => e.metodo === 'Dinheiro').reduce((sum, e) => sum + e.valor, 0);
         const saldoEsperadoDinheiro = this.caixa.saldoInicial + dinheiroEntradas - totalSaidas;
-        
-        const closingSummary = { id: `caixa_${Date.now()}`, abertura: this.caixa.abertura, fechamento: new Date().toISOString(), saldoInicial: this.caixa.saldoInicial, totalEntradas, totalSaidas, saldoEsperadoDinheiro, dinheiroConferido: countedCash, diferenca: countedCash - saldoEsperadoDinheiro };
-        
+        const closingSummary = { abertura: this.caixa.abertura, fechamento: new Date().toISOString(), saldoInicial: this.caixa.saldoInicial, totalEntradas, totalSaidas, saldoEsperadoDinheiro, dinheiroConferido: countedCash, diferenca: countedCash - saldoEsperadoDinheiro };
         this.caixaHistory.push(closingSummary);
         this.caixa = { status: 'fechado', saldoInicial: 0, abertura: null, entradas: [], saidas: [] };
-        
-        this.saveData();
-        this.hideModal();
-        this.updateCaixaStatusIndicator();
-        this.renderFinancialPage();
-        this.showNotification('Caixa fechado e salvo no histórico.', 'success');
+        this.saveData(); this.hideModal(); this.updateCaixaStatusIndicator(); this.renderFinancialPage(); this.showNotification('Caixa fechado e salvo no histórico.', 'success');
     }
 
-    // ---------------------------------------------------------------------------------
     // 8. FUNÇÕES DE RENDERIZAÇÃO DE VIEWS DO DASHBOARD
-    // ---------------------------------------------------------------------------------
-
-    /** Carrega os dados da tela principal do dashboard. */
     loadDashboardData() { if(!this.currentUser) return; this.updateCaixaStatusIndicator(); this.updateStats(); this.renderDashboardAppointments(); }
-
-    /** Atualiza os cartões de estatísticas rápidas. */
     updateStats() {
         const todayStr = this.getTodayDateString();
         const todayAppointments = this.appointments.filter(a => a.date === todayStr && a.status === 'scheduled');
         const todayRevenue = (this.caixa.entradas || []).filter(e => e.data.startsWith(todayStr)).reduce((sum, e) => sum + e.valor, 0);
         const pendingCount = this.appointments.filter(a => a.status === 'in_progress').length;
-        
         document.getElementById('todayCount').textContent = todayAppointments.length;
         document.getElementById('pendingCount').textContent = pendingCount;
         document.getElementById('todayProfit').textContent = this.formatCurrency(todayRevenue);
     }
-    
-    /** Renderiza a lista de próximos agendamentos no dashboard. */
     renderDashboardAppointments() { const listEl = document.getElementById('appointmentsList'); if(!listEl) return; const today = this.getTodayDateString(); const upcoming = this.appointments.filter(a => a.date >= today && (a.status === 'scheduled' || a.status === 'in_progress')).sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time)).slice(0, 5); listEl.innerHTML = upcoming.length === 0  ? '<p class="empty-state">Nenhum agendamento futuro.</p>'  : upcoming.map(a => this.createAppointmentCard(a)).join(''); }
-    
-    /** Renderiza a lista de comandas em andamento. */
     renderPendingAppointments() { const container = document.getElementById('pendingAppointmentsList'); if(!container) return; const pending = this.appointments.filter(a => a.status === 'in_progress'); container.innerHTML = pending.length === 0 ? '<p class="empty-state">Nenhuma comanda em andamento.</p>' : pending.map(app => this.createAppointmentCard(app)).join(''); }
-    
-    /** Renderiza a visualização da agenda com os barbeiros e seus agendamentos. */
     renderAgendaView() {
         const container = document.getElementById('agendaViewContainer');
         const dateFilter = document.getElementById('agendaDateFilter');
@@ -830,37 +690,27 @@ class BarberPro {
             if (container) container.innerHTML = '<p class="empty-state">Nenhum profissional cadastrado.</p>';
             return;
         };
-        const selectedDate = dateFilter.value;
-        container.innerHTML = '';
-        
+        const selectedDate = dateFilter.value; container.innerHTML = '';
         const timeSlots = [];
         for (let h = 9; h < 19; h++) {
-            if (h === 12 || h === 13) continue; // Pula horário de almoço
-            for (let m = 0; m < 60; m += 15) {
-                timeSlots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
-            }
+            if (h === 12 || h === 13) continue;
+            for (let m = 0; m < 60; m += 15) timeSlots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
         }
-
-        const slotHeight = 20; // Altura de cada slot de 15 min em pixels
+        const slotHeight = 20;
         const timeColumnHTML = '<div class="agenda-time-column">' + timeSlots.map(time => `<div class="agenda-time-slot" style="height: ${slotHeight}px;">${time.endsWith(':00') ? `<b>${time}</b>` : time}</div>`).join('') + '</div>';
-        
         let barbersAreaHTML = `<div class="agenda-barbers-area" style="grid-template-columns: repeat(${this.barbers.length}, 1fr);">`;
         this.barbers.forEach(barber => {
             barbersAreaHTML += `<div class="agenda-barber-column"><div class="agenda-barber-header">${barber.name}</div><div class="agenda-slots-container" style="height: ${timeSlots.length * slotHeight}px;">`;
-            const barberAppointments = this.appointments.filter(a => a.barberId === barber.id && a.date === selectedDate && a.status !== 'cancelled');
-            barberAppointments.forEach(app => {
+            this.appointments.filter(a => a.barberId === barber.id && a.date === selectedDate && a.status !== 'cancelled').forEach(app => {
                 const service = this.services.find(s => s.id === app.service);
                 if (!service || !app.time) return;
                 try {
                     const [startHour, startMinute] = app.time.split(':').map(Number);
-                    
                     let minutesFrom9 = (startHour - 9) * 60 + startMinute;
-                    let lunchBreakMinutes = (startHour >= 14) ? 120 : 0; // Desconta 2h (120min) de almoço se o horário for 14h ou mais
+                    let lunchBreakMinutes = (startHour >= 14) ? 120 : 0;
                     let effectiveMinutes = minutesFrom9 - lunchBreakMinutes;
-
                     const topPosition = (effectiveMinutes / 15) * slotHeight;
                     const height = (service.duration / 15) * slotHeight;
-                    
                     barbersAreaHTML += `<div class="agenda-appointment-block status-${app.status}" data-id="${app.id}" data-action="open-comanda-modal" style="top: ${topPosition}px; height: ${height}px;"><p class="appointment-block-name">${app.name}</p><p class="appointment-block-service">${service.name}</p></div>`;
                 } catch(e) { console.error("Erro ao renderizar agendamento:", app, e); }
             });
@@ -869,64 +719,34 @@ class BarberPro {
         barbersAreaHTML += `</div>`;
         container.innerHTML = timeColumnHTML + barbersAreaHTML;
     }
-    
-    /** Cria o HTML para um card de agendamento. */
     createAppointmentCard(appointment) { const service = this.services.find(s => s.id === appointment.service); const barber = this.barbers.find(b => b.id === appointment.barberId); const statusMap = { scheduled: { text: 'Agendado' }, completed: { text: 'Concluído' }, cancelled: { text: 'Cancelado' }, in_progress: { text: 'Em Andamento'} }; const status = statusMap[appointment.status] || {text: 'Pendente'}; return `<div class="appointment-card" data-id="${appointment.id}" data-action="open-comanda-modal"><div class="appointment-header"><div><h4>${appointment.name}</h4><p>${this.formatDate(appointment.date)} - ${appointment.time}h</p></div><div><p>${barber?.name || 'N/A'}</p><span class="appointment-status status-${appointment.status}">${status.text}</span></div></div><div class="appointment-footer"><p>${service?.name || 'Serviço'} - <strong>${this.formatCurrency(service?.price || 0)}</strong></p></div></div>`; }
-    
-    /** Renderiza a lista completa de clientes. */
-    renderFullClientsList() { const container = document.getElementById('fullClientsList'); const searchInput = document.getElementById('clientSearchInput'); if(!container || !searchInput) return; const searchTerm = searchInput.value.toLowerCase(); const clients = this.clients.filter(c => c.name.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm)).sort((a,b) => a.name.localeCompare(b.name)); container.innerHTML = clients.length === 0 ? '<p class="empty-state">Nenhum cliente encontrado.</p>' : clients.map(client => `<div class="data-card"><div><strong>${client.name}</strong><div class="data-card-info"><span>📞 ${client.phone}</span></div></div><div class="data-card-actions"><button class="btn-secondary btn-small" data-action="view-client-details" data-id="${client.phone}">Ver Detalhes</button></div></div>`).join(''); }
-    
-    /** Renderiza a lista de serviços cadastrados. */
+    renderFullClientsList() { const container = document.getElementById('fullClientsList'); const searchTerm = document.getElementById('clientSearchInput').value.toLowerCase(); if(!container) return; const clients = this.clients.filter(c => c.name.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm)).sort((a,b) => a.name.localeCompare(b.name)); container.innerHTML = clients.length === 0 ? '<p class="empty-state">Nenhum cliente encontrado.</p>' : clients.map(client => `<div class="data-card"><div><strong>${client.name}</strong><div class="data-card-info"><span>📞 ${client.phone}</span></div></div><div class="data-card-actions"><button class="btn-secondary btn-small" data-action="view-client-details" data-id="${client.phone}">Ver Detalhes</button></div></div>`).join(''); }
     renderServicesList() { const container = document.getElementById('servicesList'); if(!container) return; container.innerHTML = this.services.map(service => `<div class="data-card"><div><strong>${service.name}</strong><div class="data-card-info"><span>💰 ${this.formatCurrency(service.price)}</span><span>⏱️ ${service.duration} min</span></div></div><div class="data-card-actions"><button class="btn-secondary btn-small" data-action="edit-service" data-id="${service.id}">Editar</button><button class="btn-secondary btn-danger btn-small" data-action="delete-service" data-id="${service.id}">Excluir</button></div></div>`).join(''); }
-    
-    /** Renderiza a lista de profissionais cadastrados. */
     renderProfessionalsList() { const container = document.getElementById('professionalsList'); if(!container) return; container.innerHTML = this.barbers.map(barber => `<div class="data-card"><div><strong>${barber.name}</strong><div class="data-card-info"><span>${barber.specialty || 'Sem especialidade'}</span></div></div><div class="data-card-actions"><button class="btn-secondary btn-small" data-action="edit-professional" data-id="${barber.id}">Editar</button><button class="btn-secondary btn-danger btn-small" data-action="delete-professional" data-id="${barber.id}">Excluir</button></div></div>`).join(''); }
-    
-    /** Renderiza a página do caixa, mostrando o status (aberto/fechado) e os totais. */
     renderFinancialPage() {
         const container = document.getElementById('financialDashboard');
         const [openBtn, closeBtn, expenseBtn] = ['openCaixaBtn', 'closeCaixaBtn', 'addExpenseBtnMain'].map(id => document.getElementById(id));
         if (!container || !openBtn || !closeBtn || !expenseBtn) return;
-
         if (this.caixa.status === 'aberto') {
-            openBtn.style.display = 'none';
-            closeBtn.style.display = 'inline-block';
-            expenseBtn.style.display = 'inline-block';
+            openBtn.style.display = 'none'; closeBtn.style.display = 'inline-block'; expenseBtn.style.display = 'inline-block';
             const totalEntradas = this.caixa.entradas.reduce((sum, e) => sum + e.valor, 0);
             const totalSaidas = this.caixa.saidas.reduce((sum, s) => sum + s.valor, 0);
             const saldoAtual = this.caixa.saldoInicial + totalEntradas - totalSaidas;
             container.innerHTML = `<div class="financial-summary"><div class="summary-item"><p>Saldo Inicial</p><h4>${this.formatCurrency(this.caixa.saldoInicial)}</h4></div><div class="summary-item"><p>Entradas</p><h4 class="text-green">${this.formatCurrency(totalEntradas)}</h4></div><div class="summary-item"><p>Saídas</p><h4 class="text-red">${this.formatCurrency(totalSaidas)}</h4></div><div class="summary-item total"><p>Saldo Atual</p><h4>${this.formatCurrency(saldoAtual)}</h4></div></div>`;
         } else {
-            openBtn.style.display = 'inline-block';
-            closeBtn.style.display = 'none';
-            expenseBtn.style.display = 'none';
+            openBtn.style.display = 'inline-block'; closeBtn.style.display = 'none'; expenseBtn.style.display = 'none';
             container.innerHTML = `<div class="empty-state"><h3>Caixa Fechado</h3><p>Clique em "Abrir Caixa" para iniciar as operações.</p></div>`;
         }
     }
-    
-    /** Renderiza os gráficos de relatórios. */
-    renderCharts() {
-        // Destroi gráficos antigos para evitar sobreposição
-        Object.values(this.charts).forEach(chart => chart.destroy());
+    renderCharts() { Object.values(this.charts).forEach(chart => chart.destroy()); this.renderRevenueChart(); this.renderServicesChart(); }
 
-        this.renderRevenueChart();
-        this.renderServicesChart();
-    }
-
-    // ---------------------------------------------------------------------------------
-    // 9. LÓGICA DE CRUD (Criar, Ler, Atualizar, Deletar)
-    // ---------------------------------------------------------------------------------
-
-    /** Cria um novo cliente se não existir, ou atualiza o nome se o telefone for o mesmo. */
+    // 9. LÓGICA DE CRUD
     getOrUpdateClient(phone, name) { let client = this.clients.find(c => c.phone === phone); if (!client) { this.clients.push({ phone, name, createdAt: new Date().toISOString() }); } else if (client.name !== name) { client.name = name; } }
-    
-    /** Salva um serviço (novo ou editado). */
     saveService(formData) {
         const id = formData.get('id'); const name = formData.get('name').trim();
         const price = parseFloat(formData.get('price')); const duration = parseInt(formData.get('duration'));
         if (!name || isNaN(price) || price <= 0) return this.showNotification('Nome e preço válido são obrigatórios.', 'error');
         if (this.services.some(s => s.name.toLowerCase() === name.toLowerCase() && s.id !== id)) { return this.showNotification('Já existe um serviço com este nome.', 'error'); }
-        
         const serviceData = { name, price, duration, description: formData.get('description').trim() };
         if (id) {
             const index = this.services.findIndex(s => s.id === id);
@@ -936,16 +756,11 @@ class BarberPro {
         }
         this.saveData(); this.hideModal(); this.renderServicesList(); this.updateServiceDropdown(); this.renderClientServices(); this.showNotification('Serviço salvo!', 'success');
     }
-
-    /** Deleta um serviço. */
     deleteService(id) { if (this.services.length <= 1) return this.showNotification('É necessário ter pelo menos um serviço.', 'error'); if (confirm('Deseja remover este serviço?')) { this.services = this.services.filter(s => s.id !== id); this.saveData(); this.renderServicesList(); this.updateServiceDropdown(); this.renderClientServices(); this.showNotification('Serviço removido.'); } }
-    
-    /** Salva um profissional (novo ou editado). */
     saveProfessional(formData) {
         const id = formData.get('id'); const name = formData.get('name').trim();
         if (!name) return this.showNotification('O nome do profissional é obrigatório.', 'error');
         if (this.barbers.some(b => b.name.toLowerCase() === name.toLowerCase() && b.id !== id)) { return this.showNotification('Já existe um profissional com este nome.', 'error');}
-
         const professionalData = { name, specialty: formData.get('specialty').trim() };
         if (id) {
             const index = this.barbers.findIndex(b => b.id === id);
@@ -955,18 +770,10 @@ class BarberPro {
         }
         this.saveData(); this.hideModal(); this.renderProfessionalsList(); this.updateBarberDropdowns(); this.renderClientBarbers(); this.showNotification('Profissional salvo!', 'success');
     }
-
-    /** Deleta um profissional. */
     deleteProfessional(id) { if (this.barbers.length <= 1) return this.showNotification('É necessário ter pelo menos um profissional.', 'error'); if (confirm('Tem certeza que deseja remover este profissional?')) { this.barbers = this.barbers.filter(b => b.id !== id); this.saveData(); this.renderProfessionalsList(); this.updateBarberDropdowns(); this.renderClientBarbers(); this.showNotification('Profissional removido.'); } }
-    
-    /** Salva uma despesa no caixa atual. */
     saveExpense(formData) { if (!this.checkCaixaStatus()) return; const expenseData = { description: formData.get('description'), amount: parseFloat(formData.get('amount')) }; if(!expenseData.description || !(expenseData.amount > 0)) return this.showNotification('Preencha todos os campos da despesa.', 'error'); this.caixa.saidas.push({ descricao: expenseData.description, valor: expenseData.amount, data: new Date().toISOString() }); this.saveData(); this.hideModal(); this.renderFinancialPage(); this.updateCaixaStatusIndicator(); this.showNotification('Despesa registrada!', 'success'); }
     
-    // ---------------------------------------------------------------------------------
-    // 10. MODAIS (Pop-ups)
-    // ---------------------------------------------------------------------------------
-
-    /** Mostra o modal com um título e conteúdo específicos. */
+    // 10. MODAIS
     showModal(title, content) {
         document.getElementById('modalTitle').textContent = title;
         document.getElementById('modalContent').innerHTML = content;
@@ -975,81 +782,31 @@ class BarberPro {
         const firstInput = document.querySelector('#modalContent input, #modalContent select');
         if (firstInput) firstInput.focus();
     }
-    
-    /** Esconde o modal. */
     hideModal() { document.getElementById('modalBackdrop').style.display = 'none'; document.body.classList.remove('modal-open'); }
-    
-    /** Mostra uma notificação na tela. */
     showNotification(message, type = 'success') { const container = document.getElementById('notificationContainer'); if(!container) return; const notification = document.createElement('div'); notification.className = `notification ${type}`; notification.textContent = message; container.appendChild(notification); setTimeout(() => { notification.style.opacity = '0'; setTimeout(() => notification.remove(), 500); }, 3500); }
-    
-    /** Mostra o modal para adicionar ou editar um serviço. */
     showServiceModal(id = null) { const service = id ? this.services.find(s => s.id === id) : {}; const content = `<form id="serviceForm"><input type="hidden" name="id" value="${service.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${service.name || ''}" required></div><div class="form-group"><label>Preço (R$)</label><input type="number" step="0.01" name="price" value="${service.price || ''}" required></div><div class="form-group"><label>Duração (min)</label><input type="number" step="15" name="duration" value="${service.duration || '45'}" required></div><div class="form-group"><label>Descrição</label><input type="text" name="description" value="${service.description || ''}"></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${service.id ? 'Salvar' : 'Adicionar'}</button></div></form>`; this.showModal(service.id ? 'Editar Serviço' : 'Adicionar Serviço', content); }
-    
-    /** Mostra o modal para adicionar ou editar um profissional. */
     showProfessionalModal(id = null) { const professional = id ? this.barbers.find(b => b.id === id) : {}; const content = `<form id="professionalForm"><input type="hidden" name="id" value="${professional.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${professional.name || ''}" required></div><div class="form-group"><label>Especialidade</label><input type="text" name="specialty" value="${professional.specialty || ''}"></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${id ? 'Salvar' : 'Adicionar'}</button></div></form>`; this.showModal(id ? 'Editar Profissional' : 'Adicionar Profissional', content); }
-    
-    /** Mostra o modal para um novo agendamento ou atendimento de encaixe. */
     showAppointmentModal(isScheduled) { const agendaDate = document.getElementById('agendaDateFilter')?.value || this.getTodayDateString(); const content = `<form id="barberBookingForm" data-walk-in="${!isScheduled}"><div class="form-group"><label>Cliente</label><input type="text" name="name" list="clientSuggestions" placeholder="Buscar ou cadastrar novo" required autocomplete="off"></div><div class="form-group"><label>Celular (DDD)</label><input type="tel" name="phone" placeholder="11999999999" required></div><div class="form-group"><label>Serviço</label><select name="service" required>${this.generateServiceOptions()}</select></div><div class="form-group"><label>Profissional</label><select name="barber" required>${this.generateBarberOptions()}</select></div>${isScheduled ? `<div class="form-group"><label>Data</label><input type="date" name="date" value="${agendaDate}" min="${this.getTodayDateString()}" required></div><div class="form-group"><label>Horário</label><select name="time" required>${this.generateTimeOptions()}</select></div>` : ''}<div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar</button></div></form>${this.populateClientDatalist()}`; this.showModal(isScheduled ? 'Novo Agendamento' : 'Novo Atendimento (Encaixe)', content); }
-    
-    /** Mostra o modal com detalhes do cliente e seu histórico. */
     showClientDetailModal(phone) { const client = this.clients.find(c => c.phone === phone); if(!client) return; const clientAppointments = this.appointments.filter(a => a.phone === phone).sort((a,b)=>new Date(b.createdAt) - new Date(a.createdAt)); const statusMap = { scheduled: 'Agendado', completed: 'Concluído', cancelled: 'Cancelado', in_progress: 'Em Andamento'}; const content = `<div><h4>${client.name}</h4><p><strong>Telefone:</strong> ${client.phone}</p><p><strong>Cliente desde:</strong> ${this.formatDate(client.createdAt)}</p><hr><h5>Histórico</h5><div>${clientAppointments.length > 0 ? clientAppointments.map(a => `<div class="data-card"><span>${this.formatDate(a.date)}</span><span>${this.services.find(s=>s.id===a.service)?.name || ''}</span><span class="status-${a.status}">${statusMap[a.status] || a.status}</span></div>`).join('') : '<p>Nenhum histórico.</p>'}</div></div>`; this.showModal('Detalhes do Cliente', content); }
-    
-    /** Mostra o modal do histórico de caixas fechados. */
     showCaixaHistoryModal() { const content = `<div>${this.caixaHistory.sort((a,b) => new Date(b.fechamento) - new Date(a.fechamento)).map(item => `<div class="data-card"><div><strong>Fechamento:</strong> ${new Date(item.fechamento).toLocaleString('pt-BR')}</div><div>Faturamento: ${this.formatCurrency(item.totalEntradas)}</div><div class="${item.diferenca !== 0 ? (item.diferenca < 0 ? 'text-red' : 'text-green') : ''}">Diferença: ${this.formatCurrency(item.diferenca)}</div></div>`).join('') || '<p class="empty-state">Nenhum histórico.</p>'}</div>`; this.showModal('Histórico de Caixa', content); }
-
-    /** Mostra o modal para adicionar uma despesa. */
     showExpenseModal() { if (!this.checkCaixaStatus()) return; const content = `<form id="expenseForm"><div class="form-group"><label>Descrição</label><input type="text" name="description" required></div><div class="form-group"><label>Valor (R$)</label><input type="number" step="0.01" name="amount" required></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Adicionar Despesa</button></div></form>`; this.showModal('Adicionar Despesa', content); }
-
-    /** CORREÇÃO: Mostra o modal para abrir o caixa. */
     showAbrirCaixaModal() { const content = `<form id="openCaixaForm"><div class="form-group"><label>Valor Inicial (Troco)</label><input type="number" step="0.01" name="initialValue" required></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Abrir Caixa</button></div></form>`; this.showModal('Abrir Caixa', content); }
-    
-    /** CORREÇÃO: Mostra o modal para fechar o caixa. */
     showFecharCaixaModal() { const content = `<form id="closeCaixaForm"><div class="form-group"><label>Dinheiro Contado na Gaveta</label><input type="number" step="0.01" name="countedCash" required></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Fechar Caixa</button></div></form>`; this.showModal('Fechar Caixa', content); }
-
-    /** Mostra o modal de ações para uma comanda (iniciar, finalizar). */
-    showComandaActionsModal(appointmentId) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); const barber = this.barbers.find(b => b.id === appointment.barberId); let actions = ''; if (appointment.status === 'scheduled') { actions = `<button id="startServiceBtn" class="btn-primary">Iniciar Atendimento</button>`; } else if (appointment.status === 'in_progress') { actions = `<button id="finalizeServiceBtn" class="btn-primary">Finalizar e Receber</button>`; } const content = `<div><p><strong>Cliente:</strong> ${appointment.name}</p><p><strong>Serviço:</strong> ${service?.name}</p><p><strong>Valor:</strong> ${this.formatCurrency(service?.price || 0)}</p></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button>${actions}</div>`; this.showModal('Gerenciar Atendimento', content); document.getElementById('startServiceBtn')?.addEventListener('click', () => this.startService(appointmentId)); document.getElementById('finalizeServiceBtn')?.addEventListener('click', () => this.showFinalizeAppointmentModal(appointmentId)); }
+    showComandaActionsModal(appointmentId) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); let actions = ''; if (appointment.status === 'scheduled') actions = `<button id="startServiceBtn" class="btn-primary">Iniciar Atendimento</button>`; else if (appointment.status === 'in_progress') actions = `<button id="finalizeServiceBtn" class="btn-primary">Finalizar e Receber</button>`; const content = `<div><p><strong>Cliente:</strong> ${appointment.name}</p><p><strong>Serviço:</strong> ${service?.name}</p><p><strong>Valor:</strong> ${this.formatCurrency(service?.price || 0)}</p></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button>${actions}</div>`; this.showModal('Gerenciar Atendimento', content); document.getElementById('startServiceBtn')?.addEventListener('click', () => this.startService(appointmentId)); document.getElementById('finalizeServiceBtn')?.addEventListener('click', () => this.showFinalizeAppointmentModal(appointmentId)); }
+    showFinalizeAppointmentModal(appointmentId) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); const content = `<form id="finalizeForm"><p>Finalizando <strong>${appointment.name}</strong>.</p><h4>Total: ${this.formatCurrency(service?.price || 0)}</h4><div class="form-group"><label for="paymentMethod">Forma de Pagamento</label><select id="paymentMethod" name="paymentMethod" required><option value="Dinheiro">Dinheiro</option><option value="Pix">Pix</option><option value="Cartão de Débito">Cartão de Débito</option><option value="Cartão de Crédito">Cartão de Crédito</option></select></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar</button></div></form>`; this.showModal('Finalizar e Receber', content); document.getElementById('finalizeForm')?.addEventListener('submit', e => { e.preventDefault(); this.finalizeAppointment(appointmentId, e.target.querySelector('[name="paymentMethod"]').value); }); }
     
-    /** Mostra o modal para finalizar um atendimento e escolher a forma de pagamento. */
-    showFinalizeAppointmentModal(appointmentId) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); const content = `<form id="finalizeForm"><p>Finalizando <strong>${appointment.name}</strong>.</p><h4>Total: ${this.formatCurrency(service?.price || 0)}</h4><div class="form-group"><label for="paymentMethod">Forma de Pagamento</label><select id="paymentMethod" name="paymentMethod" required><option value="Dinheiro">Dinheiro</option><option value="Pix">Pix</option><option value="Cartão de Débito">Cartão de Débito</option><option value="Cartão de Crédito">Cartão de Crédito</option></select></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar</button></div></form>`; this.showModal('Finalizar e Receber', content); document.getElementById('finalizeForm')?.addEventListener('submit', e => { e.preventDefault(); const paymentMethod = e.target.querySelector('[name="paymentMethod"]').value; this.finalizeAppointment(appointmentId, paymentMethod); }); }
-    
-    // ---------------------------------------------------------------------------------
     // 11. FUNÇÕES UTILITÁRIAS E AUXILIARES
-    // ---------------------------------------------------------------------------------
-
-    /** Atualiza todos os dropdowns de serviços da página. */
     updateServiceDropdown() { document.querySelectorAll('select[name="service"]').forEach(select => select.innerHTML = this.generateServiceOptions()); }
-    
-    /** Atualiza todos os dropdowns de barbeiros da página. */
     updateBarberDropdowns() { document.querySelectorAll('select[name="barber"]').forEach(select => select.innerHTML = this.generateBarberOptions()); }
-    
-    /** Atualiza o dropdown de horários na página do cliente. */
     updateTimeDropdown() { document.querySelectorAll('select[name="time"]').forEach(select => select.innerHTML = this.generateTimeOptions()); }
-    
-    /** Formata um número para a moeda brasileira (BRL). */
     formatCurrency(value) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0); }
-    
-    /** Formata uma string de data para o formato brasileiro (dd/mm/aaaa). */
     formatDate(dateStr) { const date = new Date(dateStr); const userTimezoneOffset = date.getTimezoneOffset() * 60000; return new Date(date.getTime() + userTimezoneOffset).toLocaleDateString('pt-BR'); }
-    
-    /** Retorna a data de hoje no formato YYYY-MM-DD. */
     getTodayDateString() { return new Date().toISOString().split('T')[0]; }
-    
-    /** Remove caracteres não numéricos de um telefone. */
     sanitizePhone(phone) { return String(phone).replace(/\D/g, ''); }
-    
-    /** Define a data mínima para o input de data como hoje. */
     setMinDate() { const dateInput = document.getElementById('preferredDate'); if(dateInput) dateInput.min = this.getTodayDateString(); }
-    
-    /** Navega entre os dias na visualização da agenda. */
     navigateAgendaDays(direction) { const dateInput = document.getElementById('agendaDateFilter'); if (!dateInput.value) return; const date = new Date(dateInput.value + 'T00:00:00'); date.setDate(date.getDate() + direction); dateInput.value = date.toISOString().split('T')[0]; this.renderAgendaView(); }
-    
-    /** Renderiza os serviços na vitrine da área do cliente. */
     renderClientServices() { const container = document.getElementById('services-showcase-list'); if (container) container.innerHTML = this.services.map(service => `<div class="service-card glass-card"><h4>${service.name}</h4><p>${this.formatCurrency(service.price)}</p><p>${service.description || ''}</p></div>`).join(''); }
-    
-    /** Renderiza os barbeiros na vitrine da área do cliente. */
     renderClientBarbers() { const container = document.getElementById('barbers-showcase-list'); if (container) container.innerHTML = this.barbers.map(barber => `<div class="barber-card glass-card"><img src="https://ui-avatars.com/api/?name=${encodeURIComponent(barber.name)}&background=c7a355&color=fff&size=128" alt="${barber.name}"><h4>${barber.name}</h4><p>${barber.specialty || 'Especialista'}</p></div>`).join(''); }
-    
-    /** Atualiza o indicador visual do status do caixa. */
     updateCaixaStatusIndicator() {
         const indicator = document.getElementById('caixaStatus'); if (!indicator) return;
         if (this.caixa.status === 'aberto') {
@@ -1061,92 +818,34 @@ class BarberPro {
             indicator.innerHTML = `<span>Caixa Fechado</span>`;
         }
     }
-
-    /** Gera o HTML das opções para o select de serviços. */
     generateServiceOptions() { return '<option value="">Selecione</option>' + this.services.map(s => `<option value="${s.id}">${s.name} - ${this.formatCurrency(s.price)}</option>`).join(''); }
-    
-    /** Gera o HTML das opções para o select de barbeiros. */
     generateBarberOptions() { return '<option value="">Selecione</option>' + this.barbers.map(b => `<option value="${b.id}">${b.name}</option>`).join(''); }
-    
-    /** Gera o HTML das opções para o select de horários. */
     generateTimeOptions() { let options = '<option value="">Selecione</option>'; for (let h = 9; h < 19; h++) { if (h === 12 || h === 13) continue; for (let m = 0; m < 60; m += 15) { const time = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; options += `<option value="${time}">${time}</option>`; } } return options; }
-    
-    /** Renderiza novamente as views relevantes após uma ação (ex: novo agendamento). */
-    renderRelevantViews() { if(this.currentUser) { const currentView = document.querySelector('.content-view[style*="block"]')?.id; if (currentView === 'dashboardView') this.loadDashboardData(); if (currentView === 'appointmentsView') this.renderAgendaView(); if (currentView === 'comandasView') this.renderPendingAppointments(); }}
-    
-    /** Gera o HTML para o datalist de sugestões de clientes. */
+    renderRelevantViews() { if(this.currentUser) { const currentView = document.querySelector('.content-view[style*="block"]')?.id; if (currentView) this.switchDashboardView(currentView); }}
     populateClientDatalist() { return `<datalist id="clientSuggestions">${this.clients.map(c => `<option value="${c.name}"></option>`).join('')}</datalist>`; }
-    
-    /** Trata a entrada no campo de nome do cliente para autocompletar o telefone. */
     handleClientNameInput(event) { const client = this.clients.find(c => c.name.toLowerCase() === event.target.value.toLowerCase()); if (client) { event.target.closest('form').querySelector('input[name="phone"]').value = client.phone; }}
     
-    // ---------------------------------------------------------------------------------
-    // 12. MÉTODOS PARA GRÁFICOS (BÔNUS)
-    // ---------------------------------------------------------------------------------
-    
-    /** Renderiza o gráfico de faturamento dos últimos 7 dias. */
+    // 12. MÉTODOS PARA GRÁFICOS
     renderRevenueChart() {
-        const ctx = document.getElementById('revenueChart')?.getContext('2d');
-        if (!ctx) return;
-
-        const labels = [];
-        const data = [];
+        const ctx = document.getElementById('revenueChart')?.getContext('2d'); if (!ctx) return;
+        const labels = []; const data = [];
         for (let i = 6; i >= 0; i--) {
-            const date = new Date();
-            date.setDate(date.getDate() - i);
+            const date = new Date(); date.setDate(date.getDate() - i);
             const dateString = date.toISOString().split('T')[0];
             labels.push(date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
-
-            const dailyRevenue = this.caixaHistory
-                .flatMap(h => h.entradas || []) // Pega entradas do histórico
-                .concat(this.caixa.entradas) // Concatena com entradas do caixa atual
-                .filter(e => e.data.startsWith(dateString))
-                .reduce((sum, e) => sum + e.valor, 0);
-            
+            const dailyRevenue = this.appointments.filter(a => a.date === dateString && a.status === 'completed').reduce((sum, a) => sum + (this.services.find(s => s.id === a.service)?.price || 0), 0);
             data.push(dailyRevenue);
         }
-
-        this.charts.revenue = new Chart(ctx, {
-            type: 'line',
-            data: { labels, datasets: [{ label: 'Faturamento', data, borderColor: 'hsl(43, 96%, 56%)', tension: 0.3, fill: true, backgroundColor: 'hsla(43, 96%, 56%, 0.1)' }] },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-        });
+        this.charts.revenue = new Chart(ctx, { type: 'line', data: { labels, datasets: [{ label: 'Faturamento', data, borderColor: 'hsl(43, 96%, 56%)', tension: 0.3, fill: true, backgroundColor: 'hsla(43, 96%, 56%, 0.1)' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
     }
-
-    /** Renderiza o gráfico de serviços mais realizados. */
     renderServicesChart() {
-        const ctx = document.getElementById('servicesChart')?.getContext('2d');
-        if (!ctx) return;
-
-        const serviceCounts = this.appointments
-            .filter(a => a.status === 'completed')
-            .reduce((acc, app) => {
-                const service = this.services.find(s => s.id === app.service);
-                if (service) {
-                    acc[service.name] = (acc[service.name] || 0) + 1;
-                }
-                return acc;
-            }, {});
-
-        const labels = Object.keys(serviceCounts);
-        const data = Object.values(serviceCounts);
-
-        this.charts.services = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels,
-                datasets: [{
-                    label: 'Atendimentos',
-                    data,
-                    backgroundColor: ['#f59e0b', '#8b5cf6', '#3b82f6', '#22c55e', '#ef4444'],
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        const ctx = document.getElementById('servicesChart')?.getContext('2d'); if (!ctx) return;
+        const serviceCounts = this.appointments.filter(a => a.status === 'completed').reduce((acc, app) => { const service = this.services.find(s => s.id === app.service); if (service) acc[service.name] = (acc[service.name] || 0) + 1; return acc; }, {});
+        const labels = Object.keys(serviceCounts); const data = Object.values(serviceCounts);
+        this.charts.services = new Chart(ctx, { type: 'doughnut', data: { labels, datasets: [{ label: 'Atendimentos', data, backgroundColor: ['#f59e0b', '#8b5cf6', '#3b82f6', '#22c55e', '#ef4444'], hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false } });
     }
 }
 
-// Inicia a aplicação criando uma nova instância da classe.
 window.barberPro = new BarberPro();
 
     </script>
