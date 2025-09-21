@@ -142,13 +142,13 @@
         .agenda-barber-column { border-left: 1px solid var(--secondary); }
         .agenda-slots-container { position: relative; }
         .agenda-barber-header { text-align: center; padding: .5rem; position: sticky; top: 0; background: var(--background); z-index: 10; border-bottom: 1px solid var(--accent); font-weight: 600; }
-        .agenda-appointment-block { position: absolute; left: 4px; right: 4px; border-radius: calc(var(--radius) / 2); cursor: pointer; transition: all .2s; z-index: 5; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 2px 6px; min-height: 20px; }
+        .agenda-appointment-block { position: absolute; left: 4px; right: 4px; border-radius: calc(var(--radius) / 2); cursor: pointer; transition: all .2s; z-index: 5; display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; padding: 4px 6px; min-height: 20px; }
         .agenda-appointment-block.status-scheduled { background-color: var(--color-blue); }
         .agenda-appointment-block.status-in_progress { background-color: var(--color-inprogress); }
-        .agenda-appointment-block.status-completed { background-color: var(--color-green); opacity: 0.8; }
+        .agenda-appointment-block.status-completed { background-color: #166534; /* Darker Green */ }
         .appointment-block-name, .appointment-block-service { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%; line-height: 1.3; }
-        .appointment-block-name { font-weight: 600; font-size: 0.75rem; color: var(--foreground); }
-        .appointment-block-service { font-size: 0.7rem; color: rgba(255,255,255,0.8); }
+        .appointment-block-name { font-weight: 600; font-size: 0.8rem; color: hsl(210, 40%, 98%); }
+        .appointment-block-service { font-size: 0.75rem; color: hsl(210, 40%, 85%); }
 
         /* --- Listas de Dados (Clientes, Serviços, etc.) --- */
         .data-card { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background-color: var(--background); padding: 1rem; border-radius: var(--radius); border-left: 4px solid var(--border); gap: 1rem; margin-bottom: 1rem; }
@@ -171,7 +171,8 @@
         .modal-container{max-width:500px;width:100%;animation:slideIn .3s ease;max-height:90vh;display:flex;flex-direction:column;}
         .modal-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid var(--border);}
         .modal-content{padding: 1.5rem; overflow-y: auto;}
-        .modal-footer{padding: 1rem 1.5rem; border-top:1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.5rem;}
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; }
+        .modal-footer-actions { display: flex; gap: 0.75rem; }
         .close-modal-btn { background: none; border: none; font-size: 2rem; color: var(--muted-foreground); cursor: pointer; line-height: 1; padding: 0; }
         #notificationContainer{position:fixed;bottom:1.5rem;right:1.5rem;z-index:2100;display:flex;flex-direction:column;gap:.75rem;}
         .notification{padding:1rem 1.5rem;border-radius:var(--radius);color:var(--primary-foreground);min-width:250px;box-shadow:0 4px 15px rgba(0,0,0,.2);animation:slideInUp .4s ease; opacity: 1; transition: opacity 0.5s ease;}
@@ -404,7 +405,7 @@ class BarberPro {
     constructor() {
         this.currentUser = null;
         this.charts = {};
-        this.DATA_VERSION = '6.1';
+        this.DATA_VERSION = '6.2'; // Versão atualizada para garantir que os dados antigos sejam limpos se necessário
         document.addEventListener('DOMContentLoaded', () => this.init());
     }
 
@@ -740,34 +741,77 @@ class BarberPro {
 
     // 9. LÓGICA DE CRUD
     getOrUpdateClient(phone, name) { let client = this.clients.find(c => c.phone === phone); if (!client) { this.clients.push({ phone, name, createdAt: new Date().toISOString() }); } else if (client.name !== name) { client.name = name; } }
+    
     saveService(formData) {
-        const id = formData.get('id'); const name = formData.get('name').trim();
-        const price = parseFloat(formData.get('price')); const duration = parseInt(formData.get('duration'));
-        if (!name || isNaN(price) || price <= 0 || isNaN(duration) || duration <=0) return this.showNotification('Nome, preço e duração válidos são obrigatórios.', 'error');
-        if (this.services.some(s => s.name.toLowerCase() === name.toLowerCase() && s.id !== id)) { return this.showNotification('Já existe um serviço com este nome.', 'error'); }
-        const serviceData = { name, price, duration, description: formData.get('description').trim() };
-        if (id) {
-            const index = this.services.findIndex(s => s.id === id);
-            if (index > -1) this.services[index] = { ...this.services[index], ...serviceData };
-        } else {
-            this.services.push({ id: `s_${Date.now()}`, ...serviceData });
+        try {
+            const id = formData.get('id');
+            const name = formData.get('name')?.trim();
+            const priceStr = formData.get('price')?.trim();
+            const durationStr = formData.get('duration')?.trim();
+
+            if (!name || !priceStr || !durationStr) {
+                return this.showNotification('Todos os campos (Nome, Preço, Duração) são obrigatórios.', 'error');
+            }
+
+            const price = parseFloat(priceStr.replace(',', '.'));
+            const duration = parseInt(durationStr);
+
+            if (isNaN(price) || price <= 0) {
+                return this.showNotification('O preço inserido é inválido. Use números (ex: 35.00).', 'error');
+            }
+            if (isNaN(duration) || duration <= 0) {
+                return this.showNotification('A duração inserida é inválida.', 'error');
+            }
+            if (this.services.some(s => s.name.toLowerCase() === name.toLowerCase() && s.id !== id)) {
+                return this.showNotification('Já existe um serviço com este nome.', 'error');
+            }
+
+            const serviceData = { name, price, duration, description: formData.get('description').trim() };
+            if (id) {
+                const index = this.services.findIndex(s => s.id === id);
+                if (index > -1) this.services[index] = { ...this.services[index], ...serviceData };
+            } else {
+                this.services.push({ id: `s_${Date.now()}`, ...serviceData });
+            }
+            this.saveData();
+            this.hideModal();
+            this.renderServicesList();
+            this.updateServiceDropdown();
+            this.renderClientServices();
+            this.showNotification('Serviço salvo!', 'success');
+        } catch (error) {
+            console.error("Erro ao salvar serviço:", error);
+            this.showNotification("Ocorreu um erro inesperado ao salvar.", "error");
         }
-        this.saveData(); this.hideModal(); this.renderServicesList(); this.updateServiceDropdown(); this.renderClientServices(); this.showNotification('Serviço salvo!', 'success');
     }
+
     deleteService(id) { if (this.services.length <= 1) return this.showNotification('É necessário ter pelo menos um serviço.', 'error'); if (confirm('Deseja remover este serviço?')) { this.services = this.services.filter(s => s.id !== id); this.saveData(); this.renderServicesList(); this.updateServiceDropdown(); this.renderClientServices(); this.showNotification('Serviço removido.'); } }
+    
     saveProfessional(formData) {
-        const id = formData.get('id'); const name = formData.get('name').trim();
-        if (!name) return this.showNotification('O nome do profissional é obrigatório.', 'error');
-        if (this.barbers.some(b => b.name.toLowerCase() === name.toLowerCase() && b.id !== id)) { return this.showNotification('Já existe um profissional com este nome.', 'error');}
-        const professionalData = { name, specialty: formData.get('specialty').trim() };
-        if (id) {
-            const index = this.barbers.findIndex(b => b.id === id);
-            if (index > -1) this.barbers[index] = { ...this.barbers[index], ...professionalData };
-        } else {
-            this.barbers.push({ id: `b_${Date.now()}`, ...professionalData });
+        try {
+            const id = formData.get('id');
+            const name = formData.get('name').trim();
+            if (!name) return this.showNotification('O nome do profissional é obrigatório.', 'error');
+            if (this.barbers.some(b => b.name.toLowerCase() === name.toLowerCase() && b.id !== id)) { return this.showNotification('Já existe um profissional com este nome.', 'error');}
+            const professionalData = { name, specialty: formData.get('specialty').trim() };
+            if (id) {
+                const index = this.barbers.findIndex(b => b.id === id);
+                if (index > -1) this.barbers[index] = { ...this.barbers[index], ...professionalData };
+            } else {
+                this.barbers.push({ id: `b_${Date.now()}`, ...professionalData });
+            }
+            this.saveData();
+            this.hideModal();
+            this.renderProfessionalsList();
+            this.updateBarberDropdowns();
+            this.renderClientBarbers();
+            this.showNotification('Profissional salvo!', 'success');
+        } catch (error) {
+            console.error("Erro ao salvar profissional:", error);
+            this.showNotification("Ocorreu um erro inesperado ao salvar.", "error");
         }
-        this.saveData(); this.hideModal(); this.renderProfessionalsList(); this.updateBarberDropdowns(); this.renderClientBarbers(); this.showNotification('Profissional salvo!', 'success');
     }
+
     deleteProfessional(id) { if (this.barbers.length <= 1) return this.showNotification('É necessário ter pelo menos um profissional.', 'error'); if (confirm('Tem certeza que deseja remover este profissional?')) { this.barbers = this.barbers.filter(b => b.id !== id); this.saveData(); this.renderProfessionalsList(); this.updateBarberDropdowns(); this.renderClientBarbers(); this.showNotification('Profissional removido.'); } }
     saveExpense(formData) { if (!this.checkCaixaStatus()) return; const expenseData = { description: formData.get('description'), amount: parseFloat(formData.get('amount')) }; if(!expenseData.description || !(expenseData.amount > 0)) return this.showNotification('Preencha todos os campos da despesa.', 'error'); this.caixa.saidas.push({ descricao: expenseData.description, valor: expenseData.amount, data: new Date().toISOString() }); this.saveData(); this.hideModal(); this.renderFinancialPage(); this.updateCaixaStatusIndicator(); this.showNotification('Despesa registrada!', 'success'); }
     
@@ -782,16 +826,41 @@ class BarberPro {
     }
     hideModal() { document.getElementById('modalBackdrop').style.display = 'none'; document.body.classList.remove('modal-open'); }
     showNotification(message, type = 'success') { const container = document.getElementById('notificationContainer'); if(!container) return; const notification = document.createElement('div'); notification.className = `notification ${type}`; notification.textContent = message; container.appendChild(notification); setTimeout(() => { notification.style.opacity = '0'; setTimeout(() => notification.remove(), 500); }, 3500); }
-    showServiceModal(id = null) { const service = id ? this.services.find(s => s.id === id) : {}; const content = `<form id="serviceForm"><input type="hidden" name="id" value="${service.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${service.name || ''}" required></div><div class="form-group"><label>Preço (R$)</label><input type="number" step="0.01" name="price" value="${service.price || ''}" required></div><div class="form-group"><label>Duração (min)</label><input type="number" step="15" name="duration" value="${service.duration || '45'}" required></div><div class="form-group"><label>Descrição</label><input type="text" name="description" value="${service.description || ''}"></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${service.id ? 'Salvar' : 'Adicionar'}</button></div></form>`; this.showModal(service.id ? 'Editar Serviço' : 'Adicionar Serviço', content); }
-    showProfessionalModal(id = null) { const professional = id ? this.barbers.find(b => b.id === id) : {}; const content = `<form id="professionalForm"><input type="hidden" name="id" value="${professional.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${professional.name || ''}" required></div><div class="form-group"><label>Especialidade</label><input type="text" name="specialty" value="${professional.specialty || ''}"></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${id ? 'Salvar' : 'Adicionar'}</button></div></form>`; this.showModal(id ? 'Editar Profissional' : 'Adicionar Profissional', content); }
-    showAppointmentModal(isScheduled) { const agendaDate = document.getElementById('agendaDateFilter')?.value || this.getTodayDateString(); const content = `<form id="barberBookingForm" data-walk-in="${!isScheduled}"><div class="form-group"><label>Cliente</label><input type="text" name="name" list="clientSuggestions" placeholder="Buscar ou cadastrar novo" required autocomplete="off"></div><div class="form-group"><label>Celular (DDD)</label><input type="tel" name="phone" placeholder="11999999999" required></div><div class="form-group"><label>Serviço</label><select name="service" required>${this.generateServiceOptions()}</select></div><div class="form-group"><label>Profissional</label><select name="barber" required>${this.generateBarberOptions()}</select></div>${isScheduled ? `<div class="form-group"><label>Data</label><input type="date" name="date" value="${agendaDate}" min="${this.getTodayDateString()}" required></div><div class="form-group"><label>Horário</label><select name="time" required>${this.generateTimeOptions()}</select></div>` : ''}<div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar</button></div></form>${this.populateClientDatalist()}`; this.showModal(isScheduled ? 'Novo Agendamento' : 'Novo Atendimento (Encaixe)', content); }
+    showServiceModal(id = null) { const service = id ? this.services.find(s => s.id === id) : {}; const content = `<form id="serviceForm"><input type="hidden" name="id" value="${service.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${service.name || ''}" required></div><div class="form-group"><label>Preço (R$)</label><input type="text" name="price" placeholder="Ex: 35.00" value="${service.price || ''}" required></div><div class="form-group"><label>Duração (min)</label><input type="number" step="15" name="duration" value="${service.duration || '45'}" required></div><div class="form-group"><label>Descrição</label><input type="text" name="description" value="${service.description || ''}"></div><div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${service.id ? 'Salvar' : 'Adicionar'}</button></div></div></form>`; this.showModal(service.id ? 'Editar Serviço' : 'Adicionar Serviço', content); }
+    showProfessionalModal(id = null) { const professional = id ? this.barbers.find(b => b.id === id) : {}; const content = `<form id="professionalForm"><input type="hidden" name="id" value="${professional.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${professional.name || ''}" required></div><div class="form-group"><label>Especialidade</label><input type="text" name="specialty" value="${professional.specialty || ''}"></div><div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${id ? 'Salvar' : 'Adicionar'}</button></div></div></form>`; this.showModal(id ? 'Editar Profissional' : 'Adicionar Profissional', content); }
+    showAppointmentModal(isScheduled) { const agendaDate = document.getElementById('agendaDateFilter')?.value || this.getTodayDateString(); const content = `<form id="barberBookingForm" data-walk-in="${!isScheduled}"><div class="form-group"><label>Cliente</label><input type="text" name="name" list="clientSuggestions" placeholder="Buscar ou cadastrar novo" required autocomplete="off"></div><div class="form-group"><label>Celular (DDD)</label><input type="tel" name="phone" placeholder="11999999999" required></div><div class="form-group"><label>Serviço</label><select name="service" required>${this.generateServiceOptions()}</select></div><div class="form-group"><label>Profissional</label><select name="barber" required>${this.generateBarberOptions()}</select></div>${isScheduled ? `<div class="form-group"><label>Data</label><input type="date" name="date" value="${agendaDate}" min="${this.getTodayDateString()}" required></div><div class="form-group"><label>Horário</label><select name="time" required>${this.generateTimeOptions()}</select></div>` : ''}<div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar</button></div></div></form>${this.populateClientDatalist()}`; this.showModal(isScheduled ? 'Novo Agendamento' : 'Novo Atendimento (Encaixe)', content); }
     showClientDetailModal(phone) { const client = this.clients.find(c => c.phone === phone); if(!client) return; const clientAppointments = this.appointments.filter(a => a.phone === phone).sort((a,b)=>new Date(b.createdAt) - new Date(a.createdAt)); const statusMap = { scheduled: 'Agendado', completed: 'Concluído', cancelled: 'Cancelado', in_progress: 'Em Andamento'}; const content = `<div><h4>${client.name}</h4><p><strong>Telefone:</strong> ${client.phone}</p><p><strong>Cliente desde:</strong> ${this.formatDate(client.createdAt)}</p><hr><h5>Histórico</h5><div>${clientAppointments.length > 0 ? clientAppointments.map(a => `<div class="data-card"><span>${this.formatDate(a.date)}</span><span>${this.services.find(s=>s.id===a.service)?.name || ''}</span><span class="appointment-status status-${a.status}">${statusMap[a.status] || a.status}</span></div>`).join('') : '<p>Nenhum histórico.</p>'}</div></div>`; this.showModal('Detalhes do Cliente', content); }
     showCaixaHistoryModal() { const content = `<div>${this.caixaHistory.sort((a,b) => new Date(b.fechamento) - new Date(a.fechamento)).map(item => `<div class="data-card"><div><strong>Fechamento:</strong> ${new Date(item.fechamento).toLocaleString('pt-BR')}</div><div>Faturamento: ${this.formatCurrency(item.totalEntradas)}</div><div class="${item.diferenca !== 0 ? (item.diferenca < 0 ? 'text-red' : 'text-green') : ''}">Diferença: ${this.formatCurrency(item.diferenca)}</div></div>`).join('') || '<p class="empty-state">Nenhum histórico.</p>'}</div>`; this.showModal('Histórico de Caixa', content); }
-    showExpenseModal() { if (!this.checkCaixaStatus()) return; const content = `<form id="expenseForm"><div class="form-group"><label>Descrição</label><input type="text" name="description" required></div><div class="form-group"><label>Valor (R$)</label><input type="number" step="0.01" name="amount" required></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Adicionar Despesa</button></div></form>`; this.showModal('Adicionar Despesa', content); }
-    showAbrirCaixaModal() { const content = `<form id="openCaixaForm"><div class="form-group"><label>Valor Inicial (Troco)</label><input type="number" step="0.01" name="initialValue" required></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Abrir Caixa</button></div></form>`; this.showModal('Abrir Caixa', content); }
-    showFecharCaixaModal() { const content = `<form id="closeCaixaForm"><div class="form-group"><label>Dinheiro Contado na Gaveta</label><input type="number" step="0.01" name="countedCash" required></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Fechar Caixa</button></div></form>`; this.showModal('Fechar Caixa', content); }
-    showComandaActionsModal(appointmentId) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); let actions = ''; if (appointment.status === 'scheduled') actions = `<button id="startServiceBtn" class="btn-primary">Iniciar Atendimento</button>`; else if (appointment.status === 'in_progress') actions = `<button id="finalizeServiceBtn" class="btn-primary">Finalizar e Receber</button>`; const content = `<div><p><strong>Cliente:</strong> ${appointment.name}</p><p><strong>Serviço:</strong> ${service?.name}</p><p><strong>Valor:</strong> ${this.formatCurrency(service?.price || 0)}</p></div><div class="modal-footer"><button type="button" class="btn-secondary" data-action="cancel-appointment" data-id="${appointment.id}">Cancelar Agendamento</button><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Fechar</button>${actions}</div>`; this.showModal('Gerenciar Atendimento', content); document.getElementById('startServiceBtn')?.addEventListener('click', () => this.startService(appointmentId)); document.getElementById('finalizeServiceBtn')?.addEventListener('click', () => this.showFinalizeAppointmentModal(appointmentId)); }
-    showFinalizeAppointmentModal(appointmentId) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); const content = `<form id="finalizeForm"><p>Finalizando <strong>${appointment.name}</strong>.</p><h4>Total: ${this.formatCurrency(service?.price || 0)}</h4><div class="form-group"><label for="paymentMethod">Forma de Pagamento</label><select id="paymentMethod" name="paymentMethod" required><option value="Dinheiro">Dinheiro</option><option value="Pix">Pix</option><option value="Cartão de Débito">Cartão de Débito</option><option value="Cartão de Crédito">Cartão de Crédito</option></select></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar Pagamento</button></div></form>`; this.showModal('Finalizar e Receber', content); document.getElementById('finalizeForm')?.addEventListener('submit', e => { e.preventDefault(); this.finalizeAppointment(appointmentId, e.target.querySelector('[name="paymentMethod"]').value); }); }
+    showExpenseModal() { if (!this.checkCaixaStatus()) return; const content = `<form id="expenseForm"><div class="form-group"><label>Descrição</label><input type="text" name="description" required></div><div class="form-group"><label>Valor (R$)</label><input type="number" step="0.01" name="amount" required></div><div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Adicionar Despesa</button></div></div></form>`; this.showModal('Adicionar Despesa', content); }
+    showAbrirCaixaModal() { const content = `<form id="openCaixaForm"><div class="form-group"><label>Valor Inicial (Troco)</label><input type="number" step="0.01" name="initialValue" required></div><div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Abrir Caixa</button></div></div></form>`; this.showModal('Abrir Caixa', content); }
+    showFecharCaixaModal() { const content = `<form id="closeCaixaForm"><div class="form-group"><label>Dinheiro Contado na Gaveta</label><input type="number" step="0.01" name="countedCash" required></div><div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Fechar Caixa</button></div></div></form>`; this.showModal('Fechar Caixa', content); }
+    showComandaActionsModal(appointmentId) {
+        const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return;
+        const service = this.services.find(s => s.id === appointment.service);
+        let actions = '';
+        if (appointment.status === 'scheduled') actions = `<button id="startServiceBtn" class="btn-primary">Iniciar Atendimento</button>`;
+        else if (appointment.status === 'in_progress') actions = `<button id="finalizeServiceBtn" class="btn-primary">Finalizar e Receber</button>`;
+
+        const content = `
+            <div>
+                <p><strong>Cliente:</strong> ${appointment.name}</p>
+                <p><strong>Serviço:</strong> ${service?.name}</p>
+                <p><strong>Valor:</strong> ${this.formatCurrency(service?.price || 0)}</p>
+            </div>
+            <div class="modal-footer">
+                <div>
+                    <button type="button" class="btn-secondary btn-danger btn-small" data-action="cancel-appointment" data-id="${appointment.id}">Cancelar Agendamento</button>
+                </div>
+                <div class="modal-footer-actions">
+                    <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Fechar</button>
+                    ${actions}
+                </div>
+            </div>`;
+        this.showModal('Gerenciar Atendimento', content);
+        document.getElementById('startServiceBtn')?.addEventListener('click', () => this.startService(appointmentId));
+        document.getElementById('finalizeServiceBtn')?.addEventListener('click', () => this.showFinalizeAppointmentModal(appointmentId));
+    }
+    showFinalizeAppointmentModal(appointmentId) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); const content = `<form id="finalizeForm"><p>Finalizando <strong>${appointment.name}</strong>.</p><h4>Total: ${this.formatCurrency(service?.price || 0)}</h4><div class="form-group"><label for="paymentMethod">Forma de Pagamento</label><select id="paymentMethod" name="paymentMethod" required><option value="Dinheiro">Dinheiro</option><option value="Pix">Pix</option><option value="Cartão de Débito">Cartão de Débito</option><option value="Cartão de Crédito">Cartão de Crédito</option></select></div><div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar Pagamento</button></div></div></form>`; this.showModal('Finalizar e Receber', content); document.getElementById('finalizeForm')?.addEventListener('submit', e => { e.preventDefault(); this.finalizeAppointment(appointmentId, e.target.querySelector('[name="paymentMethod"]').value); }); }
     
     // 11. FUNÇÕES UTILITÁRIAS E AUXILIARES
     updateServiceDropdown() { document.querySelectorAll('select[name="service"]').forEach(select => select.innerHTML = this.generateServiceOptions()); }
