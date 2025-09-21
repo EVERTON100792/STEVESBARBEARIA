@@ -109,6 +109,7 @@
                 <nav class="sidebar-nav">
                     <a class="nav-item" data-view="dashboardView"><i class="nav-icon fas fa-chart-bar"></i><span>Dashboard</span></a>
                     <a class="nav-item" data-view="appointmentsView"><i class="nav-icon fas fa-calendar-alt"></i><span>Agenda</span></a>
+                    <a class="nav-item" data-view="comandasView"><i class="nav-icon fas fa-receipt"></i><span>Comandas Abertas</span></a>
                     <div class="nav-group">
                         <a class="nav-item nav-parent"><i class="nav-icon fas fa-edit"></i><span>Cadastros</span><i class="nav-arrow fas fa-chevron-right"></i></a>
                         <div class="nav-submenu">
@@ -117,7 +118,6 @@
                             <a class="nav-item" data-view="professionalsView"><i class="nav-icon fas fa-store"></i><span>Profissionais</span></a>
                         </div>
                     </div>
-                    <a class="nav-item" data-view="comandasView"><i class="nav-icon fas fa-receipt"></i><span>Atendimentos</span></a>
                     <div class="nav-group">
                         <a class="nav-item nav-parent"><i class="nav-icon fas fa-dollar-sign"></i><span>Financeiro</span><i class="nav-arrow fas fa-chevron-right"></i></a>
                         <div class="nav-submenu">
@@ -151,7 +151,7 @@
                         <div class="welcome-card card-grid-span-2">
                             <h3>Bem-vindo, Barbeiro!</h3>
                             <p>Aqui está um resumo rápido do seu dia. Pronto para começar?</p>
-                            <button class="btn-primary-outline" id="quickAddAppointmentBtn"><i class="fas fa-plus"></i> Novo Atendimento</button>
+                            <button class="btn-primary-outline" id="quickAddAppointmentBtn"><i class="fas fa-plus"></i> Novo Agendamento</button>
                         </div>
                         <div class="stat-card-modern">
                             <div class="stat-icon-modern icon-green"><i class="fas fa-hand-holding-usd"></i></div>
@@ -170,7 +170,7 @@
                         <div class="stat-card-modern">
                             <div class="stat-icon-modern icon-orange"><i class="fas fa-receipt"></i></div>
                             <div class="stat-info-modern">
-                                <p>Pendentes Hoje</p>
+                                <p>Comandas em Aberto</p>
                                 <h3 id="pendingCount">0</h3>
                             </div>
                         </div>
@@ -185,23 +185,23 @@
                 </div>
 
                 <div id="appointmentsView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;"><div class="section-header"><div class="agenda-nav"><button id="prevDayBtn" class="btn-secondary btn-small">⟨ Anterior</button><input type="date" id="agendaDateFilter" class="form-control-small"><button id="nextDayBtn" class="btn-secondary btn-small">Próximo ⟩</button></div><button id="addAppointmentBtn" class="btn-primary btn-small">Novo Agendamento</button></div><div id="agendaViewContainer" class="agenda-view-container"></div></div>
+                    <div class="glass-card"><div class="section-header"><div class="agenda-nav"><button id="prevDayBtn" class="btn-secondary btn-small">⟨ Anterior</button><input type="date" id="agendaDateFilter" class="form-control-small"><button id="nextDayBtn" class="btn-secondary btn-small">Próximo ⟩</button></div><button id="addAppointmentBtn" class="btn-primary btn-small">Novo Agendamento</button></div><div id="agendaViewContainer" class="agenda-view-container"></div></div>
                 </div>
                 
                 <div id="comandasView" class="content-view">
-                     <div class="glass-card" style="padding: 1.5rem;"><div class="section-header"><h3>Atendimentos Pendentes</h3><button id="addWalkInBtn" class="btn-primary btn-small">Novo Atendimento (Encaixe)</button></div><div id="pendingAppointmentsList" class="appointments-list"></div></div>
+                     <div class="glass-card"><div class="section-header"><h3>Comandas em Aberto</h3><button id="addWalkInBtn" class="btn-primary btn-small">Novo Atendimento (Encaixe)</button></div><div id="pendingAppointmentsList" class="appointments-list"></div></div>
                 </div>
                 
                 <div id="clientsView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;"><div class="section-header"><h3>Gestão de Clientes</h3><input type="search" id="clientSearchInput" placeholder="Buscar por nome ou telefone..." class="form-control-small"></div><div id="fullClientsList" class="clients-list"></div></div>
+                    <div class="glass-card"><div class="section-header"><h3>Gestão de Clientes</h3><input type="search" id="clientSearchInput" placeholder="Buscar por nome ou telefone..." class="form-control-small"></div><div id="fullClientsList" class="clients-list"></div></div>
                 </div>
                 
                 <div id="servicesView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;"><div class="section-header"><h3>Serviços Oferecidos</h3><button id="addServiceBtn" class="btn-primary btn-small">Adicionar Serviço</button></div><div id="servicesList" class="services-list" style="margin-top:1rem;"></div></div>
+                    <div class="glass-card"><div class="section-header"><h3>Serviços Oferecidos</h3><button id="addServiceBtn" class="btn-primary btn-small">Adicionar Serviço</button></div><div id="servicesList" class="services-list" style="margin-top:1rem;"></div></div>
                 </div>
                 
                 <div id="professionalsView" class="content-view">
-                    <div class="glass-card" style="padding: 1.5rem;"><div class="section-header"><h3>Profissionais</h3><button id="addProfessionalBtn" class="btn-primary btn-small">Adicionar Profissional</button></div><div id="professionalsList" class="professionals-list" style="margin-top:1rem;"></div></div>
+                    <div class="glass-card"><div class="section-header"><h3>Profissionais</h3><button id="addProfessionalBtn" class="btn-primary btn-small">Adicionar Profissional</button></div><div id="professionalsList" class="professionals-list" style="margin-top:1rem;"></div></div>
                 </div>
 
                 <div id="financialView" class="content-view">
