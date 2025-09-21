@@ -1,17 +1,16 @@
-// BarberPro - Versão 3.3 com Correção do Menu Hambúrguer
+// BarberPro - Versão 3.4 com Correção de Fuso Horário na Agenda
 class BarberPro {
     constructor() {
         this.currentUser = null;
         this.charts = {};
-        this.DATA_VERSION = '3.3';
+        this.DATA_VERSION = '3.4';
         document.addEventListener('DOMContentLoaded', () => this.init());
     }
 
-    // 1. O PONTO DE PARTIDA - INICIALIZAÇÃO SEGURA
     init() {
         try {
             this.checkDataVersion();
-            this.setupGlobalEventListeners(); // Apenas listeners que SEMPRE existem
+            this.setupGlobalEventListeners(); 
             this.loadData();
 
             const token = this.getFromStorage('auth_token', null);
@@ -27,7 +26,6 @@ class BarberPro {
         }
     }
 
-    // 2. RENDERIZAÇÃO DAS TELAS PRINCIPAIS
     renderClientView() {
         this.showSection('clientArea');
         const clientAreaBtn = document.getElementById('clientAreaBtn');
@@ -42,13 +40,14 @@ class BarberPro {
 
     renderBarberView() {
         this.showSection('barberDashboard');
+        const agendaDateFilter = document.getElementById('agendaDateFilter');
+        if (agendaDateFilter && !agendaDateFilter.value) {
+            agendaDateFilter.value = this.getTodayDateString();
+        }
         this.switchDashboardView('dashboardView');
     }
 
-
-    // 3. EVENT LISTENERS SEGUROS
     setupGlobalEventListeners() {
-        // Delegação de evento no corpo do documento para ações dinâmicas
         document.body.addEventListener('click', e => {
             const actionTarget = e.target.closest('[data-action]');
             if (actionTarget) {
@@ -56,22 +55,16 @@ class BarberPro {
                 this.handleActionClick(actionTarget.dataset.action, actionTarget.dataset.id);
                 return;
             }
-            // Lógica para botões principais
             const buttonTarget = e.target.closest('button');
             if(buttonTarget){
                 const buttonId = buttonTarget.id;
                 switch(buttonId) {
-                    // <<-- CORREÇÃO APLICADA AQUI -->>
                     case 'sidebarToggle':
                     case 'closeSidebarBtn':
                         document.body.classList.toggle('sidebar-is-open');
                         break;
-                    case 'clientAreaBtn':
-                        this.renderClientView();
-                        break;
-                    case 'barberAreaBtn':
-                        this.checkAuthentication();
-                        break;
+                    case 'clientAreaBtn': this.renderClientView(); break;
+                    case 'barberAreaBtn': this.checkAuthentication(); break;
                     case 'demoLoginBtn': this.login('barbeiro', '123'); break;
                     case 'logoutBtn': case 'logoutBtnSidebar': this.logout(); break;
                     case 'refreshBtn': this.loadDashboardData(); this.showNotification('Dados atualizados!'); break;
@@ -90,20 +83,16 @@ class BarberPro {
                     case 'closeModalBtn': this.hideModal(); break;
                 }
             }
-            // Lógica para links da sidebar
             const navItem = e.target.closest('.sidebar-nav .nav-item:not(.nav-parent)');
             if(navItem) {
                 e.preventDefault();
                 this.switchDashboardView(navItem.dataset.view);
             }
-            // Lógica para submenu da sidebar
              const navParent = e.target.closest('.nav-parent');
              if (navParent) {
                  e.preventDefault();
                  const parentGroup = navParent.closest('.nav-group');
-                 if (parentGroup) {
-                     parentGroup.classList.toggle('open');
-                 }
+                 if (parentGroup) parentGroup.classList.toggle('open');
              }
         });
 
@@ -126,7 +115,6 @@ class BarberPro {
         const agendaDateFilter = document.getElementById('agendaDateFilter');
         if(agendaDateFilter) agendaDateFilter.addEventListener('change', this.renderAgendaView.bind(this));
         
-        // <<-- CORREÇÃO APLICADA AQUI TAMBÉM -->>
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         if(sidebarOverlay) sidebarOverlay.addEventListener('click', () => document.body.classList.remove('sidebar-is-open'));
 
@@ -144,9 +132,7 @@ class BarberPro {
             'delete-professional': () => this.deleteProfessional(id),
             'view-client-details': () => this.showClientDetailModal(id),
         };
-        if (actions[action]) {
-            actions[action]();
-        }
+        if (actions[action]) actions[action]();
     }
     
     showSection(sectionId) {
@@ -346,6 +332,7 @@ class BarberPro {
             if (document.getElementById('dashboardView')?.style.display === 'block') this.loadDashboardData();
         }
     }
+    
     showComandaActionsModal(appointmentId) {
         const appointment = this.appointments.find(a => a.id === appointmentId);
         if (!appointment) return;
@@ -805,14 +792,6 @@ class BarberPro {
         const dateInput = document.getElementById('preferredDate');
         if(dateInput) dateInput.min = this.getTodayDateString(); 
     }
-    navigateAgendaDays(direction) {
-        const dateInput = document.getElementById('agendaDateFilter');
-        if(!dateInput || !dateInput.value) return;
-        const currentDate = new Date(dateInput.value);
-        currentDate.setUTCDate(currentDate.getUTCDate() + direction);
-        dateInput.value = currentDate.toISOString().split('T')[0];
-        this.renderAgendaView();
-    }
 
     renderClientServices() {
         const container = document.getElementById('services-showcase-list');
@@ -894,12 +873,13 @@ class BarberPro {
         `;
         this.showModal('Fechar Caixa', content);
     }
-    showServiceModal() { }
-    showProfessionalModal() { }
-    showAppointmentModal() { }
-    showClientDetailModal() { }
-    showCaixaHistoryModal() { }
-    showExpenseModal() { }
+    
+    showServiceModal() { console.log('showServiceModal called'); }
+    showProfessionalModal() { console.log('showProfessionalModal called'); }
+    showAppointmentModal() { console.log('showAppointmentModal called'); }
+    showClientDetailModal() { console.log('showClientDetailModal called'); }
+    showCaixaHistoryModal() { console.log('showCaixaHistoryModal called'); }
+    showExpenseModal() { console.log('showExpenseModal called'); }
 }
 
 window.barberPro = new BarberPro();
