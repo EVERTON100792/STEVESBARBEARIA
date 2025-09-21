@@ -1,9 +1,9 @@
-// BarberPro - Versão 3.2 com Correção Definitiva de Inicialização
+// BarberPro - Versão 3.3 com Correção do Menu Hambúrguer
 class BarberPro {
     constructor() {
         this.currentUser = null;
         this.charts = {};
-        this.DATA_VERSION = '3.2';
+        this.DATA_VERSION = '3.3';
         document.addEventListener('DOMContentLoaded', () => this.init());
     }
 
@@ -31,7 +31,9 @@ class BarberPro {
     renderClientView() {
         this.showSection('clientArea');
         const clientAreaBtn = document.getElementById('clientAreaBtn');
+        const barberAreaBtn = document.getElementById('barberAreaBtn');
         if(clientAreaBtn) clientAreaBtn.classList.add('active');
+        if(barberAreaBtn) barberAreaBtn.classList.remove('active');
 
         this.renderClientServices();
         this.renderClientBarbers();
@@ -59,27 +61,20 @@ class BarberPro {
             if(buttonTarget){
                 const buttonId = buttonTarget.id;
                 switch(buttonId) {
+                    // <<-- CORREÇÃO APLICADA AQUI -->>
+                    case 'sidebarToggle':
+                    case 'closeSidebarBtn':
+                        document.body.classList.toggle('sidebar-is-open');
+                        break;
                     case 'clientAreaBtn':
                         this.renderClientView();
-                        document.getElementById('barberAreaBtn')?.classList.remove('active');
-                        buttonTarget.classList.add('active');
                         break;
                     case 'barberAreaBtn':
                         this.checkAuthentication();
-                        document.getElementById('clientAreaBtn')?.classList.remove('active');
-                        buttonTarget.classList.add('active');
                         break;
-                    case 'demoLoginBtn':
-                        this.login('barbeiro', '123');
-                        break;
-                    case 'logoutBtn':
-                    case 'logoutBtnSidebar':
-                        this.logout();
-                        break;
-                    case 'refreshBtn':
-                        this.loadDashboardData();
-                        this.showNotification('Dados atualizados!');
-                        break;
+                    case 'demoLoginBtn': this.login('barbeiro', '123'); break;
+                    case 'logoutBtn': case 'logoutBtnSidebar': this.logout(); break;
+                    case 'refreshBtn': this.loadDashboardData(); this.showNotification('Dados atualizados!'); break;
                     case 'resetDataBtn': this.resetTestData(); break;
                     case 'prevDayBtn': this.navigateAgendaDays(-1); break;
                     case 'nextDayBtn': this.navigateAgendaDays(1); break;
@@ -131,6 +126,10 @@ class BarberPro {
         const agendaDateFilter = document.getElementById('agendaDateFilter');
         if(agendaDateFilter) agendaDateFilter.addEventListener('change', this.renderAgendaView.bind(this));
         
+        // <<-- CORREÇÃO APLICADA AQUI TAMBÉM -->>
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        if(sidebarOverlay) sidebarOverlay.addEventListener('click', () => document.body.classList.remove('sidebar-is-open'));
+
         const modalBackdrop = document.getElementById('modalBackdrop');
         if(modalBackdrop) modalBackdrop.addEventListener('click', e => { if (e.target.id === 'modalBackdrop') this.hideModal(); });
     }
@@ -150,8 +149,6 @@ class BarberPro {
         }
     }
     
-    // --- LÓGICA DE NAVEGAÇÃO E UI ---
-
     showSection(sectionId) {
         document.querySelectorAll('.page-section').forEach(s => s.style.display = 'none');
         const section = document.getElementById(sectionId);
@@ -159,6 +156,15 @@ class BarberPro {
         
         const navbar = document.querySelector('.navbar');
         if(navbar) navbar.style.display = sectionId === 'barberDashboard' ? 'none' : 'flex';
+
+        const clientAreaBtn = document.getElementById('clientAreaBtn');
+        const barberAreaBtn = document.getElementById('barberAreaBtn');
+        if(clientAreaBtn && barberAreaBtn){
+            if(sectionId === 'clientArea' || sectionId === 'barberLogin'){
+                clientAreaBtn.classList.toggle('active', sectionId === 'clientArea');
+                barberAreaBtn.classList.toggle('active', sectionId !== 'clientArea');
+            }
+        }
     }
 
     switchDashboardView(viewId) {
@@ -211,8 +217,6 @@ class BarberPro {
         document.body.classList.remove('sidebar-is-open');
     }
 
-    // --- LÓGICA DE DADOS (STORAGE) ---
-
     checkDataVersion() {
         if (localStorage.getItem('barberpro_data_version') !== this.DATA_VERSION) {
             localStorage.clear();
@@ -264,8 +268,6 @@ class BarberPro {
         }
     }
 
-    // --- AUTENTICAÇÃO ---
-
     checkAuthentication() {
         if (this.getFromStorage('auth_token', null)) {
             this.renderBarberView();
@@ -302,7 +304,6 @@ class BarberPro {
         }
     }
 
-    // --- LÓGICA DE AGENDAMENTOS E COMANDAS
     handleAppointmentSubmit(form) {
         const formData = new FormData(form);
         const name = formData.get('name').trim();
@@ -345,10 +346,6 @@ class BarberPro {
             if (document.getElementById('dashboardView')?.style.display === 'block') this.loadDashboardData();
         }
     }
-    
-    // ... TODAS AS OUTRAS FUNÇÕES (showComandaActionsModal, finalizeAppointment, etc.)
-    // PERMANECEM EXATAMENTE IGUAIS À VERSÃO ANTERIOR (3.1).
-    // O CÓDIGO ABAIXO É O RESTANTE NECESSÁRIO PARA COMPLETAR O ARQUIVO.
     showComandaActionsModal(appointmentId) {
         const appointment = this.appointments.find(a => a.id === appointmentId);
         if (!appointment) return;
@@ -598,7 +595,7 @@ class BarberPro {
                 try {
                     const [startHour, startMinute] = app.time.split(':').map(Number);
                     let minutesSinceOpening = (startHour - 9) * 60 + startMinute;
-                    if(startHour >= 14) minutesSinceOpening -= 120; // Ajusta para o horário do almoço de 2h
+                    if(startHour >= 14) minutesSinceOpening -= 120;
                     const topPosition = (minutesSinceOpening / 15) * 15;
                     const height = (service.duration / 15) * 15;
 
@@ -724,7 +721,7 @@ class BarberPro {
         }
     }
     
-    renderCharts() { /* Lógica de gráficos mantida */ }
+    renderCharts() { }
     getOrUpdateClient(phone, name) {
         let client = this.clients.find(c => c.phone === phone);
         if (!client) {
@@ -812,7 +809,7 @@ class BarberPro {
         const dateInput = document.getElementById('agendaDateFilter');
         if(!dateInput || !dateInput.value) return;
         const currentDate = new Date(dateInput.value);
-        currentDate.setDate(currentDate.getDate() + direction);
+        currentDate.setUTCDate(currentDate.getUTCDate() + direction);
         dateInput.value = currentDate.toISOString().split('T')[0];
         this.renderAgendaView();
     }
@@ -854,7 +851,7 @@ class BarberPro {
     
     showAbrirCaixaModal() {
         const content = `
-            <form id="openCaixaForm">
+            <form id="openCaixaForm" onsubmit="event.preventDefault();">
                 <p>Para iniciar, você precisa abrir o caixa.</p>
                 <div class="form-group">
                     <label for="initialValue">Valor inicial (fundo de troco)</label>
@@ -869,7 +866,6 @@ class BarberPro {
         this.showModal('Abrir Caixa', content);
         const form = document.getElementById('openCaixaForm');
         if(form) form.addEventListener('submit', e => {
-            e.preventDefault();
             const initialValue = parseFloat(e.target.querySelector('#initialValue').value);
             this.abrirCaixa(initialValue);
         });
@@ -898,13 +894,12 @@ class BarberPro {
         `;
         this.showModal('Fechar Caixa', content);
     }
-
-    showServiceModal() { /*...*/ }
-    showProfessionalModal() { /*...*/ }
-    showAppointmentModal() { /*...*/ }
-    showClientDetailModal() { /*...*/ }
-    showCaixaHistoryModal() { /*...*/ }
-    showExpenseModal() { /*...*/ }
+    showServiceModal() { }
+    showProfessionalModal() { }
+    showAppointmentModal() { }
+    showClientDetailModal() { }
+    showCaixaHistoryModal() { }
+    showExpenseModal() { }
 }
 
 window.barberPro = new BarberPro();
