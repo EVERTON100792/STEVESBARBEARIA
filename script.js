@@ -3,7 +3,7 @@ class BarberPro {
     constructor() {
         this.currentUser = null;
         this.charts = {};
-        this.DATA_VERSION = '5.0'; // Versão final para forçar a limpeza de dados antigos
+        this.DATA_VERSION = '5.1'; // Versão incrementada para garantir limpeza de dados antigos
         document.addEventListener('DOMContentLoaded', () => this.init());
     }
 
@@ -120,8 +120,8 @@ class BarberPro {
                     form.reset();
                     break;
                 case 'barberBookingForm':
-                     this.handleAppointmentSubmit(new FormData(form), form.dataset.walkIn === 'true');
-                     break;
+                    this.handleAppointmentSubmit(new FormData(form), form.dataset.walkIn === 'true');
+                    break;
                 case 'loginForm':
                     this.handleLoginSubmit(form);
                     break;
@@ -144,8 +144,16 @@ class BarberPro {
             }
         });
 
-        const clientSearchInput = document.getElementById('clientSearchInput');
-        if(clientSearchInput) clientSearchInput.addEventListener('input', () => this.renderFullClientsList());
+        // MELHORIA: Eventos de input movidos para delegação para funcionarem em modais criados dinamicamente
+        document.body.addEventListener('input', e => {
+            if (e.target.id === 'clientSearchInput') {
+                this.renderFullClientsList();
+            }
+            // CORRIGIDO: Listener para o campo de nome no modal de agendamento para autocompletar o telefone
+            if (e.target.matches('#barberBookingForm input[name="name"]')) {
+                this.handleClientNameInput(e);
+            }
+        });
 
         const agendaDateFilter = document.getElementById('agendaDateFilter');
         if(agendaDateFilter) agendaDateFilter.addEventListener('change', () => this.renderAgendaView());
@@ -218,7 +226,6 @@ class BarberPro {
             if(parentGroup) {
                 parentGroup.querySelector('.nav-parent')?.classList.add('active');
                  if(!parentGroup.classList.contains('open')) {
-                    // Abre o submenu se um item dele for selecionado
                     const submenu = parentGroup.querySelector('.nav-submenu');
                     parentGroup.classList.add('open');
                     if(submenu) submenu.style.maxHeight = submenu.scrollHeight + "px";
@@ -266,6 +273,11 @@ class BarberPro {
         this.getOrUpdateClient(appointment.phone, appointment.name);
         this.appointments.push(appointment); this.saveData();
         this.showNotification(isWalkIn ? 'Comanda aberta com sucesso!' : 'Agendamento realizado com sucesso!', 'success');
+        
+        // MELHORIA: Limpa o formulário do barbeiro após o envio
+        const form = document.getElementById('barberBookingForm');
+        if (form) form.reset();
+
         this.hideModal();
         this.renderRelevantViews();
     }
@@ -285,7 +297,54 @@ class BarberPro {
     updateStats() { const todayStr = this.getTodayDateString(); const todayAppointments = this.appointments.filter(a => a.date === todayStr && a.status === 'scheduled'); const todayRevenue = (this.caixa.entradas || []).filter(e => e.data.startsWith(todayStr)).reduce((sum, e) => sum + e.valor, 0); const pendingCount = this.appointments.filter(a => a.status === 'in_progress').length; const todayCountEl = document.getElementById('todayCount'); const pendingCountEl = document.getElementById('pendingCount'); const todayProfitEl = document.getElementById('todayProfit'); if(todayCountEl) todayCountEl.textContent = todayAppointments.length; if(pendingCountEl) pendingCountEl.textContent = pendingCount; if(todayProfitEl) todayProfitEl.textContent = this.formatCurrency(todayRevenue); }
     renderDashboardAppointments() { const listEl = document.getElementById('appointmentsList'); if(!listEl) return; const today = this.getTodayDateString(); const upcoming = this.appointments.filter(a => a.date >= today && (a.status === 'scheduled' || a.status === 'in_progress')).sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time)).slice(0, 5); listEl.innerHTML = upcoming.length === 0  ? '<p class="empty-state">Nenhum agendamento futuro.</p>'  : upcoming.map(a => this.createAppointmentCard(a)).join(''); }
     renderPendingAppointments() { const container = document.getElementById('pendingAppointmentsList'); if(!container) return; const pending = this.appointments.filter(a => a.status === 'in_progress'); container.innerHTML = pending.length === 0 ? '<p class="empty-state">Nenhuma comanda em andamento.</p>' : pending.map(app => this.createAppointmentCard(app)).join(''); }
-    renderAgendaView() { const container = document.getElementById('agendaViewContainer'); const dateFilter = document.getElementById('agendaDateFilter'); if (!container || !dateFilter || this.barbers.length === 0) { if(container) container.innerHTML = '<p class="empty-state">Nenhum profissional cadastrado.</p>'; return; }; const selectedDate = dateFilter.value; container.innerHTML = ''; const timeSlots = Array.from({ length: (19 - 9) * 4 }, (_, i) => { const hour = 9 + Math.floor(i / 4); if (hour === 12 || hour === 13) return null; const minute = (i % 4) * 15; return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`; }).filter(Boolean); const timeColumnHTML = '<div class="agenda-time-column">' + timeSlots.map(time => `<div class="agenda-time-slot" style="height: 20px;">${time.endsWith(':00') ? `<b>${time}</b>` : time}</div>`).join('') + '</div>'; let barbersAreaHTML = `<div class="agenda-barbers-area" style="grid-template-columns: repeat(${this.barbers.length}, 1fr);">`; this.barbers.forEach(barber => { barbersAreaHTML += `<div class="agenda-barber-column"><div class="agenda-barber-header">${barber.name}</div><div class="agenda-slots-container" style="height: ${timeSlots.length * 20}px;">`; const barberAppointments = this.appointments.filter(a => a.barberId === barber.id && a.date === selectedDate && a.status !== 'cancelled'); barberAppointments.forEach(app => { const service = this.services.find(s => s.id === app.service); if (!service || !app.time) return; try { const [startHour, startMinute] = app.time.split(':').map(Number); let minutesSinceOpening = (startHour - 9) * 60 + startMinute; if(startHour >= 14) minutesSinceOpening -= 120; const topPosition = (minutesSinceOpening / 15) * 20; const height = (service.duration / 15) * 20; barbersAreaHTML += `<div class="agenda-appointment-block status-${app.status}" data-id="${app.id}" style="top: ${topPosition}px; height: ${height}px;" data-action="open-comanda-modal"><p class="appointment-block-name">${app.name}</p><p class="appointment-block-service">${service.name}</p></div>`; } catch(e) { console.error("Erro ao renderizar agendamento:", app, e); } }); barbersAreaHTML += `</div></div>`; }); barbersAreaHTML += `</div>`; container.innerHTML = timeColumnHTML + barbersAreaHTML; }
+    // CORRIGIDO: Lógica de renderização da agenda para ser mais robusta
+    renderAgendaView() {
+        const container = document.getElementById('agendaViewContainer');
+        const dateFilter = document.getElementById('agendaDateFilter');
+        if (!container || !dateFilter || this.barbers.length === 0) {
+            if (container) container.innerHTML = '<p class="empty-state">Nenhum profissional cadastrado. Adicione um na aba de Configurações.</p>';
+            return;
+        };
+        const selectedDate = dateFilter.value;
+        container.innerHTML = '';
+        
+        const timeSlots = [];
+        for (let h = 9; h < 19; h++) {
+            if (h === 12 || h === 13) continue;
+            for (let m = 0; m < 60; m += 15) {
+                timeSlots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+            }
+        }
+
+        const slotHeight = 20; // Altura de cada slot de 15 min em pixels
+        const timeColumnHTML = '<div class="agenda-time-column">' + timeSlots.map(time => `<div class="agenda-time-slot" style="height: ${slotHeight}px;">${time.endsWith(':00') ? `<b>${time}</b>` : time}</div>`).join('') + '</div>';
+        
+        let barbersAreaHTML = `<div class="agenda-barbers-area" style="grid-template-columns: repeat(${this.barbers.length}, 1fr);">`;
+        this.barbers.forEach(barber => {
+            barbersAreaHTML += `<div class="agenda-barber-column"><div class="agenda-barber-header">${barber.name}</div><div class="agenda-slots-container" style="height: ${timeSlots.length * slotHeight}px;">`;
+            const barberAppointments = this.appointments.filter(a => a.barberId === barber.id && a.date === selectedDate && a.status !== 'cancelled');
+            barberAppointments.forEach(app => {
+                const service = this.services.find(s => s.id === app.service);
+                if (!service || !app.time) return;
+                try {
+                    const [startHour, startMinute] = app.time.split(':').map(Number);
+                    
+                    // Lógica de cálculo de minutos desde a abertura, descontando o almoço
+                    let minutesFrom9 = (startHour - 9) * 60 + startMinute;
+                    let lunchBreakMinutes = (startHour > 13) ? 120 : (startHour === 13 ? 60 : 0);
+                    let effectiveMinutes = minutesFrom9 - lunchBreakMinutes;
+
+                    const topPosition = (effectiveMinutes / 15) * slotHeight;
+                    const height = (service.duration / 15) * slotHeight;
+                    
+                    barbersAreaHTML += `<div class="agenda-appointment-block status-${app.status}" data-id="${app.id}" style="top: ${topPosition}px; height: ${height}px;" data-action="open-comanda-modal"><p class="appointment-block-name">${app.name}</p><p class="appointment-block-service">${service.name}</p></div>`;
+                } catch(e) { console.error("Erro ao renderizar agendamento:", app, e); }
+            });
+            barbersAreaHTML += `</div></div>`;
+        });
+        barbersAreaHTML += `</div>`;
+        container.innerHTML = timeColumnHTML + barbersAreaHTML;
+    }
     createAppointmentCard(appointment) { const service = this.services.find(s => s.id === appointment.service); const barber = this.barbers.find(b => b.id === appointment.barberId); const statusMap = { scheduled: { text: 'Agendado', class: 'status-scheduled' }, completed: { text: 'Concluído', class: 'status-completed' }, cancelled: { text: 'Cancelado', class: 'status-cancelled' }, in_progress: { text: 'Em Andamento', class: 'status-in_progress'} }; const status = statusMap[appointment.status] || {text: 'Pendente', class: 'status-pending'}; return `<div class="appointment-card status-${appointment.status}" data-id="${appointment.id}" data-action="open-comanda-modal"><div class="appointment-header"><div class="appointment-client"><h4>${appointment.name}</h4><p>${this.formatDate(appointment.date)} - ${appointment.time}h</p></div><div class="appointment-time"><p>${barber?.name || 'N/A'}</p><span class="appointment-status ${status.class}">${status.text}</span></div></div><div class="appointment-footer"><p class="appointment-service">${service?.name || 'Serviço'} - <strong>${this.formatCurrency(service?.price || 0)}</strong></p></div></div>`; }
     renderFullClientsList() { const container = document.getElementById('fullClientsList'); const searchInput = document.getElementById('clientSearchInput'); if(!container || !searchInput) return; const searchTerm = searchInput.value.toLowerCase(); const clients = this.clients.filter(c => c.name.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm)).sort((a,b) => a.name.localeCompare(b.name)); container.innerHTML = clients.length === 0 ? '<p class="empty-state">Nenhum cliente encontrado.</p>' : clients.map(client => `<div class="data-card"><div><strong>${client.name}</strong><div class="data-card-info"><span>📞 ${client.phone}</span></div></div><div class="data-card-actions"><button class="btn-secondary btn-small" data-action="view-client-details" data-id="${client.phone}">Ver Detalhes</button></div></div>`).join(''); }
     renderServicesList() { const container = document.getElementById('servicesList'); if(!container) return; container.innerHTML = this.services.map(service => `<div class="data-card"><div><strong>${service.name}</strong><div class="data-card-info"><span>💰 ${this.formatCurrency(service.price)}</span><span>⏱️ ${service.duration} min</span></div></div><div class="data-card-actions"><button class="btn-secondary btn-small" data-action="edit-service" data-id="${service.id}">Editar</button><button class="btn-secondary btn-danger btn-small" data-action="delete-service" data-id="${service.id}">Excluir</button></div></div>`).join(''); }
@@ -295,21 +354,84 @@ class BarberPro {
     
     // 9. Lógica de CRUD (Criar, Ler, Atualizar, Deletar)
     getOrUpdateClient(phone, name) { let client = this.clients.find(c => c.phone === phone); if (!client) { this.clients.push({ phone, name, createdAt: new Date().toISOString() }); } else if (client.name !== name) { client.name = name; } }
-    saveService(formData) { const serviceData = { id: formData.get('id'), name: formData.get('name'), price: parseFloat(formData.get('price')), duration: parseInt(formData.get('duration')), description: formData.get('description') }; if (!serviceData.name || !serviceData.price) return this.showNotification('Nome e preço são obrigatórios.', 'error'); if (serviceData.id) { const index = this.services.findIndex(s => s.id === serviceData.id); if (index > -1) this.services[index] = { ...this.services[index], ...serviceData }; } else { this.services.push({ id: `s_${Date.now()}`, ...serviceData }); } this.saveData(); this.hideModal(); this.renderServicesList(); this.updateServiceDropdown(); this.renderClientServices(); this.showNotification('Serviço salvo!', 'success'); }
+    saveService(formData) {
+        const id = formData.get('id');
+        const name = formData.get('name').trim();
+        const price = parseFloat(formData.get('price'));
+        const duration = parseInt(formData.get('duration'));
+        const description = formData.get('description').trim();
+
+        if (!name || isNaN(price) || price <= 0) return this.showNotification('Nome e preço válido são obrigatórios.', 'error');
+
+        // MELHORIA: Verifica se já existe um serviço com o mesmo nome (ignorando o atual na edição)
+        if (this.services.some(s => s.name.toLowerCase() === name.toLowerCase() && s.id !== id)) {
+            return this.showNotification('Já existe um serviço com este nome.', 'error');
+        }
+        
+        const serviceData = { name, price, duration, description };
+        if (id) {
+            const index = this.services.findIndex(s => s.id === id);
+            if (index > -1) this.services[index] = { ...this.services[index], ...serviceData };
+        } else {
+            this.services.push({ id: `s_${Date.now()}`, ...serviceData });
+        }
+        this.saveData();
+        this.hideModal();
+        this.renderServicesList();
+        this.updateServiceDropdown();
+        this.renderClientServices();
+        this.showNotification('Serviço salvo!', 'success');
+    }
     deleteService(id) { if (this.services.length <= 1) return this.showNotification('É necessário ter pelo menos um serviço.', 'error'); if (confirm('Deseja remover este serviço?')) { this.services = this.services.filter(s => s.id !== id); this.saveData(); this.renderServicesList(); this.updateServiceDropdown(); this.renderClientServices(); this.showNotification('Serviço removido.'); } }
-    saveProfessional(formData) { const professionalData = { id: formData.get('id'), name: formData.get('name').trim(), specialty: formData.get('specialty').trim() }; if (!professionalData.name) return this.showNotification('O nome do profissional é obrigatório.', 'error'); if (professionalData.id) { const index = this.barbers.findIndex(b => b.id === professionalData.id); if (index > -1) this.barbers[index] = { ...this.barbers[index], ...professionalData }; } else { this.barbers.push({ id: `b_${Date.now()}`, ...professionalData }); } this.saveData(); this.hideModal(); this.renderProfessionalsList(); this.updateBarberDropdowns(); this.renderClientBarbers(); this.showNotification('Profissional salvo com sucesso!', 'success'); }
+    saveProfessional(formData) {
+        const id = formData.get('id');
+        const name = formData.get('name').trim();
+        const specialty = formData.get('specialty').trim();
+
+        if (!name) return this.showNotification('O nome do profissional é obrigatório.', 'error');
+        
+        // MELHORIA: Verifica se já existe um profissional com o mesmo nome
+        if (this.barbers.some(b => b.name.toLowerCase() === name.toLowerCase() && b.id !== id)) {
+            return this.showNotification('Já existe um profissional com este nome.', 'error');
+        }
+
+        const professionalData = { name, specialty };
+        if (id) {
+            const index = this.barbers.findIndex(b => b.id === id);
+            if (index > -1) this.barbers[index] = { ...this.barbers[index], ...professionalData };
+        } else {
+            this.barbers.push({ id: `b_${Date.now()}`, ...professionalData });
+        }
+        this.saveData();
+        this.hideModal();
+        this.renderProfessionalsList();
+        this.updateBarberDropdowns();
+        this.renderClientBarbers();
+        this.showNotification('Profissional salvo com sucesso!', 'success');
+    }
     deleteProfessional(id) { if (this.barbers.length <= 1) return this.showNotification('É necessário ter pelo menos um profissional.', 'error'); if (confirm('Tem certeza que deseja remover este profissional?')) { this.barbers = this.barbers.filter(b => b.id !== id); this.saveData(); this.renderProfessionalsList(); this.updateBarberDropdowns(); this.renderClientBarbers(); this.showNotification('Profissional removido.'); } }
     saveExpense(formData) { if (!this.checkCaixaStatus()) return; const expenseData = { description: formData.get('description'), amount: parseFloat(formData.get('amount')) }; if(!expenseData.description || !expenseData.amount > 0) return this.showNotification('Preencha todos os campos da despesa.', 'error'); this.caixa.saidas.push({ descricao: expenseData.description, valor: expenseData.amount, data: new Date().toISOString() }); this.saveData(); this.hideModal(); this.renderFinancialPage(); this.updateCaixaStatusIndicator(); this.showNotification('Despesa registrada com sucesso!', 'success'); }
     
     // 10. Modais (construção da interface dos pop-ups)
-    showModal(title, content) { const modalTitle = document.getElementById('modalTitle'); const modalContent = document.getElementById('modalContent'); const modalBackdrop = document.getElementById('modalBackdrop'); if(modalTitle) modalTitle.textContent = title; if(modalContent) modalContent.innerHTML = content; if(modalBackdrop) modalBackdrop.style.display = 'flex'; document.body.classList.add('modal-open'); }
+    showModal(title, content) {
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        if (modalTitle) modalTitle.textContent = title;
+        if (modalContent) modalContent.innerHTML = content;
+        if (modalBackdrop) modalBackdrop.style.display = 'flex';
+        document.body.classList.add('modal-open');
+        // MELHORIA: Foca no primeiro input ou select do modal
+        const firstInput = modalContent.querySelector('input, select');
+        if (firstInput) firstInput.focus();
+    }
     hideModal() { const modalBackdrop = document.getElementById('modalBackdrop'); if(modalBackdrop) modalBackdrop.style.display = 'none'; document.body.classList.remove('modal-open'); }
-    showNotification(message, type = 'success') { const container = document.getElementById('notificationContainer'); if(!container) return; const notification = document.createElement('div'); notification.className = `notification ${type}`; notification.textContent = message; container.appendChild(notification); setTimeout(() => notification.remove(), 4000); }
+    showNotification(message, type = 'success') { const container = document.getElementById('notificationContainer'); if(!container) return; const notification = document.createElement('div'); notification.className = `notification ${type}`; notification.textContent = message; container.appendChild(notification); setTimeout(() => { notification.style.opacity = '0'; setTimeout(() => notification.remove(), 500); }, 3500); }
     showServiceModal(id = null) { const service = id ? this.services.find(s => s.id === id) : {}; const content = `<form id="serviceForm"><input type="hidden" name="id" value="${service.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${service.name || ''}" required></div><div class="form-group"><label>Preço (R$)</label><input type="number" step="0.01" name="price" value="${service.price || ''}" required></div><div class="form-group"><label>Duração (min)</label><input type="number" step="15" name="duration" value="${service.duration || '45'}" required></div><div class="form-group"><label>Descrição</label><input type="text" name="description" value="${service.description || ''}"></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${service.id ? 'Salvar' : 'Adicionar'}</button></div></form>`; this.showModal(service.id ? 'Editar Serviço' : 'Adicionar Serviço', content); }
     showProfessionalModal(id = null) { const professional = id ? this.barbers.find(b => b.id === id) : {}; const content = `<form id="professionalForm"><input type="hidden" name="id" value="${professional.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${professional.name || ''}" required></div><div class="form-group"><label>Especialidade</label><input type="text" name="specialty" value="${professional.specialty || ''}"></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${id ? 'Salvar' : 'Adicionar'}</button></div></form>`; this.showModal(id ? 'Editar Profissional' : 'Adicionar Profissional', content); }
-    showAppointmentModal(isScheduled) { const agendaDate = document.getElementById('agendaDateFilter')?.value || this.getTodayDateString(); const content = `<form id="barberBookingForm" data-walk-in="${!isScheduled}"><div class="form-group"><label>Cliente</label><input type="text" name="name" list="clientSuggestions" placeholder="Buscar ou cadastrar novo" required></div><div class="form-group"><label>Celular (DDD)</label><input type="tel" name="phone" placeholder="11999999999" required></div><div class="form-group"><label>Serviço</label><select name="service" required>${this.generateServiceOptions()}</select></div><div class="form-group"><label>Profissional</label><select name="barber" required>${this.generateBarberOptions()}</select></div>${isScheduled ? `<div class="form-group"><label>Data</label><input type="date" name="date" value="${agendaDate}" required></div><div class="form-group"><label>Horário</label><select name="time" required>${this.generateTimeOptions()}</select></div>` : ''}<div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar</button></div></form>`; this.showModal(isScheduled ? 'Novo Agendamento' : 'Novo Atendimento (Encaixe)', content); }
-    showClientDetailModal(phone) { const client = this.clients.find(c => c.phone === phone); if(!client) return; const clientAppointments = this.appointments.filter(a => a.phone === phone).sort((a,b)=>new Date(b.date) - new Date(a.date)); const content = `<div class="client-details"><h4>${client.name}</h4><p><strong>Telefone:</strong> ${client.phone}</p><p><strong>Cliente desde:</strong> ${this.formatDate(client.createdAt)}</p><hr style="margin: 1rem 0;"><h5>Histórico</h5><div class="history-list">${clientAppointments.length > 0 ? clientAppointments.map(a => `<div class="history-item"><span>${this.formatDate(a.date)}</span><span>${this.services.find(s=>s.id===a.service)?.name || ''}</span><span class="status-${a.status}">${a.status}</span></div>`).join('') : '<p>Nenhum histórico.</p>'}</div></div>`; this.showModal('Detalhes do Cliente', content); }
-    showCaixaHistoryModal() { const content = `<div class="history-list">${this.caixaHistory.length > 0 ? this.caixaHistory.map(item => `<div class="history-item"><span><strong>Fechamento:</strong> ${new Date(item.fechamento).toLocaleString('pt-BR')}</span><span><strong>Faturamento:</strong> ${this.formatCurrency(item.totalEntradas)}</span><span class="${item.diferenca < 0 ? 'text-red' : ''}">${this.formatCurrency(item.diferenca)}</span></div>`).join('') : '<p>Nenhum histórico.</p>'}</div>`; this.showModal('Histórico de Caixa', content); }
+    showAppointmentModal(isScheduled) { const agendaDate = document.getElementById('agendaDateFilter')?.value || this.getTodayDateString(); const content = `<form id="barberBookingForm" data-walk-in="${!isScheduled}"><div class="form-group"><label>Cliente</label><input type="text" name="name" list="clientSuggestions" placeholder="Buscar ou cadastrar novo" required autocomplete="off"></div><div class="form-group"><label>Celular (DDD)</label><input type="tel" name="phone" placeholder="11999999999" required></div><div class="form-group"><label>Serviço</label><select name="service" required>${this.generateServiceOptions()}</select></div><div class="form-group"><label>Profissional</label><select name="barber" required>${this.generateBarberOptions()}</select></div>${isScheduled ? `<div class="form-group"><label>Data</label><input type="date" name="date" value="${agendaDate}" required></div><div class="form-group"><label>Horário</label><select name="time" required>${this.generateTimeOptions()}</select></div>` : ''}<div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar</button></div></form>${this.populateClientDatalist()}`; this.showModal(isScheduled ? 'Novo Agendamento' : 'Novo Atendimento (Encaixe)', content); }
+    showClientDetailModal(phone) { const client = this.clients.find(c => c.phone === phone); if(!client) return; const clientAppointments = this.appointments.filter(a => a.phone === phone).sort((a,b)=>new Date(b.createdAt) - new Date(a.createdAt)); const content = `<div class="client-details"><h4>${client.name}</h4><p><strong>Telefone:</strong> ${client.phone}</p><p><strong>Cliente desde:</strong> ${this.formatDate(client.createdAt)}</p><hr style="margin: 1rem 0;"><h5>Histórico de Atendimentos</h5><div class="history-list">${clientAppointments.length > 0 ? clientAppointments.map(a => `<div class="history-item"><span>${this.formatDate(a.date)}</span><span>${this.services.find(s=>s.id===a.service)?.name || ''}</span><span class="status-${a.status}">${statusMap[a.status]?.text || a.status}</span></div>`).join('') : '<p>Nenhum histórico de atendimentos.</p>'}</div></div>`; this.showModal('Detalhes do Cliente', content); }
+    showCaixaHistoryModal() { const content = `<div class="history-list">${this.caixaHistory.sort((a,b) => new Date(b.fechamento) - new Date(a.fechamento)).map(item => `<div class="history-item"><div><strong>Fechamento:</strong> ${new Date(item.fechamento).toLocaleString('pt-BR')}</div><div><strong>Faturamento:</strong> ${this.formatCurrency(item.totalEntradas)}</div><div class="diferenca ${item.diferenca !== 0 ? (item.diferenca < 0 ? 'text-red' : 'text-green') : ''}"><strong>Diferença:</strong> ${this.formatCurrency(item.diferenca)}</div></div>`).join('') || '<p class="empty-state">Nenhum histórico de caixa encontrado.</p>'}</div>`; this.showModal('Histórico de Caixa', content); }
     showExpenseModal() { if (!this.checkCaixaStatus()) return; const content = `<form id="expenseForm"><div class="form-group"><label>Descrição</label><input type="text" name="description" required></div><div class="form-group"><label>Valor (R$)</label><input type="number" step="0.01" name="amount" required></div><div class="modal-footer"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Adicionar Despesa</button></div></form>`; this.showModal('Adicionar Despesa', content); }
     
     // 11. Funções Utilitárias e Auxiliares
@@ -328,6 +450,20 @@ class BarberPro {
     generateBarberOptions() { return '<option value="">Selecione</option>' + this.barbers.map(b => `<option value="${b.id}">${b.name}</option>`).join(''); }
     generateTimeOptions() { let options = '<option value="">Selecione</option>'; for (let h = 9; h < 19; h++) { if (h === 12 || h === 13) continue; for (let m = 0; m < 60; m += 15) { const time = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; options += `<option value="${time}">${time}</option>`; } } return options; }
     renderRelevantViews() { if (document.getElementById('dashboardView')?.style.display === 'block') this.loadDashboardData(); if (document.getElementById('appointmentsView')?.style.display === 'block') this.renderAgendaView(); if (document.getElementById('comandasView')?.style.display === 'block') this.renderPendingAppointments(); }
+
+    // NOVO: Funções para autocompletar cliente e telefone
+    populateClientDatalist() {
+        return `<datalist id="clientSuggestions">${this.clients.map(c => `<option value="${c.name}"></option>`).join('')}</datalist>`;
+    }
+
+    handleClientNameInput(event) {
+        const name = event.target.value;
+        const client = this.clients.find(c => c.name.toLowerCase() === name.toLowerCase());
+        const phoneInput = event.target.closest('form').querySelector('input[name="phone"]');
+        if (client && phoneInput) {
+            phoneInput.value = client.phone;
+        }
+    }
 }
 
 window.barberPro = new BarberPro();
