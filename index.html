@@ -809,7 +809,7 @@
             overflow-y: auto;
         }
 
-        .modal-footer {
+        #modalFooter { /* Alterado de .modal-footer para #modalFooter */
             padding: 1rem 1.5rem;
             border-top: 1px solid var(--border);
             display: flex;
@@ -822,6 +822,7 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            margin-left: auto; /* Garante que os botões fiquem à direita */
         }
 
         .close-modal-btn {
@@ -1493,6 +1494,7 @@
                 <button id="closeModalBtn" class="close-modal-btn">&times;</button>
             </div>
             <div id="modalContent" class="modal-content"></div>
+            <div id="modalFooter"></div>
         </div>
     </div>
 
@@ -2505,9 +2507,10 @@
                 this.showNotification('Despesa registrada!', 'success');
             }
 
-            showModal(title, content) {
+            showModal(title, content, footerHTML = '') {
                 document.getElementById('modalTitle').textContent = title;
                 document.getElementById('modalContent').innerHTML = content;
+                document.getElementById('modalFooter').innerHTML = footerHTML;
                 document.getElementById('modalBackdrop').style.display = 'flex';
                 document.body.classList.add('modal-open');
                 const firstInput = document.querySelector('#modalContent input, #modalContent select');
@@ -2531,13 +2534,36 @@
             }
             showServiceModal(id = null) {
                 const service = id ? this.services.find(s => s.id === id) : {};
-                const content = `<form id="serviceForm"><input type="hidden" name="id" value="${service.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${service.name || ''}" required></div><div class="form-group"><label>Preço (R$)</label><input type="text" name="price" placeholder="Ex: 35,00" value="${service.price || ''}" required></div><div class="form-group"><label>Duração (min)</label><input type="number" step="15" name="duration" value="${service.duration || '45'}" required></div><div class="form-group"><label>Descrição</label><input type="text" name="description" value="${service.description || ''}"></div><div class="form-group"><label>URL da Imagem (Opcional)</label><input type="text" name="imageUrl" value="${service.imageUrl || ''}"></div><div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${service.id ? 'Salvar' : 'Adicionar'}</button></div></div></form>`;
-                this.showModal(service.id ? 'Editar Serviço' : 'Adicionar Serviço', content);
+                const content = `
+                    <form id="serviceForm">
+                        <input type="hidden" name="id" value="${service.id || ''}">
+                        <div class="form-group"><label>Nome</label><input type="text" name="name" value="${service.name || ''}" required></div>
+                        <div class="form-group"><label>Preço (R$)</label><input type="text" name="price" placeholder="Ex: 35,00" value="${service.price || ''}" required></div>
+                        <div class="form-group"><label>Duração (min)</label><input type="number" step="15" name="duration" value="${service.duration || '45'}" required></div>
+                        <div class="form-group"><label>Descrição</label><input type="text" name="description" value="${service.description || ''}"></div>
+                        <div class="form-group"><label>URL da Imagem (Opcional)</label><input type="text" name="imageUrl" value="${service.imageUrl || ''}"></div>
+                    </form>`;
+                const footer = `
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button>
+                        <button type="submit" form="serviceForm" class="btn-primary">${service.id ? 'Salvar' : 'Adicionar'}</button>
+                    </div>`;
+                this.showModal(service.id ? 'Editar Serviço' : 'Adicionar Serviço', content, footer);
             }
             showProfessionalModal(id = null) {
                 const professional = id ? this.barbers.find(b => b.id === id) : {};
-                const content = `<form id="professionalForm"><input type="hidden" name="id" value="${professional.id || ''}"><div class="form-group"><label>Nome</label><input type="text" name="name" value="${professional.name || ''}" required></div><div class="form-group"><label>Especialidade</label><input type="text" name="specialty" value="${professional.specialty || ''}"></div><div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">${id ? 'Salvar' : 'Adicionar'}</button></div></div></form>`;
-                this.showModal(id ? 'Editar Profissional' : 'Adicionar Profissional', content);
+                const content = `
+                    <form id="professionalForm">
+                        <input type="hidden" name="id" value="${professional.id || ''}">
+                        <div class="form-group"><label>Nome</label><input type="text" name="name" value="${professional.name || ''}" required></div>
+                        <div class="form-group"><label>Especialidade</label><input type="text" name="specialty" value="${professional.specialty || ''}"></div>
+                    </form>`;
+                const footer = `
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button>
+                        <button type="submit" form="professionalForm" class="btn-primary">${id ? 'Salvar' : 'Adicionar'}</button>
+                    </div>`;
+                this.showModal(id ? 'Editar Profissional' : 'Adicionar Profissional', content, footer);
             }
             showAppointmentModal(isScheduled) {
                 const agendaDate = document.getElementById('agendaDateFilter')?.value || this.getTodayDateString();
