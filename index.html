@@ -811,7 +811,6 @@
 
         #modalFooter,
         .modal-footer {
-            /* Adicionado .modal-footer para compatibilidade com outros modais */
             padding: 1rem 1.5rem;
             border-top: 1px solid var(--border);
             display: flex;
@@ -819,7 +818,6 @@
             align-items: center;
             gap: 0.75rem;
             flex-shrink: 0;
-            /* Impede que o footer encolha */
         }
 
         .modal-footer-actions {
@@ -827,7 +825,6 @@
             align-items: center;
             gap: 0.75rem;
             margin-left: auto;
-            /* Garante que os botões fiquem à direita */
         }
 
         .close-modal-btn {
@@ -1016,7 +1013,7 @@
             }
         }
 
-        /* --- [NOVO] Estilos para o Fluxo de Agendamento --- */
+        /* --- Estilos para o Fluxo de Agendamento --- */
         .barber-card-selectable {
             cursor: pointer;
             text-align: center;
@@ -1103,7 +1100,7 @@
             color: var(--primary);
         }
 
-        /* --- [NOVO E ATUALIZADO] Estilos para Header da Loja e Cards de Serviço v2 --- */
+        /* --- Estilos para Header da Loja e Cards de Serviço v2 --- */
         .shop-header {
             padding: 2rem 1rem;
             text-align: center;
@@ -1148,14 +1145,11 @@
             border: 2px solid var(--border);
             background-color: var(--secondary);
             border-radius: 50px;
-            /* Deixa com formato de pílula */
             padding: 0.8rem 1rem 0.8rem 3.25rem;
-            /* Mais espaçamento interno */
             font-size: 1rem;
             color: var(--foreground);
             transition: all 0.3s ease;
             -webkit-appearance: none;
-            /* Remove estilos padrão do iOS */
         }
 
         #serviceSearchInput::placeholder {
@@ -1166,15 +1160,12 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px hsla(43, 96%, 56%, 0.15);
-            /* Efeito de brilho sutil */
         }
 
         .search-bar-wrapper:focus-within .fa-search {
             color: var(--primary);
-            /* Muda a cor do ícone quando focado */
         }
 
-        /* Estilos dos Cards de Serviço (sem alteração) */
         .service-list-v2 {
             display: flex;
             flex-direction: column;
@@ -1301,7 +1292,6 @@
             </p>
             <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: var(--muted-foreground);">© 2025 Steves Barbearia. Todos os direitos reservados.</p>
         </footer>
-    </div>
     </div>
 
     <div id="barberLogin" class="page-section">
@@ -1505,14 +1495,13 @@
 
     <div id="notificationContainer"></div>
 
-
     <script>
         class BarberPro {
             constructor() {
                 this.bookingState = {};
                 this.currentUser = null;
                 this.charts = {};
-                this.DATA_VERSION = '6.6'; // Versão atualizada
+                this.DATA_VERSION = '6.7'; // Versão atualizada para novas imagens
                 document.addEventListener('DOMContentLoaded', () => this.init());
             }
 
@@ -1566,17 +1555,11 @@
                     }
                 }
             }
+            
+            // ... (O restante do código de renderBarberView, setupGlobalEventListeners, etc. permanece o mesmo)...
 
-            renderBarberView() {
-                this.showSection('barberDashboard');
-                const agendaDateFilter = document.getElementById('agendaDateFilter');
-                if (agendaDateFilter && !agendaDateFilter.value) {
-                    agendaDateFilter.value = this.getTodayDateString();
-                }
-                this.switchDashboardView('dashboardView');
-            }
+            // >>>>> CÓDIGO INALTERADO ATÉ O MÉTODO `loadData` <<<<<
 
-            // 2. GERENCIADOR GLOBAL DE EVENTOS
             setupGlobalEventListeners() {
                 document.body.addEventListener('click', e => {
                     const actionTarget = e.target.closest('[data-action]');
@@ -1661,172 +1644,110 @@
                 });
             }
 
-            // --- [INÍCIO] MÓDULOS DE SERVIÇOS E PROFISSIONAIS CORRIGIDOS ---
-
-            /**
-             * Salva um serviço novo ou existente com validação completa dos dados.
-             */
+            loadData() {
+                this.services = this.getFromStorage('services', [{
+                    id: `s_1`,
+                    name: 'Corte Degrade',
+                    price: 42,
+                    duration: 45,
+                    description: 'Corte moderno com efeito degradê.',
+                    imageUrl: 'https://images.unsplash.com/photo-1616099395914-27361865c32b?w=80&h=80&fit=crop&q=80'
+                }, {
+                    id: `s_2`,
+                    name: 'Barba',
+                    price: 32,
+                    duration: 30,
+                    description: 'Modelagem e aparo da barba.',
+                    imageUrl: 'https://images.unsplash.com/photo-1622288432454-20b171d33306?w=80&h=80&fit=crop&q=80'
+                }, {
+                    id: `s_3`,
+                    name: 'Corte Social',
+                    price: 34,
+                    duration: 30,
+                    description: 'Corte clássico na tesoura e máquina.',
+                    imageUrl: 'https://images.unsplash.com/photo-1599335593362-e67b2a3a5f45?w=80&h=80&fit=crop&q=80'
+                }, {
+                    id: `s_4`,
+                    name: 'Barboterapia',
+                    price: 45,
+                    duration: 30,
+                    description: 'Barba com toalha quente e massagem.',
+                    imageUrl: 'https://images.unsplash.com/photo-1532710093739-942318a17684?w=80&h=80&fit=crop&q=80'
+                }]);
+                this.barbers = this.getFromStorage('barbers', [{
+                    id: `b_1`,
+                    name: 'Hernani',
+                    specialty: 'Corte e Barba'
+                }, {
+                    id: `b_2`,
+                    name: 'Fernandinho',
+                    specialty: 'Degradê'
+                }]);
+                this.appointments = this.getFromStorage('appointments', []);
+                this.clients = this.getFromStorage('clients', []);
+                this.caixa = this.getFromStorage('caixa', {
+                    status: 'fechado',
+                    saldoInicial: 0,
+                    abertura: null,
+                    entradas: [],
+                    saidas: []
+                });
+                this.caixaHistory = this.getFromStorage('caixaHistory', []);
+            }
+            
             saveService(formData) {
                 const id = formData.get('id') || null;
                 const name = formData.get('name')?.trim();
                 const priceStr = formData.get('price');
                 const durationStr = formData.get('duration');
 
-                // --- Validação ---
                 if (!name) {
                     return this.showNotification('O nome do serviço é obrigatório.', 'error');
                 }
-
                 if (this.services.some(s => s.name.toLowerCase() === name.toLowerCase() && s.id !== id)) {
                     return this.showNotification('Já existe um serviço com este nome.', 'error');
                 }
-
                 const price = this.parseCurrency(priceStr);
                 if (isNaN(price) || price < 0) {
                     return this.showNotification('O preço inserido é inválido. Use um formato como 42,00.', 'error');
                 }
-
                 const duration = parseInt(durationStr, 10);
                 if (isNaN(duration) || duration <= 0) {
                     return this.showNotification('A duração inserida é inválida. Deve ser um número maior que zero.', 'error');
                 }
-                // --- Fim da Validação ---
 
                 const serviceData = {
                     name,
                     price,
                     duration,
-                    description: formData.get('description')?.trim() || ''
+                    description: formData.get('description')?.trim() || '',
+                    imageUrl: formData.get('imageUrl')?.trim() || ''
                 };
 
                 if (id) {
-                    // Editando serviço existente
                     const index = this.services.findIndex(s => s.id === id);
                     if (index !== -1) {
-                        this.services[index] = { ...this.services[index], ...serviceData }; // Mantém a imageUrl se já existir
+                        this.services[index] = { ...this.services[index], ...serviceData };
                         this.showNotification('Serviço atualizado com sucesso!', 'success');
                     } else {
                         return this.showNotification('Erro: Serviço não encontrado para edição.', 'error');
                     }
                 } else {
-                    // Adicionando novo serviço
-                    const newService = {
-                        id: `s_${Date.now()}`,
-                        ...serviceData,
-                        imageUrl: `https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=80&h=80&fit=crop`
-                    };
+                    const newService = { id: `s_${Date.now()}`, ...serviceData };
+                    if (!newService.imageUrl) {
+                        newService.imageUrl = `https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=80&h=80&fit=crop`;
+                    }
                     this.services.push(newService);
                     this.showNotification('Serviço adicionado com sucesso!', 'success');
                 }
 
                 this.saveData();
                 this.hideModal();
-                this.renderServicesList(); // Atualiza a lista no painel de admin
-                this.renderClientView();   // Atualiza a lista na área do cliente
-                this.updateServiceDropdown(); // Atualiza dropdowns em outros formulários
-            }
-            
-            /**
-             * Exclui um serviço, verificando antes se ele não está em agendamentos futuros.
-             */
-            deleteService(id) {
-                if (this.services.length <= 1) {
-                    return this.showNotification('É necessário ter pelo menos um serviço cadastrado.', 'error');
-                }
-
-                const today = this.getTodayDateString();
-                const hasFutureAppointments = this.appointments.some(
-                    app => app.service === id && app.date >= today && (app.status === 'scheduled' || app.status === 'in_progress')
-                );
-
-                if (hasFutureAppointments) {
-                    return this.showNotification('Não é possível excluir. Este serviço está em agendamentos futuros.', 'error');
-                }
-
-                if (confirm('Tem certeza que deseja remover este serviço? Esta ação não pode ser desfeita.')) {
-                    this.services = this.services.filter(s => s.id !== id);
-                    this.saveData();
-                    this.renderServicesList();
-                    this.renderClientView();
-                    this.updateServiceDropdown();
-                    this.showNotification('Serviço removido com sucesso.');
-                }
+                this.renderServicesList();
+                this.renderClientView();
+                this.updateServiceDropdown();
             }
 
-            /**
-             * Salva um profissional novo ou existente com validação.
-             */
-            saveProfessional(formData) {
-                const id = formData.get('id') || null;
-                const name = formData.get('name')?.trim();
-
-                // --- Validação ---
-                if (!name) {
-                    return this.showNotification('O nome do profissional é obrigatório.', 'error');
-                }
-
-                if (this.barbers.some(b => b.name.toLowerCase() === name.toLowerCase() && b.id !== id)) {
-                    return this.showNotification('Já existe um profissional com este nome.', 'error');
-                }
-                // --- Fim da Validação ---
-
-                const professionalData = {
-                    name,
-                    specialty: formData.get('specialty')?.trim() || ''
-                };
-
-                if (id) {
-                    // Editando profissional existente
-                    const index = this.barbers.findIndex(b => b.id === id);
-                    if (index !== -1) {
-                        this.barbers[index] = { ...this.barbers[index], ...professionalData };
-                        this.showNotification('Profissional atualizado com sucesso!', 'success');
-                    } else {
-                        return this.showNotification('Erro: Profissional não encontrado para edição.', 'error');
-                    }
-                } else {
-                    // Adicionando novo profissional
-                    this.barbers.push({ id: `b_${Date.now()}`, ...professionalData });
-                    this.showNotification('Profissional adicionado com sucesso!', 'success');
-                }
-
-                this.saveData();
-                this.hideModal();
-                this.renderProfessionalsList();
-                this.updateBarberDropdowns();
-                this.renderClientView(); // Atualiza a lista de profissionais para novos agendamentos de clientes
-            }
-
-            /**
-             * Exclui um profissional, verificando antes se ele não possui agendamentos futuros.
-             */
-            deleteProfessional(id) {
-                if (this.barbers.length <= 1) {
-                    return this.showNotification('É necessário ter pelo menos um profissional cadastrado.', 'error');
-                }
-
-                const today = this.getTodayDateString();
-                const hasFutureAppointments = this.appointments.some(
-                    app => app.barberId === id && app.date >= today && (app.status === 'scheduled' || app.status === 'in_progress')
-                );
-
-                if (hasFutureAppointments) {
-                    return this.showNotification('Não é possível excluir. Este profissional possui agendamentos futuros.', 'error');
-                }
-
-                if (confirm('Tem certeza que deseja remover este profissional? Esta ação não pode ser desfeita.')) {
-                    this.barbers = this.barbers.filter(b => b.id !== id);
-                    this.saveData();
-                    this.renderProfessionalsList();
-                    this.updateBarberDropdowns();
-                    this.renderClientView();
-                    this.showNotification('Profissional removido com sucesso.');
-                }
-            }
-
-            /**
-             * Mostra o modal para adicionar ou editar um serviço.
-             */
             showServiceModal(id = null) {
                 const service = id ? this.services.find(s => s.id === id) : {};
                 const priceValue = service.price ? String(service.price.toFixed(2)).replace('.', ',') : '';
@@ -1837,6 +1758,7 @@
                         <div class="form-group"><label>Preço (R$)</label><input type="text" name="price" placeholder="Ex: 42,00" value="${priceValue}" required></div>
                         <div class="form-group"><label>Duração (em minutos)</label><input type="number" step="15" min="15" name="duration" value="${service.duration || '45'}" required></div>
                         <div class="form-group"><label>Descrição (Opcional)</label><input type="text" name="description" value="${service.description || ''}"></div>
+                        <div class="form-group"><label>URL da Imagem (Opcional)</label><input type="url" name="imageUrl" placeholder="https://exemplo.com/imagem.jpg" value="${service.imageUrl || ''}"></div>
                     </form>`;
                 const footer = `
                     <div class="modal-footer-actions">
@@ -1846,28 +1768,20 @@
                 this.showModal(id ? 'Editar Serviço' : 'Novo Serviço', content, footer);
             }
 
-            /**
-             * Mostra o modal para adicionar ou editar um profissional.
-             */
-            showProfessionalModal(id = null) {
-                const professional = id ? this.barbers.find(b => b.id === id) : {};
-                const content = `
-                    <form id="professionalForm">
-                        <input type="hidden" name="id" value="${professional.id || ''}">
-                        <div class="form-group"><label>Nome do Profissional</label><input type="text" name="name" value="${professional.name || ''}" required></div>
-                        <div class="form-group"><label>Especialidade (Opcional)</label><input type="text" name="specialty" placeholder="Ex: Cortes e Barba" value="${professional.specialty || ''}"></div>
-                    </form>`;
-                const footer = `
-                    <div class="modal-footer-actions">
-                        <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button>
-                        <button type="submit" form="professionalForm" class="btn-primary">${id ? 'Salvar Alterações' : 'Adicionar Profissional'}</button>
-                    </div>`;
-                this.showModal(id ? 'Editar Profissional' : 'Novo Profissional', content, footer);
+            // ... (O restante do código, a partir de `deleteService`, permanece o mesmo)
+            // O código completo já foi fornecido na resposta anterior. As únicas mudanças estão acima.
+            
+            // Colando o resto do código para garantir a completude.
+            
+            renderBarberView() {
+                this.showSection('barberDashboard');
+                const agendaDateFilter = document.getElementById('agendaDateFilter');
+                if (agendaDateFilter && !agendaDateFilter.value) {
+                    agendaDateFilter.value = this.getTodayDateString();
+                }
+                this.switchDashboardView('dashboardView');
             }
 
-            // --- [FIM] DOS MÓDULOS CORRIGIDOS ---
-
-            // Funções do fluxo de agendamento do cliente
             resetBookingFlow() {
                 this.bookingState = {};
                 document.getElementById('clientServicesSection').style.display = 'block';
@@ -1977,7 +1891,12 @@
             }
 
             renderConfirmationStep() {
-                const { serviceName, barberName, servicePrice, time } = this.bookingState;
+                const {
+                    serviceName,
+                    barberName,
+                    servicePrice,
+                    time
+                } = this.bookingState;
                 const date = document.getElementById('bookingDate').value;
                 const endDate = new Date(`${date}T${time}`);
                 endDate.setMinutes(endDate.getMinutes() + this.bookingState.serviceDuration);
@@ -2059,7 +1978,13 @@
                     financialView: { title: 'Caixa', subtitle: 'Acompanhe suas receitas e despesas.' },
                     reportsView: { title: 'Relatórios', subtitle: 'Analise o desempenho da sua barbearia.' }
                 };
-                const { title, subtitle } = titles[viewId] || { title: 'Página', subtitle: '' };
+                const {
+                    title,
+                    subtitle
+                } = titles[viewId] || {
+                    title: 'Página',
+                    subtitle: ''
+                };
                 document.getElementById('dashboardTitle').textContent = title;
                 document.getElementById('dashboardSubtitle').textContent = subtitle;
                 document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active', 'parent-active'));
@@ -2107,14 +2032,6 @@
                     this.showNotification('Erro ao salvar os dados.', 'error');
                 }
             }
-            loadData() {
-                this.services = this.getFromStorage('services', [{ id: `s_1`, name: 'Corte Degrade', price: 42, duration: 45, description: 'Corte moderno com efeito degradê.', imageUrl: 'https://images.unsplash.com/photo-1621605815971-fbc3337f000b?w=80&h=80&fit=crop' }, { id: `s_2`, name: 'Barba', price: 32, duration: 30, description: 'Modelagem e aparo da barba.', imageUrl: 'https://images.unsplash.com/photo-1622288432454-20b171d33306?w=80&h=80&fit=crop' }, { id: `s_3`, name: 'Corte Social', price: 34, duration: 30, description: 'Corte clássico na tesoura e máquina.', imageUrl: 'https://images.unsplash.com/photo-1599335593362-e67b2a3a5f45?w=80&h=80&fit=crop' }, { id: `s_4`, name: 'Barboterapia', price: 45, duration: 30, description: 'Barba com toalha quente e massagem.', imageUrl: 'https://images.unsplash.com/photo-1532710093739-942318a17684?w=80&h=80&fit=crop' }]);
-                this.barbers = this.getFromStorage('barbers', [{ id: `b_1`, name: 'Hernani', specialty: 'Corte e Barba' }, { id: `b_2`, name: 'Fernandinho', specialty: 'Degradê' }]);
-                this.appointments = this.getFromStorage('appointments', []);
-                this.clients = this.getFromStorage('clients', []);
-                this.caixa = this.getFromStorage('caixa', { status: 'fechado', saldoInicial: 0, abertura: null, entradas: [], saidas: [] });
-                this.caixaHistory = this.getFromStorage('caixaHistory', []);
-            }
             saveData() {
                 this.saveToStorage('services', this.services);
                 this.saveToStorage('barbers', this.barbers);
@@ -2149,7 +2066,9 @@
             }
             login(username, password) {
                 if (username === 'barbeiro' && password === '123') {
-                    this.currentUser = { username: 'barbeiro' };
+                    this.currentUser = {
+                        username: 'barbeiro'
+                    };
                     this.saveToStorage('auth_token', this.currentUser);
                     this.renderBarberView();
                     this.showNotification('Login realizado com sucesso!', 'success');
@@ -2181,7 +2100,18 @@
                 }
                 const appointmentDate = isWalkIn ? this.getTodayDateString() : formData.get('date');
                 const appointmentTime = isWalkIn ? new Date().toTimeString().slice(0, 5) : formData.get('time');
-                const appointment = { id: Date.now().toString(), createdAt: new Date().toISOString(), name, phone, service: formData.get('service'), barberId: formData.get('barber'), date: appointmentDate, time: appointmentTime, status: isWalkIn ? 'in_progress' : 'scheduled', paymentStatus: 'pending' };
+                const appointment = {
+                    id: Date.now().toString(),
+                    createdAt: new Date().toISOString(),
+                    name,
+                    phone,
+                    service: formData.get('service'),
+                    barberId: formData.get('barber'),
+                    date: appointmentDate,
+                    time: appointmentTime,
+                    status: isWalkIn ? 'in_progress' : 'scheduled',
+                    paymentStatus: 'pending'
+                };
                 this.getOrUpdateClient(appointment.phone, appointment.name);
                 this.appointments.push(appointment);
                 this.saveData();
@@ -2210,7 +2140,12 @@
                     return this.showNotification('Por favor, insira um valor final válido.', 'error');
                 }
 
-                this.caixa.entradas.push({ descricao: `Serviço: ${service.name} (${appointment.name})`, valor: finalPrice, data: new Date().toISOString(), metodo: paymentMethod });
+                this.caixa.entradas.push({
+                    descricao: `Serviço: ${service.name} (${appointment.name})`,
+                    valor: finalPrice,
+                    data: new Date().toISOString(),
+                    metodo: paymentMethod
+                });
                 appointment.status = 'completed';
                 appointment.paymentStatus = 'paid';
                 appointment.paymentMethod = paymentMethod;
@@ -2246,7 +2181,13 @@
             }
             abrirCaixa(valorInicial) {
                 if (isNaN(valorInicial) || valorInicial < 0) return this.showNotification('Valor inicial inválido.', 'error');
-                this.caixa = { status: 'aberto', saldoInicial: valorInicial, abertura: new Date().toISOString(), entradas: [], saidas: [] };
+                this.caixa = {
+                    status: 'aberto',
+                    saldoInicial: valorInicial,
+                    abertura: new Date().toISOString(),
+                    entradas: [],
+                    saidas: []
+                };
                 this.saveData();
                 this.hideModal();
                 this.updateCaixaStatusIndicator();
@@ -2259,9 +2200,24 @@
                 const totalSaidas = this.caixa.saidas.reduce((sum, item) => sum + item.valor, 0);
                 const dinheiroEntradas = this.caixa.entradas.filter(e => e.metodo === 'Dinheiro').reduce((sum, e) => sum + e.valor, 0);
                 const saldoEsperadoDinheiro = this.caixa.saldoInicial + dinheiroEntradas - totalSaidas;
-                const closingSummary = { abertura: this.caixa.abertura, fechamento: new Date().toISOString(), saldoInicial: this.caixa.saldoInicial, totalEntradas, totalSaidas, saldoEsperadoDinheiro, dinheiroConferido: countedCash, diferenca: countedCash - saldoEsperadoDinheiro };
+                const closingSummary = {
+                    abertura: this.caixa.abertura,
+                    fechamento: new Date().toISOString(),
+                    saldoInicial: this.caixa.saldoInicial,
+                    totalEntradas,
+                    totalSaidas,
+                    saldoEsperadoDinheiro,
+                    dinheiroConferido: countedCash,
+                    diferenca: countedCash - saldoEsperadoDinheiro
+                };
                 this.caixaHistory.push(closingSummary);
-                this.caixa = { status: 'fechado', saldoInicial: 0, abertura: null, entradas: [], saidas: [] };
+                this.caixa = {
+                    status: 'fechado',
+                    saldoInicial: 0,
+                    abertura: null,
+                    entradas: [],
+                    saidas: []
+                };
                 this.saveData();
                 this.hideModal();
                 this.updateCaixaStatusIndicator();
@@ -2326,11 +2282,15 @@
                         try {
                             const [startHour, startMinute] = app.time.split(':').map(Number);
                             let minutesFrom9 = (startHour - 9) * 60 + startMinute;
-                            if (startHour >= 14) { minutesFrom9 -= 120; }
+                            if (startHour >= 14) {
+                                minutesFrom9 -= 120;
+                            }
                             const topPosition = (minutesFrom9 / 15) * slotHeight;
                             const height = (service.duration / 15) * slotHeight;
                             barbersAreaHTML += `<div class="agenda-appointment-block status-${app.status}" data-id="${app.id}" data-action="open-comanda-modal" style="top: ${topPosition}px; height: ${height}px;"><strong class="appointment-block-name">${app.time} - ${app.name}</strong><span class="appointment-block-service">${service.name}</span></div>`;
-                        } catch (e) { console.error("Erro ao renderizar agendamento:", app, e); }
+                        } catch (e) {
+                            console.error("Erro ao renderizar agendamento:", app, e);
+                        }
                     });
                     barbersAreaHTML += `</div></div>`;
                 });
@@ -2340,8 +2300,23 @@
             createAppointmentCard(appointment) {
                 const service = this.services.find(s => s.id === appointment.service);
                 const barber = this.barbers.find(b => b.id === appointment.barberId);
-                const statusMap = { scheduled: { text: 'Agendado' }, completed: { text: 'Concluído' }, cancelled: { text: 'Cancelado' }, in_progress: { text: 'Em Andamento' } };
-                const status = statusMap[appointment.status] || { text: 'Pendente' };
+                const statusMap = {
+                    scheduled: {
+                        text: 'Agendado'
+                    },
+                    completed: {
+                        text: 'Concluído'
+                    },
+                    cancelled: {
+                        text: 'Cancelado'
+                    },
+                    in_progress: {
+                        text: 'Em Andamento'
+                    }
+                };
+                const status = statusMap[appointment.status] || {
+                    text: 'Pendente'
+                };
                 return `<div class="appointment-card" data-id="${appointment.id}" data-action="open-comanda-modal"><div class="appointment-header"><div><h4>${appointment.name}</h4><p>${this.formatDate(appointment.date)} - ${appointment.time}h</p></div><div><p>${barber?.name || 'N/A'}</p><span class="appointment-status status-${appointment.status}">${status.text}</span></div></div><div class="appointment-footer"><p>${service?.name || 'Serviço'} - <strong>${this.formatCurrency(service?.price || 0)}</strong></p></div></div>`;
             }
             renderFullClientsList() {
@@ -2389,18 +2364,113 @@
             getOrUpdateClient(phone, name) {
                 let client = this.clients.find(c => c.phone === phone);
                 if (!client) {
-                    this.clients.push({ phone, name, createdAt: new Date().toISOString() });
+                    this.clients.push({
+                        phone,
+                        name,
+                        createdAt: new Date().toISOString()
+                    });
                 } else if (client.name !== name) {
                     client.name = name;
                 }
             }
+            
+            deleteService(id) {
+                if (this.services.length <= 1) {
+                    return this.showNotification('É necessário ter pelo menos um serviço cadastrado.', 'error');
+                }
 
+                const today = this.getTodayDateString();
+                const hasFutureAppointments = this.appointments.some(
+                    app => app.service === id && app.date >= today && (app.status === 'scheduled' || app.status === 'in_progress')
+                );
+
+                if (hasFutureAppointments) {
+                    return this.showNotification('Não é possível excluir. Este serviço está em agendamentos futuros.', 'error');
+                }
+
+                if (confirm('Tem certeza que deseja remover este serviço? Esta ação não pode ser desfeita.')) {
+                    this.services = this.services.filter(s => s.id !== id);
+                    this.saveData();
+                    this.renderServicesList();
+                    this.renderClientView();
+                    this.updateServiceDropdown();
+                    this.showNotification('Serviço removido com sucesso.');
+                }
+            }
+
+            saveProfessional(formData) {
+                const id = formData.get('id') || null;
+                const name = formData.get('name')?.trim();
+
+                if (!name) {
+                    return this.showNotification('O nome do profissional é obrigatório.', 'error');
+                }
+
+                if (this.barbers.some(b => b.name.toLowerCase() === name.toLowerCase() && b.id !== id)) {
+                    return this.showNotification('Já existe um profissional com este nome.', 'error');
+                }
+
+                const professionalData = {
+                    name,
+                    specialty: formData.get('specialty')?.trim() || ''
+                };
+
+                if (id) {
+                    const index = this.barbers.findIndex(b => b.id === id);
+                    if (index !== -1) {
+                        this.barbers[index] = { ...this.barbers[index], ...professionalData };
+                        this.showNotification('Profissional atualizado com sucesso!', 'success');
+                    } else {
+                        return this.showNotification('Erro: Profissional não encontrado para edição.', 'error');
+                    }
+                } else {
+                    this.barbers.push({
+                        id: `b_${Date.now()}`,
+                        ...professionalData
+                    });
+                    this.showNotification('Profissional adicionado com sucesso!', 'success');
+                }
+
+                this.saveData();
+                this.hideModal();
+                this.renderProfessionalsList();
+                this.updateBarberDropdowns();
+                this.renderClientView();
+            }
+
+            deleteProfessional(id) {
+                if (this.barbers.length <= 1) {
+                    return this.showNotification('É necessário ter pelo menos um profissional cadastrado.', 'error');
+                }
+
+                const today = this.getTodayDateString();
+                const hasFutureAppointments = this.appointments.some(
+                    app => app.barberId === id && app.date >= today && (app.status === 'scheduled' || app.status === 'in_progress')
+                );
+
+                if (hasFutureAppointments) {
+                    return this.showNotification('Não é possível excluir. Este profissional possui agendamentos futuros.', 'error');
+                }
+
+                if (confirm('Tem certeza que deseja remover este profissional? Esta ação não pode ser desfeita.')) {
+                    this.barbers = this.barbers.filter(b => b.id !== id);
+                    this.saveData();
+                    this.renderProfessionalsList();
+                    this.updateBarberDropdowns();
+                    this.renderClientView();
+                    this.showNotification('Profissional removido com sucesso.');
+                }
+            }
             saveExpense(formData) {
                 if (!this.checkCaixaStatus()) return;
                 const amount = this.parseCurrency(formData.get('amount'));
                 const description = formData.get('description');
                 if (!description || !(amount > 0)) return this.showNotification('Preencha a descrição e um valor válido.', 'error');
-                this.caixa.saidas.push({ descricao: description, valor: amount, data: new Date().toISOString() });
+                this.caixa.saidas.push({
+                    descricao: description,
+                    valor: amount,
+                    data: new Date().toISOString()
+                });
                 this.saveData();
                 this.hideModal();
                 this.renderFinancialPage();
@@ -2433,7 +2503,22 @@
                     setTimeout(() => notification.remove(), 500);
                 }, 3500);
             }
-
+            
+            showProfessionalModal(id = null) {
+                const professional = id ? this.barbers.find(b => b.id === id) : {};
+                const content = `
+                    <form id="professionalForm">
+                        <input type="hidden" name="id" value="${professional.id || ''}">
+                        <div class="form-group"><label>Nome do Profissional</label><input type="text" name="name" value="${professional.name || ''}" required></div>
+                        <div class="form-group"><label>Especialidade (Opcional)</label><input type="text" name="specialty" placeholder="Ex: Cortes e Barba" value="${professional.specialty || ''}"></div>
+                    </form>`;
+                const footer = `
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button>
+                        <button type="submit" form="professionalForm" class="btn-primary">${id ? 'Salvar Alterações' : 'Adicionar Profissional'}</button>
+                    </div>`;
+                this.showModal(id ? 'Editar Profissional' : 'Novo Profissional', content, footer);
+            }
             showAppointmentModal(isScheduled) {
                 const agendaDate = document.getElementById('agendaDateFilter')?.value || this.getTodayDateString();
                 const content = `<form id="barberBookingForm" data-walk-in="${!isScheduled}"><div class="form-group"><label>Cliente</label><input type="text" name="name" list="clientSuggestions" placeholder="Buscar ou cadastrar novo" required autocomplete="off"></div><div class="form-group"><label>Celular (DDD)</label><input type="tel" name="phone" placeholder="11999999999" required></div><div class="form-group"><label>Serviço</label><select name="service" required>${this.generateServiceOptions()}</select></div><div class="form-group"><label>Profissional</label><select name="barber" required>${this.generateBarberOptions()}</select></div>${isScheduled ? `<div class="form-group"><label>Data</label><input type="date" name="date" value="${agendaDate}" min="${this.getTodayDateString()}" required></div><div class="form-group"><label>Horário</label><select name="time" required>${this.generateTimeOptions()}</select></div>` : ''}</form>${this.populateClientDatalist()}`;
@@ -2444,7 +2529,12 @@
                 const client = this.clients.find(c => c.phone === phone);
                 if (!client) return;
                 const clientAppointments = this.appointments.filter(a => a.phone === phone).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                const statusMap = { scheduled: 'Agendado', completed: 'Concluído', cancelled: 'Cancelado', in_progress: 'Em Andamento' };
+                const statusMap = {
+                    scheduled: 'Agendado',
+                    completed: 'Concluído',
+                    cancelled: 'Cancelado',
+                    in_progress: 'Em Andamento'
+                };
                 const content = `<div><h4>${client.name}</h4><p><strong>Telefone:</strong> ${client.phone}</p><p><strong>Cliente desde:</strong> ${this.formatDate(client.createdAt)}</p><hr><h5>Histórico</h5><div>${clientAppointments.length > 0 ? clientAppointments.map(a => `<div class="data-card"><span>${this.formatDate(a.date)}</span><span>${this.services.find(s=>s.id===a.service)?.name || ''}</span><span class="appointment-status status-${a.status}">${statusMap[a.status] || a.status}</span></div>`).join('') : '<p>Nenhum histórico.</p>'}</div></div>`;
                 this.showModal('Detalhes do Cliente', content);
             }
@@ -2506,7 +2596,9 @@
                 const appointmentDate = this.formatDate(appointment.date);
                 const message = `Olá ${clientName}, passando para lembrar do seu agendamento na Steves Barbearia no dia ${appointmentDate} às ${appointmentTime}. Podemos confirmar?`;
                 let phone = this.sanitizePhone(appointment.phone);
-                if (phone.length >= 10 && !phone.startsWith('55')) { phone = '55' + phone; }
+                if (phone.length >= 10 && !phone.startsWith('55')) {
+                    phone = '55' + phone;
+                }
                 const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
                 window.open(whatsappUrl, '_blank');
                 this.showNotification('Abrindo WhatsApp para enviar lembrete.', 'success');
@@ -2527,7 +2619,10 @@
                 document.querySelectorAll('select[name="time"]').forEach(select => select.innerHTML = this.generateTimeOptions());
             }
             formatCurrency(value) {
-                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
+                return new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(value || 0);
             }
             formatDate(dateStr) {
                 const date = new Date(dateStr);
@@ -2607,7 +2702,10 @@
                     const date = new Date();
                     date.setDate(date.getDate() - i);
                     const dateString = date.toISOString().split('T')[0];
-                    labels.push(date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
+                    labels.push(date.toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit'
+                    }));
                     const dailyRevenue = this.appointments.filter(a => a.date === dateString && a.status === 'completed' && a.finalPrice).reduce((sum, a) => sum + a.finalPrice, 0);
                     data.push(dailyRevenue);
                 }
@@ -2616,9 +2714,39 @@
                     type: 'line',
                     data: {
                         labels,
-                        datasets: [{ label: 'Faturamento', data, borderColor: 'hsl(43, 96%, 56%)', tension: 0.3, fill: true, backgroundColor: 'hsla(43, 96%, 56%, 0.1)' }]
+                        datasets: [{
+                            label: 'Faturamento',
+                            data,
+                            borderColor: 'hsl(43, 96%, 56%)',
+                            tension: 0.3,
+                            fill: true,
+                            backgroundColor: 'hsla(43, 96%, 56%, 0.1)'
+                        }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }, plugins: { legend: { labels: { color: '#9ca3af' } } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#9ca3af'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#9ca3af'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#9ca3af'
+                                }
+                            }
+                        }
+                    }
                 });
             }
             renderServicesChart() {
@@ -2636,9 +2764,24 @@
                     type: 'doughnut',
                     data: {
                         labels,
-                        datasets: [{ label: 'Atendimentos', data, backgroundColor: ['#f59e0b', '#8b5cf6', '#3b82f6', '#22c55e', '#ef4444'], hoverOffset: 4 }]
+                        datasets: [{
+                            label: 'Atendimentos',
+                            data,
+                            backgroundColor: ['#f59e0b', '#8b5cf6', '#3b82f6', '#22c55e', '#ef4444'],
+                            hoverOffset: 4
+                        }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#9ca3af' } } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#9ca3af'
+                                }
+                            }
+                        }
+                    }
                 });
             }
         }
