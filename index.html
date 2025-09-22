@@ -285,12 +285,11 @@
     <nav class="navbar glass-card">
         <div class="nav-container">
             <div class="nav-brand">
-                <div class="logo">⭐</div>
+                <div class="logo">SB</div>
                 <h1>Steves Barbearia</h1>
             </div>
             <div class="nav-buttons">
                 <button class="nav-btn active" id="clientAreaBtn">Área do Cliente</button>
-                <button class="nav-btn" id="barberAreaBtn">Área do Barbeiro</button>
             </div>
         </div>
     </nav>
@@ -359,6 +358,13 @@
                 </div>
             </div>
         </div>
+            <footer class="site-footer" style="text-align: center; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border);">
+                <p style="margin: 0; font-size: 0.9rem;">
+                    <button id="barberAreaBtn" style="background:none;border:none;color:var(--muted-foreground);text-decoration:underline;cursor:pointer;font-size:0.9rem;padding:0;">Login do Barbeiro</button>
+                </p>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: var(--muted-foreground);">© 2025 Steves Barbearia. Todos os direitos reservados.</p>
+            </footer>
+        </div>
     </div>
 
     <div id="barberLogin" class="page-section">
@@ -386,7 +392,7 @@
             <aside class="dashboard-sidebar">
                 <div class="sidebar-header">
                     <div class="nav-brand">
-                         <div class="logo">⭐</div>
+                         <div class="logo">SB</div>
                         <h2>Steves Barbearia</h2>
                     </div>
                     <button id="closeSidebarBtn" class="btn-icon" aria-label="Fechar menu"><i class="fas fa-times"></i></button>
@@ -596,6 +602,7 @@ class BarberPro {
                     case 'addAppointmentBtn': this.showAppointmentModal(true); break;
                     case 'quickAddAppointmentBtn': this.showAppointmentModal(true); break;
                     case 'addWalkInBtn': this.showAppointmentModal(false); break;
+                    case 'welcomeOpenCaixaBtn': this.showAbrirCaixaModal(); break;
                     case 'welcomeOpenCaixaBtn': this.showAbrirCaixaModal(); break;
                     case 'openCaixaBtn': this.showAbrirCaixaModal(); break;
                     case 'closeCaixaBtn': this.showFecharCaixaModal(); break;
@@ -891,7 +898,32 @@ class BarberPro {
         if (this.currentUser) this.renderRelevantViews();
     }
     startService(appointmentId) { if (!this.checkCaixaStatus()) return; const appointment = this.appointments.find(a => a.id === appointmentId); if (appointment) { appointment.status = 'in_progress'; this.saveData(); this.hideModal(); this.showNotification('Atendimento iniciado! A comanda foi aberta.', 'success'); this.switchDashboardView('comandasView'); } }
-    finalizeAppointment(appointmentId, paymentMethod) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); if (!service) return; this.caixa.entradas.push({ descricao: `Serviço: ${service.name} (${appointment.name})`, valor: service.price, data: new Date().toISOString(), metodo: paymentMethod }); appointment.status = 'completed'; appointment.paymentStatus = 'paid'; appointment.paymentMethod = paymentMethod; appointment.closedAt = new Date().toISOString(); this.saveData(); this.hideModal(); this.showNotification(`Pagamento de ${this.formatCurrency(service.price)} recebido!`, 'success'); this.renderRelevantViews(); }
+    finalizeAppointment(appointmentId, paymentMethod, finalPrice) {
+        const appointment = this.appointments.find(a => a.id === appointmentId);
+        if (!appointment) return;
+        const service = this.services.find(s => s.id === appointment.service);
+        if (!service) return;
+
+        if (isNaN(finalPrice) || finalPrice < 0) {
+            return this.showNotification('Por favor, insira um valor final válido.', 'error');
+        }
+
+        this.caixa.entradas.push({
+            descricao: `Serviço: ${service.name} (${appointment.name})`,
+            valor: finalPrice,
+            data: new Date().toISOString(),
+            metodo: paymentMethod
+        });
+        appointment.status = 'completed';
+        appointment.paymentStatus = 'paid';
+        appointment.paymentMethod = paymentMethod;
+        appointment.finalPrice = finalPrice;
+        appointment.closedAt = new Date().toISOString();
+        this.saveData();
+        this.hideModal();
+        this.showNotification(`Pagamento de ${this.formatCurrency(finalPrice)} recebido!`, 'success');
+        this.renderRelevantViews();
+    }
     cancelAppointment(id) { if (confirm('Tem certeza que deseja cancelar este agendamento?')) { const appointment = this.appointments.find(a => a.id === id); if (appointment) { appointment.status = 'cancelled'; this.saveData(); this.hideModal(); this.renderRelevantViews(); this.showNotification('Agendamento cancelado.'); } } }
     
     checkCaixaStatus(isInitialLoad = false) { if (this.caixa.status === 'fechado') { if (!isInitialLoad) { this.showNotification('O caixa está fechado. É preciso abri-lo para esta operação.', 'error'); this.showAbrirCaixaModal(); } return false; } return true; }
@@ -1066,7 +1098,41 @@ class BarberPro {
         document.getElementById('finalizeServiceBtn')?.addEventListener('click', () => this.showFinalizeAppointmentModal(appointmentId));
         document.getElementById('remindWhatsAppBtn')?.addEventListener('click', () => this.sendWhatsAppReminder(appointmentId));
     }
-    showFinalizeAppointmentModal(appointmentId) { const appointment = this.appointments.find(a => a.id === appointmentId); if (!appointment) return; const service = this.services.find(s => s.id === appointment.service); const content = `<form id="finalizeForm"><p>Finalizando <strong>${appointment.name}</strong>.</p><h4>Total: ${this.formatCurrency(service?.price || 0)}</h4><div class="form-group"><label for="paymentMethod">Forma de Pagamento</label><select id="paymentMethod" name="paymentMethod" required><option value="Dinheiro">Dinheiro</option><option value="Pix">Pix</option><option value="Cartão de Débito">Cartão de Débito</option><option value="Cartão de Crédito">Cartão de Crédito</option></select></div><div class="modal-footer"><div class="modal-footer-actions"><button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button><button type="submit" class="btn-primary">Confirmar Pagamento</button></div></div></form>`; this.showModal('Finalizar e Receber', content); document.getElementById('finalizeForm')?.addEventListener('submit', e => { e.preventDefault(); this.finalizeAppointment(appointmentId, e.target.querySelector('[name="paymentMethod"]').value); }); }
+    showFinalizeAppointmentModal(appointmentId) {
+        const appointment = this.appointments.find(a => a.id === appointmentId);
+        if (!appointment) return;
+        const service = this.services.find(s => s.id === appointment.service);
+        const content = `<form id="finalizeForm">
+            <p>Finalizando <strong>${appointment.name}</strong>.</p>
+            <div class="form-group">
+                <label for="finalPrice">Valor Final a Cobrar (R$)</label>
+                <input type="text" id="finalPrice" name="finalPrice" value="${(service?.price || 0).toFixed(2)}" placeholder="Ex: 42,00" required>
+            </div>
+            <div class="form-group">
+                <label for="paymentMethod">Forma de Pagamento</label>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Pix">Pix</option>
+                    <option value="Cartão de Débito">Cartão de Débito</option>
+                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer-actions">
+                    <button type="button" class="btn-secondary" onclick="window.barberPro.hideModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Confirmar Pagamento</button>
+                </div>
+            </div>
+        </form>`;
+        this.showModal('Finalizar e Receber', content);
+        document.getElementById('finalizeForm')?.addEventListener('submit', e => {
+            e.preventDefault();
+            const form = e.target;
+            const paymentMethod = form.querySelector('[name="paymentMethod"]').value;
+            const finalPrice = this.parseCurrency(form.querySelector('[name="finalPrice"]').value);
+            this.finalizeAppointment(appointmentId, paymentMethod, finalPrice);
+        });
+    }
     
     sendWhatsAppReminder(appointmentId) {
         const appointment = this.appointments.find(a => a.id === appointmentId);
