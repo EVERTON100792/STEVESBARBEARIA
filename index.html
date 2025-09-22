@@ -133,74 +133,74 @@
         .caixa-status-indicator.fechado { background-color: var(--destructive); color: var(--foreground); }
 
         /* --- Visualização da Agenda --- */
-.agenda-nav{ display:flex; gap:.5rem; align-items:center; flex-wrap: wrap; }
-.agenda-view-container { display: grid; grid-template-columns: 60px 1fr; margin-top: 1.5rem; overflow-x: auto; position: relative; }
-.agenda-time-column { padding-top: 2.5rem; }
-.agenda-time-slot {
-    height: 20px;
-    display: flex;
-    align-items: flex-start; /* Align to top to match appointment block top */
-    justify-content: center;
-    font-size: .75rem;
-    color: var(--muted-foreground);
-    position: relative;
-}
-.agenda-time-slot b {
-    position: relative;
-    top: -0.6em; /* Center text on the line */
-    background: var(--background); /* Hide line behind text */
-    padding: 0 5px;
-    font-weight: 600;
-    color: var(--foreground);
-}
-.agenda-time-slot:nth-child(4n+1)::after {
-    content: '';
-    position: absolute;
-    top: 0; /* Draw line at the top of the slot */
-    left: 10%;
-    right: 0;
-    border-top: 1px solid var(--border);
-}
-.agenda-barbers-area { display: grid; }
-.agenda-barber-column { border-left: 1px solid var(--border); }
-.agenda-slots-container { position: relative; }
-.agenda-barber-header { text-align: center; padding: .5rem; position: sticky; top: 0; background: var(--background); z-index: 10; border-bottom: 1px solid var(--accent); font-weight: 600; }
-.agenda-appointment-block {
-    position: absolute;
-    left: 6px;
-    right: 6px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all .2s;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
-    padding: 5px 10px;
-    min-height: 20px;
-    border: 1px solid rgba(0,0,0,0.3);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-}
-.agenda-appointment-block:hover {
-    transform: scale(1.02);
-    z-index: 6;
-}
-.agenda-appointment-block.status-scheduled {
-    background: linear-gradient(145deg, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.9));
-    border-left: 4px solid #3b82f6;
-}
-.agenda-appointment-block.status-in_progress {
-    background: linear-gradient(145deg, rgba(139, 92, 246, 0.8), rgba(139, 92, 246, 0.9));
-    border-left: 4px solid #8b5cf6;
-}
-.agenda-appointment-block.status-completed {
-    background: linear-gradient(145deg, rgba(34, 197, 94, 0.8), rgba(34, 197, 94, 0.9));
-    border-left: 4px solid #22c55e;
-}
-.appointment-block-name, .appointment-block-service { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%; line-height: 1.4; }
-.appointment-block-name { font-weight: 600; font-size: 0.8rem; color: hsl(210, 40%, 98%); }
-.appointment-block-service { font-size: 0.75rem; color: hsl(210, 40%, 90%); }
+		.agenda-nav{ display:flex; gap:.5rem; align-items:center; flex-wrap: wrap; }
+		.agenda-view-container { display: grid; grid-template-columns: 60px 1fr; margin-top: 1.5rem; overflow-x: auto; position: relative; }
+		.agenda-time-column { padding-top: 2.5rem; }
+		.agenda-time-slot {
+			height: 20px;
+			display: flex;
+			align-items: flex-start; /* Align to top to match appointment block top */
+			justify-content: center;
+			font-size: .75rem;
+			color: var(--muted-foreground);
+			position: relative;
+		}
+		.agenda-time-slot b {
+			position: relative;
+			top: -0.6em; /* Center text on the line */
+			background: var(--background); /* Hide line behind text */
+			padding: 0 5px;
+			font-weight: 600;
+			color: var(--foreground);
+		}
+		.agenda-time-slot:nth-child(4n+1)::after {
+			content: '';
+			position: absolute;
+			top: 0; /* Draw line at the top of the slot */
+			left: 10%;
+			right: 0;
+			border-top: 1px solid var(--border);
+		}
+		.agenda-barbers-area { display: grid; }
+		.agenda-barber-column { border-left: 1px solid var(--border); }
+		.agenda-slots-container { position: relative; }
+		.agenda-barber-header { text-align: center; padding: .5rem; position: sticky; top: 0; background: var(--background); z-index: 10; border-bottom: 1px solid var(--accent); font-weight: 600; }
+		.agenda-appointment-block {
+			position: absolute;
+			left: 6px;
+			right: 6px;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: all .2s;
+			z-index: 5;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			overflow: hidden;
+			padding: 5px 10px;
+			min-height: 20px;
+			border: 1px solid rgba(0,0,0,0.3);
+			box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+		}
+		.agenda-appointment-block:hover {
+			transform: scale(1.02);
+			z-index: 6;
+		}
+		.agenda-appointment-block.status-scheduled {
+			background: linear-gradient(145deg, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.9));
+			border-left: 4px solid #3b82f6;
+		}
+		.agenda-appointment-block.status-in_progress {
+			background: linear-gradient(145deg, rgba(139, 92, 246, 0.8), rgba(139, 92, 246, 0.9));
+			border-left: 4px solid #8b5cf6;
+		}
+		.agenda-appointment-block.status-completed {
+			background: linear-gradient(145deg, rgba(34, 197, 94, 0.8), rgba(34, 197, 94, 0.9));
+			border-left: 4px solid #22c55e;
+		}
+		.appointment-block-name, .appointment-block-service { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%; line-height: 1.4; }
+		.appointment-block-name { font-weight: 600; font-size: 0.8rem; color: hsl(210, 40%, 98%); }
+		.appointment-block-service { font-size: 0.75rem; color: hsl(210, 40%, 90%); }
 
         /* --- Listas de Dados (Clientes, Serviços, etc.) --- */
         .data-card { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background-color: var(--background); padding: 1rem; border-radius: var(--radius); border-left: 4px solid var(--border); gap: 1rem; margin-bottom: 1rem; }
@@ -272,6 +272,24 @@
             .section-header .button-group, .section-header .agenda-nav { width: 100%; justify-content: space-between; }
             .data-card-info { flex-direction: column; gap: 0.25rem; align-items: flex-start; }
         }
+
+        /* --- Estilos para o Novo Fluxo de Agendamento --- */
+        .service-card-bookable { cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
+        .service-card-bookable:hover { transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        .barber-card-selectable { cursor: pointer; text-align: center; transition: all .2s ease; border: 2px solid transparent; }
+        .barber-card-selectable:hover { transform: scale(1.05); background-color: var(--secondary); }
+        .barber-card-selectable.selected { border-color: var(--primary); background-color: var(--secondary); }
+        .barber-card-selectable img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem; border: 3px solid var(--primary); }
+        .time-slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.75rem; }
+        .time-slot-btn { background: var(--secondary); color: var(--foreground); border: 1px solid var(--border); padding: 0.75rem 0.5rem; text-align: center; border-radius: var(--radius); cursor: pointer; transition: all .2s ease; }
+        .time-slot-btn:hover:not(:disabled) { background: var(--primary); color: var(--primary-foreground); }
+        .time-slot-btn:disabled { background: var(--input); color: var(--muted-foreground); cursor: not-allowed; opacity: 0.5; }
+        .confirmation-summary { background: var(--secondary); padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; }
+        .confirmation-summary p { margin: 0.5rem 0; display: flex; justify-content: space-between; }
+        .confirmation-summary p span:first-child { color: var(--muted-foreground); }
+        .confirmation-summary p span:last-child { font-weight: 600; }
+        .confirmation-summary hr { border-color: var(--border); margin: 1rem 0; }
+        .confirmation-summary .total { font-size: 1.2rem; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -290,36 +308,60 @@
     
     <div id="clientArea" class="page-section">
         <div class="container">
-            <div class="hero-section">
-                <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600" alt="Barbearia Moderna">
-                    <div class="hero-overlay">
-                        <h2>Estilo e Precisão em Cada Corte</h2>
-                        <p>Experiência premium, resultados excepcionais.</p>
+            <div id="clientServicesSection">
+                <div class="hero-section">
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=600" alt="Barbearia Moderna">
+                        <div class="hero-overlay">
+                            <h2>Estilo e Precisão em Cada Corte</h2>
+                            <p>Experiência premium, resultados excepcionais.</p>
+                        </div>
                     </div>
                 </div>
+                <div class="services-showcase-section">
+                    <h3 class="section-title">Nossos Serviços</h3>
+                    <p style="text-align: center; color: var(--muted-foreground); margin-top: -1.5rem; margin-bottom: 2rem;">Clique em um serviço para iniciar seu agendamento.</p>
+                    <div id="clientServicesList" class="services-grid">
+                        </div>
+                </div>
             </div>
-            <div class="services-showcase-section">
-                <h3 class="section-title">Nossos Serviços</h3>
-                <div id="services-showcase-list" class="services-grid"></div>
-            </div>
-            <div class="barbers-section" style="margin-top: 3rem;">
-                <h3 class="section-title">Nossos Barbeiros</h3>
-                <div id="barbers-showcase-list" class="barbers-grid"></div>
-            </div>
-            <div class="booking-form-container">
+
+            <div id="bookingFlowContainer" class="booking-form-container" style="display: none;">
                 <div class="glass-card booking-form">
-                    <h3 class="section-title" style="font-size: 1.8rem; margin-bottom: 2rem;">Pronto para Transformar seu Visual?</h3>
-                    <h4>Faça seu Agendamento</h4>
-                    <form id="bookingForm" style="margin-top: 1.5rem;">
-                        <div class="form-group"><label for="clientName">Nome Completo</label><input type="text" id="clientName" name="name" placeholder="Seu nome completo" required autocomplete="name"></div>
-                        <div class="form-group"><label for="clientPhone">Celular (com DDD)</label><input type="tel" id="clientPhone" name="phone" placeholder="11999999999" required autocomplete="tel"></div>
-                        <div class="form-group"><label for="serviceType">Serviço</label><select id="serviceType" name="service" required></select></div>
-                        <div class="form-group"><label for="barberSelection">Profissional</label><select id="barberSelection" name="barber" required></select></div>
-                        <div class="form-group"><label for="preferredDate">Data de Preferência</label><input type="date" id="preferredDate" name="date" required></div>
-                        <div class="form-group"><label for="preferredTime">Horário de Preferência</label><select id="preferredTime" name="time" required></select></div>
-                        <button type="submit" class="btn-primary">Agendar Agora</button>
-                    </form>
+                    <button id="backToServicesBtn" class="btn-icon" style="position: absolute; top: 1.5rem; left: 1.5rem; font-size: 1.5rem;">&lt;</button>
+                    
+                    <div id="step1_Professionals" class="booking-step">
+                        <h3 class="section-title">Selecione o Profissional</h3>
+                        <div id="professionalsListContainer" class="barbers-grid">
+                            </div>
+                    </div>
+
+                    <div id="step2_DateTime" class="booking-step" style="display: none;">
+                        <h3 class="section-title">Escolha a Data e o Horário</h3>
+                        <div class="form-group">
+                            <label for="bookingDate">Data</label>
+                            <input type="date" id="bookingDate" class="form-control">
+                        </div>
+                        <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Horários disponíveis</h4>
+                        <div id="availableTimesContainer" class="time-slot-grid">
+                            </div>
+                    </div>
+
+                    <div id="step3_Confirmation" class="booking-step" style="display: none;">
+                        <h3 class="section-title">Confirme seu Agendamento</h3>
+                        <div id="confirmationSummary" class="confirmation-summary">
+                           </div>
+                        <form id="clientDetailsForm">
+                            <div class="form-group"><label for="finalClientName">Seu Nome Completo</label><input type="text" id="finalClientName" required></div>
+                            <div class="form-group"><label for="finalClientPhone">Seu Celular (com DDD)</label><input type="tel" id="finalClientPhone" placeholder="43999999999" required></div>
+                             <div class="form-group">
+                                <label for="observations">Alguma observação?</label>
+                                <textarea id="observations" rows="2" placeholder="Ex: Não precisa lavar, etc..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%;">Confirmar Agendamento</button>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -465,6 +507,7 @@
     <script>
 class BarberPro {
     constructor() {
+        this.bookingState = {}; // Guarda as escolhas do cliente (serviço, profissional, etc.)
         this.currentUser = null;
         this.charts = {};
         this.DATA_VERSION = '6.3'; // Versão atualizada para garantir que os dados antigos sejam limpos se necessário
@@ -490,15 +533,22 @@ class BarberPro {
             this.showNotification('Ocorreu um erro crítico. O sistema não pôde ser carregado.', 'error');
         }
     }
-
+    
+    // SUBSTITUA a função renderClientView existente por esta
     renderClientView() {
         this.showSection('clientArea');
-        this.renderClientServices();
-        this.renderClientBarbers();
-        this.updateServiceDropdown();
-        this.updateBarberDropdowns();
-        this.updateTimeDropdown();
-        this.setMinDate();
+        this.resetBookingFlow();
+
+        const container = document.getElementById('clientServicesList');
+        if (container) {
+            container.innerHTML = this.services.map(service => `
+                <div class="service-card-bookable glass-card" onclick="window.barberPro.startBooking('${service.id}')">
+                    <h4>${service.name}</h4>
+                    <p><strong>${this.formatCurrency(service.price)}</strong> - ${service.duration} min</p>
+                    <p style="color: var(--muted-foreground);">${service.description || ''}</p>
+                </div>
+            `).join('');
+        }
     }
 
     renderBarberView() {
@@ -511,7 +561,9 @@ class BarberPro {
     }
 
     // 2. GERENCIADOR GLOBAL DE EVENTOS
+    // SUBSTITUA a função setupGlobalEventListeners existente por esta
     setupGlobalEventListeners() {
+        // O início da função é o mesmo...
         document.body.addEventListener('click', e => {
             const actionTarget = e.target.closest('[data-action]');
             if (actionTarget) {
@@ -523,6 +575,9 @@ class BarberPro {
             if (buttonTarget) {
                 const buttonId = buttonTarget.id;
                 switch (buttonId) {
+                    // ADICIONAR ESTE NOVO CASE
+                    case 'backToServicesBtn': this.resetBookingFlow(); break;
+
                     case 'sidebarToggle': case 'closeSidebarBtn': document.body.classList.toggle('sidebar-is-open'); break;
                     case 'clientAreaBtn': this.renderClientView(); break;
                     case 'barberAreaBtn': this.checkAuthentication(); break;
@@ -572,11 +627,9 @@ class BarberPro {
             }
 
             switch(form.id){
-                case 'bookingForm':
-                    this.handleAppointmentSubmit(new FormData(form), false);
-                    form.reset();
-                    this.setMinDate();
-                    break;
+                // ADICIONAR ESTE NOVO CASE
+                case 'clientDetailsForm': this.handleClientBookingConfirmation(e); break;
+
                 case 'barberBookingForm':
                     this.handleAppointmentSubmit(new FormData(form), form.dataset.walkIn === 'true');
                     break;
@@ -598,10 +651,164 @@ class BarberPro {
             if (e.target.matches('#barberBookingForm input[name="name"]')) this.handleClientNameInput(e);
         });
 
-        document.getElementById('agendaDateFilter')?.addEventListener('change', () => this.renderAgendaView());
         document.getElementById('sidebarOverlay')?.addEventListener('click', () => document.body.classList.remove('sidebar-is-open'));
         document.getElementById('modalBackdrop')?.addEventListener('click', e => { if (e.target.id === 'modalBackdrop') this.hideModal(); });
     }
+    
+    // Adicione estas NOVAS funções DENTRO da classe BarberPro
+    resetBookingFlow() {
+        this.bookingState = {};
+        document.getElementById('clientServicesSection').style.display = 'block';
+        document.getElementById('bookingFlowContainer').style.display = 'none';
+        document.querySelectorAll('.booking-step').forEach(step => step.style.display = 'none');
+        document.getElementById('step1_Professionals').style.display = 'block'; // Reseta para o primeiro passo
+    }
+
+    showBookingStep(stepNumber) {
+        document.querySelectorAll('.booking-step').forEach(step => step.style.display = 'none');
+        document.getElementById(`step${stepNumber}_${stepNumber === 1 ? 'Professionals' : stepNumber === 2 ? 'DateTime' : 'Confirmation'}`).style.display = 'block';
+    }
+
+    startBooking(serviceId) {
+        const service = this.services.find(s => s.id === serviceId);
+        if (!service) return;
+
+        this.bookingState = { serviceId, serviceName: service.name, servicePrice: service.price, serviceDuration: service.duration };
+
+        document.getElementById('clientServicesSection').style.display = 'none';
+        document.getElementById('bookingFlowContainer').style.display = 'block';
+        
+        const container = document.getElementById('professionalsListContainer');
+        container.innerHTML = this.barbers.map(barber => `
+            <div class="barber-card-selectable glass-card" onclick="window.barberPro.selectProfessional('${barber.id}')">
+                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(barber.name)}&background=c7a355&color=fff&size=128" alt="${barber.name}">
+                <h4>${barber.name}</h4>
+            </div>
+        `).join('');
+        this.showBookingStep(1);
+    }
+    
+    selectProfessional(barberId) {
+        const barber = this.barbers.find(b => b.id === barberId);
+        if (!barber) return;
+        this.bookingState.barberId = barberId;
+        this.bookingState.barberName = barber.name;
+
+        this.showBookingStep(2);
+        const dateInput = document.getElementById('bookingDate');
+        dateInput.min = this.getTodayDateString();
+        dateInput.value = this.getTodayDateString();
+        this.renderAvailableTimes();
+
+        dateInput.onchange = () => this.renderAvailableTimes();
+    }
+
+    renderAvailableTimes() {
+        const date = document.getElementById('bookingDate').value;
+        const barberId = this.bookingState.barberId;
+        const serviceDuration = this.bookingState.serviceDuration;
+        const container = document.getElementById('availableTimesContainer');
+        container.innerHTML = '<p>Carregando horários...</p>';
+
+        const allSlots = [];
+        for (let h = 9; h < 19; h++) {
+            if (h === 12 || h === 13) continue; // Almoço
+            for (let m = 0; m < 60; m += 15) { // Slots de 15 em 15 minutos
+                allSlots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+            }
+        }
+        
+        const appointmentsOnDate = this.appointments.filter(a => a.barberId === barberId && a.date === date && a.status !== 'cancelled');
+        const occupiedSlots = new Set();
+
+        appointmentsOnDate.forEach(app => {
+            const appService = this.services.find(s => s.id === app.service);
+            if (!appService) return;
+            
+            const startSlotIndex = allSlots.indexOf(app.time);
+            if (startSlotIndex === -1) return;
+
+            const slotsToOccupy = Math.ceil(appService.duration / 15);
+            for (let i = 0; i < slotsToOccupy; i++) {
+                if (allSlots[startSlotIndex + i]) {
+                    occupiedSlots.add(allSlots[startSlotIndex + i]);
+                }
+            }
+        });
+        
+        let availableSlotsHTML = '';
+        allSlots.forEach((slot, index) => {
+             // Verifica se o slot ou os slots seguintes necessários para o serviço estão ocupados
+            let isAvailable = true;
+            const slotsNeeded = Math.ceil(serviceDuration / 15);
+            for (let i = 0; i < slotsNeeded; i++) {
+                const checkSlot = allSlots[index + i];
+                if (!checkSlot || occupiedSlots.has(checkSlot)) {
+                    isAvailable = false;
+                    break;
+                }
+            }
+            availableSlotsHTML += `<button class="time-slot-btn" onclick="window.barberPro.selectTime('${slot}')" ${!isAvailable ? 'disabled' : ''}>${slot}</button>`;
+        });
+        
+        container.innerHTML = availableSlotsHTML || '<p>Nenhum horário disponível para esta data.</p>';
+    }
+
+    selectTime(time) {
+        this.bookingState.time = time;
+        this.renderConfirmationStep();
+        this.showBookingStep(3);
+    }
+
+    renderConfirmationStep() {
+        const { serviceName, barberName, servicePrice, time } = this.bookingState;
+        const date = document.getElementById('bookingDate').value;
+        const endDate = new Date(`${date}T${time}`);
+        endDate.setMinutes(endDate.getMinutes() + this.bookingState.serviceDuration);
+        const endTime = endDate.toTimeString().slice(0, 5);
+
+        const summaryContainer = document.getElementById('confirmationSummary');
+        summaryContainer.innerHTML = `
+            <p><span>Serviço</span> <span>${serviceName}</span></p>
+            <p><span>Profissional</span> <span>${barberName}</span></p>
+            <p><span>Data</span> <span>${this.formatDate(date)}</span></p>
+            <p><span>Horário</span> <span>${time} - ${endTime} (${this.bookingState.serviceDuration} min)</span></p>
+            <hr>
+            <p class="total"><span>Total</span> <span>${this.formatCurrency(servicePrice)}</span></p>
+        `;
+    }
+
+    handleClientBookingConfirmation(e) {
+        e.preventDefault();
+        const name = document.getElementById('finalClientName').value.trim();
+        const phone = document.getElementById('finalClientPhone').value.trim();
+        const date = document.getElementById('bookingDate').value;
+
+        if (!name || !phone) {
+            return this.showNotification('Por favor, preencha seu nome e telefone.', 'error');
+        }
+
+        const appointment = {
+            id: Date.now().toString(),
+            createdAt: new Date().toISOString(),
+            name,
+            phone: this.sanitizePhone(phone),
+            service: this.bookingState.serviceId,
+            barberId: this.bookingState.barberId,
+            date: date,
+            time: this.bookingState.time,
+            status: 'scheduled',
+            paymentStatus: 'pending'
+        };
+
+        this.getOrUpdateClient(appointment.phone, appointment.name);
+        this.appointments.push(appointment);
+        this.saveData();
+        
+        this.showNotification('Agendamento confirmado com sucesso! 🎉', 'success');
+        this.resetBookingFlow();
+    }
+
 
     handleActionClick(action, id) {
         const actions = {
