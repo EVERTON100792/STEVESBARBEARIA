@@ -141,21 +141,21 @@ class BarberPro {
                     duration: 45,
                     description: 'Corte moderno com efeito degradê.',
                     imageUrl: 'https://images.unsplash.com/photo-1616099395914-27361865c32b?w=80&h=80&fit=crop&q=80'
-                }, {
+                }, { 
                     id: `s_2`,
                     name: 'Barba',
                     price: 32,
                     duration: 30,
                     description: 'Modelagem e aparo da barba.',
                     imageUrl: 'https://images.unsplash.com/photo-1622288432454-20b171d33306?w=80&h=80&fit=crop&q=80'
-                }, {
+                }, { 
                     id: `s_3`,
                     name: 'Corte Social',
                     price: 34,
                     duration: 30,
                     description: 'Corte clássico na tesoura e máquina.',
                     imageUrl: 'https://images.unsplash.com/photo-1599335593362-e67b2a3a5f45?w=80&h=80&fit=crop&q=80'
-                }, {
+                }, { 
                     id: `s_4`,
                     name: 'Barboterapia',
                     price: 45,
@@ -167,7 +167,7 @@ class BarberPro {
                     id: `b_1`,
                     name: 'Hernani',
                     specialty: 'Corte e Barba'
-                }, {
+                }, { 
                     id: `b_2`,
                     name: 'Fernandinho',
                     specialty: 'Degradê'
@@ -315,7 +315,6 @@ class BarberPro {
                     this.services = this.services.filter(s => s.id !== id);
                     this.saveData();
                     this.renderServicesList();
-                    this.renderClientView();
                     this.updateServiceDropdown();
                     this.showNotification('Serviço removido com sucesso.');
                 }
@@ -327,7 +326,7 @@ class BarberPro {
                     <form id="professionalForm">
                         <input type="hidden" name="id" value="${professional.id || ''}">
                         <div class="form-group"><label>Nome do Profissional</label><input type="text" name="name" value="${professional.name || ''}" required></div>
-                        <div class="form-group"><label>Especialidade (Opcional)</label><input type="text" name="specialty" placeholder="Ex: Cortes e Barba" value="${professional.specialty || ''}"></div>
+                        <div class="form-group"><label>Especialidade (Opcional)</label><input type="text" name="specialty" placeholder="Ex: Cortes e Barba" value="${professional.specialty || ''}">
                     </form>`;
                 const footer = `
                     <div class="modal-footer-actions">
@@ -370,7 +369,6 @@ class BarberPro {
                 this.hideModal();
                 this.renderProfessionalsList();
                 this.updateBarberDropdowns();
-                this.renderClientView();
             }
 
             deleteProfessional(id) {
@@ -877,9 +875,11 @@ class BarberPro {
                 }
                 const slotHeight = 20;
                 const timeColumnHTML = '<div class="agenda-time-column">' + timeSlots.map(time => `<div class="agenda-time-slot" style="height: ${slotHeight}px;">${time.endsWith(':00') ? `<b>${time}</b>` : time}</div>`).join('') + '</div>';
-                let barbersAreaHTML = `<div class="agenda-barbers-area" style="grid-template-columns: repeat(${this.barbers.length}, 1fr);">`;
+                let barbersAreaHTML = `<div class="agenda-barbers-area" style="grid-template-columns: repeat(${this.barbers.length}, 1fr);">
+`;
                 this.barbers.forEach(barber => {
-                    barbersAreaHTML += `<div class="agenda-barber-column"><div class="agenda-barber-header">${barber.name}</div><div class="agenda-slots-container" style="height: ${timeSlots.length * slotHeight}px;">`;
+                    barbersAreaHTML += `<div class="agenda-barber-column"><div class="agenda-barber-header">${barber.name}</div><div class="agenda-slots-container" style="height: ${timeSlots.length * slotHeight}px;">
+`;
                     this.appointments.filter(a => a.barberId === barber.id && a.date === selectedDate && a.status !== 'cancelled').forEach(app => {
                         const service = this.services.find(s => s.id === app.service);
                         if (!service || !app.time) return;
