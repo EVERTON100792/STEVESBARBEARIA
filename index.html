@@ -14,34 +14,49 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <nav class="navbar glass-card">
-        <div class="nav-container">
+    <nav class="navbar-simple">
+        <div class="container">
             <div class="nav-brand">
-                <div class="logo">SB</div>
-                <h1>Steves Barbearia</h1>
-            </div>
-            <div class="nav-buttons">
-                <button class="nav-btn active" id="clientAreaBtn">Área do Cliente</button>
+                <div class="stylish-logo">
+                    <div class="logo-line-1">STEVE<span class="backward-s">S</span></div>
+                    <div class="logo-line-2">BARBEARIA</div>
+                </div>
             </div>
         </div>
     </nav>
 
     <div id="clientArea" class="page-section">
         <div class="container">
-            <div id="clientServicesSection">
-                <div class="shop-header">
-                    <h2>STEVE'S BARBEARIA</h2>
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <span style="color: var(--muted-foreground); margin-left: 0.5rem;">5.0</span>
+            <div id="initialClientView">
+                <div class="shop-hero">
+                    <img src="https://images.unsplash.com/photo-1536520002442-9979a83a2b83?q=80&w=1920&h=400&auto=format&fit=crop" alt="Interior da Barbearia">
+                    <div class="shop-hero-overlay"></div>
+                    <div class="hero-text-container">
+                        <h2>O lugar perfeito para o seu estilo.</h2>
                     </div>
-                    <p class="address"><i class="fas fa-map-marker-alt"></i> Rua dos Ipês, 18 - Jardim Novo Horizonte - Rolândia/PR</p>
                 </div>
 
+                <div class="client-panel glass-card">
+                    <div class="panel-segment">
+                        <h4>Já é cliente?</h4>
+                        <p>Consulte seus agendamentos aqui.</p>
+                        <div class="appointment-lookup-form">
+                            <input type="tel" id="clientPhoneLookup" placeholder="Seu celular com DDD" class="form-group input">
+                            <button id="lookupAppointmentsBtn" class="btn-secondary">Consultar</button>
+                        </div>
+                    </div>
+                    <div class="panel-divider"></div>
+                    <div class="panel-segment">
+                        <h4>Novo por aqui?</h4>
+                        <p>Veja nossos serviços e agende seu horário.</p>
+                        <button id="newBookingBtn" class="btn-primary" style="width: 100%;">Ver Serviços e Agendar</button>
+                    </div>
+                </div>
+                <div id="clientAppointmentsResult" class="appointments-list" style="display: none; margin-top: 1.5rem;"></div>
+            </div>
+
+            <div id="clientServicesSection" style="display: none;">
+                <button id="backToHomeBtn" class="btn-secondary" style="margin-bottom: 1.5rem;">&lt; Voltar</button>
                 <div class="search-bar-wrapper">
                     <i class="fas fa-search"></i>
                     <input type="search" id="serviceSearchInput" placeholder="Pesquisar serviço..." class="form-group input">
