@@ -1501,7 +1501,7 @@
                 this.bookingState = {};
                 this.currentUser = null;
                 this.charts = {};
-                this.DATA_VERSION = '6.7';
+                this.DATA_VERSION = '6.8'; // Version updated
                 document.addEventListener('DOMContentLoaded', () => this.init());
             }
 
@@ -1582,7 +1582,7 @@
                     if (submitButton) {
                         submitButton.disabled = true;
                         setTimeout(() => {
-                            if(submitButton) submitButton.disabled = false;
+                            if (submitButton) submitButton.disabled = false;
                         }, 1000);
                     }
 
@@ -2674,7 +2674,7 @@
                 const client = this.clients.find(c => c.name.toLowerCase() === event.target.value.toLowerCase());
                 if (client) {
                     const form = event.target.closest('form');
-                    if(form) form.querySelector('input[name="phone"]').value = client.phone;
+                    if (form) form.querySelector('input[name="phone"]').value = client.phone;
                 }
             }
 
