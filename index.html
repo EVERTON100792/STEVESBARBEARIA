@@ -27,10 +27,25 @@
 
     <div id="clientArea" class="page-section">
         <div class="container">
-            <div id="initialClientView">
-                <div class="shop-hero">
-                    <img src="https://images.unsplash.com/photo-1536520002442-9979a83a2b83?q=80&w=1920&h=400&auto=format&fit=crop" alt="Interior da Barbearia">
-                    <div class="shop-hero-overlay"></div>
+            <div class="client-tabs glass-card">
+                <button class="tab-btn active" data-target="initialClientView">Home</button>
+                <button class="tab-btn" data-target="clientServicesSection">Serviços</button>
+                <button class="tab-btn" data-target="detalhes">Detalhes</button>
+                <button class="tab-btn" data-target="profissionais">Profissionais</button>
+            </div>
+
+            <div id="initialClientView" class="client-sub-section">
+                <div class="shop-hero-carousel">
+                    <div class="carousel-track-container">
+                        <ul class="carousel-track">
+                            <li class="carousel-slide current-slide"><img class="carousel-image" src="imagens/Foto interna salao.jpeg" alt="Interior da Barbearia 1"></li>
+                            <li class="carousel-slide"><img class="carousel-image" src="imagens/foto interna 02.jpeg" alt="Interior da Barbearia 2"></li>
+                            <li class="carousel-slide"><img class="carousel-image" src="imagens/foto interna 03.jpeg" alt="Interior da Barbearia 3"></li>
+                        </ul>
+                    </div>
+                    <button class="carousel-button carousel-button--left"><i class="fas fa-chevron-left"></i></button>
+                    <button class="carousel-button carousel-button--right"><i class="fas fa-chevron-right"></i></button>
+                    <div class="carousel-nav"></div>
                     <div class="hero-text-container">
                         <h2>O lugar perfeito para o seu estilo.</h2>
                     </div>
@@ -55,7 +70,7 @@
                 <div id="clientAppointmentsResult" class="appointments-list" style="display: none; margin-top: 1.5rem;"></div>
             </div>
 
-            <div id="clientServicesSection" style="display: none;">
+            <div id="clientServicesSection" class="client-sub-section" style="display: none;">
                 <button id="backToHomeBtn" class="btn-secondary" style="margin-bottom: 1.5rem;">&lt; Voltar</button>
                 <div class="search-bar-wrapper">
                     <i class="fas fa-search"></i>
@@ -63,6 +78,42 @@
                 </div>
 
                 <div id="clientServicesList" class="service-list-v2">
+                </div>
+            </div>
+
+            <div id="detalhes" class="client-sub-section" style="display: none;">
+                <div class="details-grid">
+                    <div class="details-card glass-card">
+                        <h3><i class="fas fa-info-circle"></i> Sobre Nós</h3>
+                        <p>Bem-vindo à Steves Barbearia, onde a tradição encontra o estilo. Oferecemos cortes de cabelo e barba de alta qualidade em um ambiente amigável e profissional.</p>
+                    </div>
+                    <div class="details-card glass-card">
+                        <h3><i class="fas fa-clock"></i> Horários</h3>
+                        <p><strong>Terça a Sábado:</strong> 09:00 às 19:00</p>
+                        <p><strong>Domingo e Segunda:</strong> Fechado</p>
+                    </div>
+                    <div class="details-card glass-card">
+                        <h3><i class="fas fa-map-marker-alt"></i> Endereço</h3>
+                        <p>Rua dos Ipês, 18<br>Jardim Novo Horizonte<br>Rolândia/PR - CEP: 86604-470</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="profissionais" class="client-sub-section" style="display: none;">
+                <div class="glass-card">
+                    <h3>Nossos Profissionais</h3>
+                    <div class="barbers-grid">
+                        <div class="barber-card-selectable glass-card">
+                            <img src="https://ui-avatars.com/api/?name=Hernani&background=c7a355&color=fff&size=128" alt="Hernani">
+                            <h4>Hernani</h4>
+                            <p>Especialista em cortes clássicos e modernos, com mais de 10 anos de experiência.</p>
+                        </div>
+                        <div class="barber-card-selectable glass-card">
+                            <img src="https://ui-avatars.com/api/?name=Fernandinho&background=c7a355&color=fff&size=128" alt="Fernandinho">
+                            <h4>Fernandinho</h4>
+                            <p>Mestre em barbas e finalizações. Sempre atualizado com as novas tendências.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -113,19 +164,30 @@
         </footer>
     </div>
 
-    <div id="barberLogin" class="page-section">
+    <div id="barberLogin" class="page-section" style="display: none;">
+        <a href="#" onclick="window.barberPro.renderClientView(); return false;" class="back-to-site-link"><i class="fas fa-arrow-left"></i> Voltar ao Site</a>
         <div class="container">
             <div class="login-container">
-                <div class="glass-card login-form">
+                <div class="glass-card login-form animated-fade-in">
                     <div class="login-header">
-                        <h2>Acesso do Barbeiro</h2>
-                        <p>Entre com suas credenciais</p>
+                        <div class="stylish-logo">
+                            <div class="logo-line-1">STEVE<span class="backward-s">S</span></div>
+                            <div class="logo-line-2">BARBEARIA</div>
+                        </div>
+                        <h2 style="margin-top: 1.5rem;">Acesso Restrito</h2>
+                        <p>Exclusivo para administradores e barbeiros.</p>
                     </div>
                     <form id="loginForm">
-                        <div class="form-group"><label for="username">Usuário</label><input type="text" id="username" value="barbeiro" required autocomplete="username"></div>
-                        <div class="form-group"><label for="password">Senha</label><input type="password" id="password" value="123" required autocomplete="current-password"></div>
-                        <button type="submit" class="btn-primary">Entrar</button>
-                        <button type="button" class="btn-secondary" id="demoLoginBtn" style="margin-top:0.5rem;">Entrar como demonstração</button>
+                        <div class="form-group-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" value="barbeiro" required autocomplete="username" placeholder="Usuário">
+                        </div>
+                        <div class="form-group-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" value="123" required autocomplete="current-password" placeholder="Senha">
+                        </div>
+                        <button type="submit" class="btn-primary btn-full-width">Entrar</button>
+                        <button type="button" class="btn-secondary btn-full-width" id="demoLoginBtn" style="margin-top:0.5rem;">Entrar como demonstração</button>
                     </form>
                     <p class="demo-info">Demo: usuário "barbeiro" senha "123"</p>
                 </div>
@@ -133,13 +195,15 @@
         </div>
     </div>
 
-    <div id="barberDashboard" class="page-section">
+    <div id="barberDashboard" class="page-section" style="display: none;">
         <div class="dashboard-layout">
             <aside class="dashboard-sidebar">
                 <div class="sidebar-header">
                     <div class="nav-brand">
-                        <div class="logo">SB</div>
-                        <h2>Steves Barbearia</h2>
+                        <div class="stylish-logo stylish-logo-sidebar">
+                            <div class="logo-line-1">STEVE<span class="backward-s">S</span></div>
+                            <div class="logo-line-2">Barbearia</div>
+                        </div>
                     </div>
                     <button id="closeSidebarBtn" class="btn-icon" aria-label="Fechar menu"><i class="fas fa-times"></i></button>
                 </div>
@@ -226,7 +290,7 @@
                     </div>
                 </div>
 
-                <div id="appointmentsView" class="content-view">
+                <div id="appointmentsView" class="content-view" style="display: none;">
                     <div class="glass-card">
                         <div class="section-header">
                             <div class="agenda-nav"><button id="prevDayBtn" class="btn-secondary btn-small">⟨ Anterior</button><input type="date" id="agendaDateFilter" class="form-control-small"><button id="nextDayBtn" class="btn-secondary btn-small">Próximo ⟩</button></div><button id="addAppointmentBtn" class="btn-primary">Novo Agendamento</button>
@@ -235,7 +299,7 @@
                     </div>
                 </div>
 
-                <div id="comandasView" class="content-view">
+                <div id="comandasView" class="content-view" style="display: none;">
                     <div class="glass-card">
                         <div class="section-header">
                             <h3>Comandas em Aberto</h3><button id="addWalkInBtn" class="btn-primary">Novo Atendimento (Encaixe)</button>
@@ -244,7 +308,7 @@
                     </div>
                 </div>
 
-                <div id="clientsView" class="content-view">
+                <div id="clientsView" class="content-view" style="display: none;">
                     <div class="glass-card">
                         <div class="section-header">
                             <h3>Gestão de Clientes</h3><input type="search" id="clientSearchInput" placeholder="Buscar por nome ou telefone..." class="form-control-small">
@@ -253,7 +317,7 @@
                     </div>
                 </div>
 
-                <div id="servicesView" class="content-view">
+                <div id="servicesView" class="content-view" style="display: none;">
                     <div class="glass-card">
                         <div class="section-header">
                             <h3>Serviços Oferecidos</h3><button id="addServiceBtn" class="btn-primary">Adicionar Serviço</button>
@@ -262,7 +326,7 @@
                     </div>
                 </div>
 
-                <div id="professionalsView" class="content-view">
+                <div id="professionalsView" class="content-view" style="display: none;">
                     <div class="glass-card">
                         <div class="section-header">
                             <h3>Profissionais</h3><button id="addProfessionalBtn" class="btn-primary">Adicionar Profissional</button>
@@ -271,7 +335,7 @@
                     </div>
                 </div>
 
-                <div id="financialView" class="content-view">
+                <div id="financialView" class="content-view" style="display: none;">
                     <div class="glass-card">
                         <div class="section-header">
                             <h3>Controle de Caixa</h3>
@@ -281,7 +345,7 @@
                     </div>
                 </div>
 
-                <div id="reportsView" class="content-view">
+                <div id="reportsView" class="content-view" style="display: none;">
                     <div class="charts-grid">
                         <div class="glass-card chart-container">
                             <div class="chart-header">
@@ -315,5 +379,112 @@
     <div id="notificationContainer"></div>
 
     <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Tab functionality
+            try {
+                const tabs = document.querySelectorAll('.tab-btn');
+                const sections = document.querySelectorAll('.client-sub-section');
+                if (tabs.length > 0 && sections.length > 0) {
+                    const showSection = (targetId) => {
+                        sections.forEach(section => {
+                            section.style.display = section.id === targetId ? 'block' : 'none';
+                        });
+                    };
+                    tabs.forEach(tab => {
+                        tab.addEventListener('click', (e) => {
+                            const target = e.currentTarget.getAttribute('data-target');
+                            tabs.forEach(t => t.classList.remove('active'));
+                            e.currentTarget.classList.add('active');
+                            showSection(target);
+                        });
+                    });
+                    const newBookingBtn = document.getElementById('newBookingBtn');
+                    if(newBookingBtn) {
+                        newBookingBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const servicesTab = document.querySelector('.tab-btn[data-target="clientServicesSection"]');
+                            if (servicesTab) servicesTab.click();
+                        }, true);
+                    }
+                    const backToHomeBtn = document.getElementById('backToHomeBtn');
+                    if(backToHomeBtn) {
+                        backToHomeBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const homeTab = document.querySelector('.tab-btn[data-target="initialClientView"]');
+                            if (homeTab) homeTab.click();
+                        }, true);
+                    }
+                }
+            } catch (e) {
+                console.error("Error in tab functionality:", e);
+            }
+
+            // Carousel functionality
+            try {
+                const track = document.querySelector('.carousel-track');
+                if (track) {
+                    const slides = Array.from(track.children);
+                    const nextButton = document.querySelector('.carousel-button--right');
+                    const prevButton = document.querySelector('.carousel-button--left');
+                    const dotsNav = document.querySelector('.carousel-nav');
+                    
+                    if (slides.length > 0 && nextButton && prevButton && dotsNav) {
+                        let currentIndex = 0;
+
+                        slides.forEach((slide, index) => {
+                            const button = document.createElement('button');
+                            button.classList.add('carousel-indicator');
+                            if (index === 0) button.classList.add('current-slide');
+                            dotsNav.appendChild(button);
+                        });
+                        const dots = Array.from(dotsNav.children);
+
+                        const moveToSlide = (slideIndex) => {
+                            if (!slides[slideIndex] || !dots[slideIndex]) return;
+                            track.style.transform = 'translateX(-' + (slideIndex * 100) + '%)';
+                            
+                            const currentDot = dotsNav.querySelector('.current-slide');
+                            if (currentDot) currentDot.classList.remove('current-slide');
+                            dots[slideIndex].classList.add('current-slide');
+                            
+                            currentIndex = slideIndex;
+                        };
+
+                        const showNextSlide = () => {
+                            const nextIndex = (currentIndex + 1) % slides.length;
+                            moveToSlide(nextIndex);
+                        };
+
+                        let slideInterval = setInterval(showNextSlide, 5000);
+                        const stopAutoplay = () => clearInterval(slideInterval);
+
+                        nextButton.addEventListener('click', () => {
+                            stopAutoplay();
+                            showNextSlide();
+                        });
+
+                        prevButton.addEventListener('click', () => {
+                            stopAutoplay();
+                            const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+                            moveToSlide(prevIndex);
+                        });
+
+                        dotsNav.addEventListener('click', e => {
+                            const targetDot = e.target.closest('button');
+                            if (!targetDot) return;
+                            stopAutoplay();
+                            const targetIndex = dots.findIndex(dot => dot === targetDot);
+                            moveToSlide(targetIndex);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("Error in carousel functionality:", e);
+            }
+        });
+    </script>
 </body>
 </html>
